@@ -8,7 +8,8 @@ if(!host) return;
 const reduce = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)");
 if(reduce && reduce.matches) return;
 
-const SRC = "images/logo-chrome.webp";
+const HERE = document.currentScript && document.currentScript.src;   /* adresse de ce script : sert de repère pour les autres fichiers */
+const SRC = HERE ? new URL("../images/brand/logo-chrome.webp", HERE).href : "assets/images/brand/logo-chrome.webp";
 const TURN = 30;        // secondes pour un tour complet
 const DEPTH = 0.09;     // épaisseur du logo (hauteur du logo = 1)
 const MAX_SLICES = 72;  // tranches empilées pour donner du volume (adaptées à l'angle)
@@ -169,7 +170,7 @@ function upload(img, r){
 /* 1) l'image du site ; 2) si le navigateur la refuse pour WebGL (ouverture directe du fichier), la version intégrée dans logo-tex.js */
 function embedded(){
   const s = document.createElement("script");
-  s.src = "logo-tex.js";
+  s.src = HERE ? new URL("logo-tex.js", HERE).href : "assets/js/logo-tex.js";
   s.onload = () => {
     const T = window.LOGO_TEX; if(!T) return fail();
     const i = new Image();

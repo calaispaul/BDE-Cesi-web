@@ -33,29 +33,29 @@ const PRODUCTS = [
       {
         id: "black", name: "Noir", hex: "#292728",
         images: [
-          { src: "images/hoodie-black-face.jpg", thumb: "images/t-black-face.jpg", alt: "Hoodie CESI Lille noir, vue de face" },
-          { src: "images/hoodie-black-dos.jpg",  thumb: "images/t-black-dos.jpg",  alt: "Aperçu du design CESI Lille au dos, impression blanc sur fond noir" }
+          { src: "assets/images/products/hoodie/black-face.jpg", thumb: "assets/images/products/hoodie/thumbs/black-face.jpg", alt: "Hoodie CESI Lille noir, vue de face" },
+          { src: "assets/images/products/hoodie/black-dos.jpg",  thumb: "assets/images/products/hoodie/thumbs/black-dos.jpg",  alt: "Aperçu du design CESI Lille au dos, impression blanc sur fond noir" }
         ]
       },
       {
         id: "grey", name: "Gris chiné", hex: "#d5d2dd",
         images: [
-          { src: "images/hoodie-grey-face.jpg", thumb: "images/t-grey-face.jpg", alt: "Hoodie CESI Lille gris chiné, vue de face" },
-          { src: "images/hoodie-grey-dos.jpg",  thumb: "images/t-grey-dos.jpg",  alt: "Aperçu du design CESI Lille au dos, impression noir sur fond gris chiné" }
+          { src: "assets/images/products/hoodie/grey-face.jpg", thumb: "assets/images/products/hoodie/thumbs/grey-face.jpg", alt: "Hoodie CESI Lille gris chiné, vue de face" },
+          { src: "assets/images/products/hoodie/grey-dos.jpg",  thumb: "assets/images/products/hoodie/thumbs/grey-dos.jpg",  alt: "Aperçu du design CESI Lille au dos, impression noir sur fond gris chiné" }
         ]
       },
       {
         id: "brown", name: "Marron", hex: "#48342e",
         images: [
-          { src: "images/hoodie-brown-face.jpg", thumb: "images/t-brown-face.jpg", alt: "Hoodie CESI Lille marron, vue de face" },
-          { src: "images/hoodie-brown-dos.jpg",  thumb: "images/t-brown-dos.jpg",  alt: "Aperçu du design CESI Lille au dos, impression blanc sur fond marron" }
+          { src: "assets/images/products/hoodie/brown-face.jpg", thumb: "assets/images/products/hoodie/thumbs/brown-face.jpg", alt: "Hoodie CESI Lille marron, vue de face" },
+          { src: "assets/images/products/hoodie/brown-dos.jpg",  thumb: "assets/images/products/hoodie/thumbs/brown-dos.jpg",  alt: "Aperçu du design CESI Lille au dos, impression blanc sur fond marron" }
         ]
       },
       {
         id: "cream", name: "Écru", hex: "#e4d8cf",
         images: [
-          { src: "images/hoodie-cream-face.jpg", thumb: "images/t-cream-face.jpg", alt: "Hoodie CESI Lille écru, vue de face" },
-          { src: "images/hoodie-cream-dos.jpg",  thumb: "images/t-cream-dos.jpg",  alt: "Aperçu du design CESI Lille au dos, impression noir sur fond écru" }
+          { src: "assets/images/products/hoodie/cream-face.jpg", thumb: "assets/images/products/hoodie/thumbs/cream-face.jpg", alt: "Hoodie CESI Lille écru, vue de face" },
+          { src: "assets/images/products/hoodie/cream-dos.jpg",  thumb: "assets/images/products/hoodie/thumbs/cream-dos.jpg",  alt: "Aperçu du design CESI Lille au dos, impression noir sur fond écru" }
         ]
       }
     ]
@@ -73,8 +73,8 @@ const PRODUCTS = [
     colors: [
       { id: "black", name: "Noir", hex: "#0f1417",
         images: [
-          { src: "images/tshirt-black-face.jpg", thumb: "images/tt-black-face.jpg", alt: "T-shirt CESI Lille noir, devant : petit logo chromé en haut du torse" },
-          { src: "images/tshirt-black-dos.jpg",  thumb: "images/tt-black-dos.jpg",  alt: "T-shirt CESI Lille noir, dos : grande illustration au trait et texte manuscrit" }
+          { src: "assets/images/products/tshirt/black-face.jpg", thumb: "assets/images/products/tshirt/thumbs/black-face.jpg", alt: "T-shirt CESI Lille noir, devant : petit logo chromé en haut du torse" },
+          { src: "assets/images/products/tshirt/black-dos.jpg",  thumb: "assets/images/products/tshirt/thumbs/black-dos.jpg",  alt: "T-shirt CESI Lille noir, dos : grande illustration au trait et texte manuscrit" }
         ] }
       // Autres coloris : ajoutez un bloc { id, name, hex, images:[...] } ici (le design est clair, prévu pour fond foncé)
     ]
