@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self' https://formspree.io; base-uri 'self'; form-action 'self' https://formspree.io; object-src 'none'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="theme-color" content="#ffffff">
+<title>Boutique – CESI Lille</title>
+<meta name="description" content="Boutique CESI Lille : hoodies et T-shirts en édition limitée, précommande, retrait sur le campus de Lille.">
+<meta property="og:title" content="Boutique – CESI Lille">
+<meta property="og:description" content="Boutique CESI Lille : hoodies et T-shirts en édition limitée, précommande, retrait sur le campus de Lille.">
+<meta property="og:image" content="images/og.jpg">
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<a class="skip" href="#contenu">Aller au contenu</a>
+<div class="bg-logo" aria-hidden="true"></div>
+<div class="bg-glass" aria-hidden="true"></div>
+<header>
+  <div class="nav">
+    <button class="burger" type="button" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="menu"><span></span><span></span><span></span></button>
+    <a class="brand" href="index.html" aria-label="CESI Lille – accueil"><img src="images/logo-header.png" alt="CESI Lille" width="176" height="176"></a>
+    <a class="cart" href="boutique.html" data-cart aria-label="Panier : voir la boutique"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8h12l-1 12H7L6 8z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg></a>
+  </div>
+</header>
+<div class="scrim" hidden></div>
+<nav class="drawer" id="menu" aria-label="Menu" aria-hidden="true">
+  <a href="index.html">Accueil</a>
+  <div class="dgroup">
+    <button type="button" class="dtoggle" aria-expanded="false" aria-controls="sub-boutique">Boutique<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+    <div class="dsub" id="sub-boutique" hidden>
+      <a href="boutique.html">Tout voir</a>
+      <a href="hoodie.html">Pull</a>
+      <a href="tshirt.html">T-shirt</a>
+    </div>
+  </div>
+  <a href="index.html#apropos">La marque</a>
+  <a href="infos-legales.html">Infos légales</a>
+  <a href="mailto:bde-lille@viacesi.fr" data-mail>Contact</a>
+</nav>
+<main class="pdp" id="contenu"><div id="shopRoot"><noscript><p class="sub">Cette page nécessite JavaScript. Écrivez-nous à bde-lille@viacesi.fr pour précommander.</p></noscript></div></main>
+<footer>
+  <div class="wrap fcols">
+    <div><h4>Marque</h4><a href="index.html#apropos">La marque</a><a href="boutique.html">Boutique</a><a href="hoodie.html">Hoodie</a><a href="tshirt.html">T-shirt</a></div>
+    <div><h4>Légal</h4><a href="infos-legales.html#mentions">Mentions légales</a><a href="infos-legales.html#cgv">Conditions de vente</a><a href="infos-legales.html#confidentialite">Confidentialité</a></div>
+    <div><h4>Aide</h4><a href="mailto:bde-lille@viacesi.fr" data-mail>Contact</a><a href="boutique.html#infos">Comment précommander</a></div>
+    <div><h4>Suivre</h4><a href="https://instagram.com/" target="_blank" rel="noopener noreferrer">Instagram</a><a href="https://www.tiktok.com/" target="_blank" rel="noopener noreferrer">TikTok</a></div>
+  </div>
+  <p class="copy">&copy; 2026 CESI Lille — Tous droits réservés</p>
+</footer>
+<script src="products.js"></script>
+<script src="app.js"></script>
+<script src="logo3d.js" defer></script>
+<script src="menu.js" defer></script>
+</body>
+</html>
