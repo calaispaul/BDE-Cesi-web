@@ -1,0 +1,236 @@
+/* CESI Lille : feuille de style
+   Direction artistique inspirée d'Apple : fond blanc, sobriété, typographie, pilules, aucune ombre, sections pleine largeur.
+   Palette : blanc (principale), rose très clair (secondaire), bleu clair (détails uniquement), encre #1d1d1f pour le texte. */
+:root{
+  --lg-inset:6vh 4vw;--ink:#1d1d1f;--mute:#6e6e73;--line:rgba(0,0,0,.12);
+  --pink:#fbe3ea;--pink-2:#f6cfdc;--focus:#1d1d1f;
+  --surface:#f5f5f7;--layer:rgba(255,255,255,.64);--layer-2:rgba(245,245,247,.7);--err:#d70015;
+  --ease:cubic-bezier(.28,.11,.32,1);--r:8px;--pill:980px;
+  --font:-apple-system,BlinkMacSystemFont,"SF Pro Text","SF Pro Display",Inter,"Helvetica Neue",Helvetica,Arial,sans-serif
+}
+*{box-sizing:border-box;margin:0}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{background:#fff;color:var(--ink);text-align:center;font:400 17px/1.47 var(--font);letter-spacing:-.016em;-webkit-font-smoothing:antialiased}
+::selection{background:var(--pink-2);color:var(--ink)}
+img{display:block;max-width:100%}
+a{color:inherit;text-decoration:none}
+button,input,select,textarea{font:inherit;letter-spacing:inherit;color:inherit}
+button{cursor:pointer;background:none;border:0}
+:focus-visible{outline:2px solid var(--focus);outline-offset:3px}
+main,footer{position:relative;z-index:1}
+h1,h2,h3{font-weight:600;letter-spacing:-.022em}
+
+/* Logo chrome fixe : le dessin ne bouge pas, une teinte rose / bleu clair glisse sur le métal */
+.bg-logo{position:fixed;inset:var(--lg-inset);z-index:0;pointer-events:none;opacity:.32;isolation:isolate;background:url(images/logo-noir-grand.png) center/contain no-repeat;transition:opacity .9s var(--ease)}
+body.logo-on .bg-logo{opacity:1}
+.rb{color:var(--ink)}
+
+/* Bandeau et navigation */
+.skip{position:absolute;left:12px;top:-64px;z-index:100;padding:10px 18px;border-radius:var(--pill);background:var(--ink);color:#fff;font-weight:600;transition:top .2s}
+.skip:focus{top:12px}
+header{position:sticky;top:0;z-index:30;background:rgba(255,255,255,.74);-webkit-backdrop-filter:saturate(180%) blur(20px);backdrop-filter:saturate(180%) blur(20px);border-bottom:1px solid var(--line)}
+.nav{height:56px;position:relative;display:flex;align-items:center;justify-content:space-between;padding:0 max(8px,env(safe-area-inset-right)) 0 max(8px,env(safe-area-inset-left))}
+.brand:hover @media(max-width:700px){.nav{height:52px}}
+
+
+/* Verre dépoli très léger devant le logo, et logo 3D (canvas) */
+.bg-glass{position:fixed;inset:0;z-index:0;pointer-events:none;background:rgba(255,255,255,.12);-webkit-backdrop-filter:blur(1.5px);backdrop-filter:blur(1.5px)}
+.bg-logo canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.bg-logo.gl-on,.bg-logo.is-3d{background:none}
+/* Panier de l'en-tête */
+.cart{display:grid;place-items:center;width:44px;height:44px;border-radius:50%;transition:background .3s var(--ease),transform .3s var(--ease)}
+.cart:hover{background:var(--pink);transform:translateY(-1px)}
+
+/* Structure commune */
+.wrap{max-width:1280px;margin:auto;padding-left:max(20px,env(safe-area-inset-left));padding-right:max(20px,env(safe-area-inset-right))}
+.band{background:var(--layer);-webkit-backdrop-filter:saturate(180%) blur(20px);backdrop-filter:saturate(180%) blur(20px)}
+.band.alt{background:var(--layer-2)}
+.band.wash{background:rgba(251,227,234,.78)}
+.band .wrap{padding-top:clamp(56px,9vw,112px);padding-bottom:clamp(56px,9vw,112px)}
+h2{font-size:clamp(28px,3.6vw,44px);line-height:1.1}
+.sec-head{margin-bottom:clamp(28px,4vw,48px)}
+.sub{max-width:52ch;margin:14px auto 32px;font-size:clamp(17px,1.6vw,21px);font-weight:300;line-height:1.3;color:var(--mute)}
+.more{position:relative;display:inline-block;margin-top:32px;padding-bottom:3px;transition:color .3s var(--ease)}
+.more::after{content:"";position:absolute;left:0;right:0;bottom:0;height:1px;background:currentColor;transform:scaleX(.3);transition:transform .45s var(--ease)}
+.more:hover::after{transform:scaleX(1)}
+.btn{position:relative;display:block;width:100%;overflow:hidden;isolation:isolate;padding:12px 24px;border-radius:var(--pill);background:var(--ink);color:#fff;font-size:17px;font-weight:400;line-height:1.3;text-align:center;transition:transform .3s var(--ease),color .3s var(--ease)}
+.btn::before{content:"";position:absolute;inset:0;z-index:-1;background:var(--pink);transform:translateX(-101%);transition:transform .45s var(--ease)}
+.btn:hover,.btn:focus-visible{transform:scale(1.02);color:var(--ink)}
+.btn:hover::before,.btn:focus-visible::before{transform:none}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn:disabled::before{display:none}.btn:disabled:hover{transform:none;color:#fff}
+.btn.inl{display:inline-block;width:auto}
+.btn.ghost{background:var(--pink);color:var(--ink)}
+.btn.ghost::before{background:var(--pink-2)}
+.msg{min-height:22px;margin-top:10px;font-size:14px;color:var(--err)}
+.price{font-size:21px;font-weight:400}
+
+/* Accueil */
+.hero{position:relative;z-index:1;min-height:calc(100vh - 56px);min-height:calc(100svh - 56px);display:flex;align-items:flex-end;justify-content:center}
+.hero .wrap{padding-bottom:clamp(36px,8vh,88px)}
+.hero h1{font-size:clamp(44px,8vw,88px);line-height:1.05;letter-spacing:-.03em;text-shadow:0 0 28px #fff,0 0 8px #fff}
+.hero p{max-width:28ch;margin:12px auto 28px;font-size:clamp(19px,2.2vw,28px);font-weight:300;line-height:1.2;text-shadow:0 0 18px #fff,0 0 4px #fff}
+.cta{display:flex;justify-content:center;flex-wrap:wrap;gap:12px}
+.banner{position:relative;z-index:1;display:block;height:clamp(320px,68vh,780px);overflow:hidden;background:var(--surface)}
+.banner picture{position:absolute;inset:0}
+.banner img{width:100%;height:100%;object-fit:cover;object-position:50% 50%;transition:transform 1.4s var(--ease)}
+.banner:hover img{transform:scale(1.02)}
+.pgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),440px));justify-content:center;gap:28px}
+.pcard{display:grid;gap:10px;justify-items:center}
+.pcard h3{margin-top:12px;font-size:clamp(24px,2.4vw,32px);line-height:1.12}
+.pcard .btn{margin-top:8px}
+.swap{position:relative;display:block;width:100%;aspect-ratio:1;overflow:hidden;border-radius:var(--r);background:var(--surface);transition:transform .6s var(--ease)}
+.swap:hover{transform:scale(1.015)}
+.swap img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:opacity .5s var(--ease)}
+.swap img+img{opacity:0}
+.swap:hover img+img{opacity:1}
+.badge{position:absolute;top:14px;left:50%;z-index:2;transform:translateX(-50%);padding:3px 12px;border-radius:var(--pill);background:var(--pink);color:var(--ink);font-size:12px;font-weight:600}
+.dots{display:flex;justify-content:center;gap:8px}
+.dots i{display:block;width:14px;height:14px;border-radius:50%;box-shadow:inset 0 0 0 1px var(--line)}
+@media(min-width:900px){}
+.crest{position:relative;z-index:1;display:flex;align-items:center;justify-content:center}
+.crest .wrap{display:flex;flex-direction:column;align-items:center;gap:16px;padding-top:clamp(48px,8vw,96px);padding-bottom:clamp(48px,8vw,96px)}
+.crest h2{font-size:clamp(48px,11vw,128px);line-height:.95;letter-spacing:-.04em;text-shadow:0 0 30px #fff,0 0 8px #fff}
+.crest p{max-width:42ch;font-size:clamp(17px,1.6vw,21px);font-weight:300;text-shadow:0 0 16px #fff,0 0 4px #fff}
+@media(min-width:900px){}
+.reassure{display:grid;grid-template-columns:repeat(4,1fr);gap:clamp(20px,3vw,40px)}
+.reassure h3{font-size:clamp(19px,1.8vw,21px);line-height:1.24}
+.reassure p{margin-top:8px;font-size:14px;line-height:1.43;color:var(--mute)}
+@media(max-width:800px){.reassure{grid-template-columns:1fr 1fr;row-gap:36px}}
+.news{max-width:560px}
+.news .f{display:flex;gap:8px;justify-content:center}
+.news .f input{flex:1;min-width:0;padding:12px 16px;border-radius:var(--r);background:#fff;box-shadow:inset 0 0 0 1px #d2d2d7;text-align:center;transition:box-shadow .3s var(--ease)}
+.news .f input:focus{outline:none;box-shadow:inset 0 0 0 2px var(--focus)}
+.news .btn{width:auto;padding:12px 24px}
+@media(max-width:480px){.news .f{flex-direction:column}.news .btn{width:100%}}
+.hp{position:absolute;left:-9999px;width:1px;height:1px;opacity:0}
+.agree{display:flex;gap:10px;align-items:flex-start;max-width:440px;margin:16px auto 0;text-align:left;font-size:14px;line-height:1.43;color:var(--mute)}
+.agree input{width:18px;height:18px;flex:none;margin-top:2px;accent-color:var(--ink)}
+.agree a{text-decoration:underline}
+
+/* Pied de page */
+footer{background:rgba(245,245,247,.86);-webkit-backdrop-filter:saturate(180%) blur(20px);backdrop-filter:saturate(180%) blur(20px);padding-top:clamp(40px,6vw,64px);font-size:12px;line-height:1.33;color:var(--mute)}
+.fcols{display:grid;grid-template-columns:repeat(4,1fr);gap:32px}
+.fcols h4{margin-bottom:10px;font-size:12px;font-weight:600;color:var(--ink)}
+.fcols a{position:relative;display:block;width:fit-content;margin:0 auto;padding:5px 0;transition:color .3s var(--ease)}
+.fcols a::after{content:"";position:absolute;left:0;right:0;bottom:2px;height:1px;background:var(--ink);transform:scaleX(0);transition:transform .4s var(--ease)}
+.fcols a:hover{color:var(--ink)}.fcols a:hover::after{transform:scaleX(1)}
+/* Instagram mis en avant */
+.fcols a.ig{display:inline-flex;align-items:center;gap:10px;padding:7px 16px 7px 7px;border-radius:999px;background:#fff;box-shadow:0 0 0 1px #e6e6e8;color:#1d1d1f;text-align:left;transition:transform .3s,box-shadow .3s}
+.fcols a.ig::after{display:none}
+.fcols a.ig:hover{transform:translateY(-2px);box-shadow:0 0 0 1px #1d1d1f}
+.ig-ico{display:grid;place-items:center;width:34px;height:34px;border-radius:50%;background:#1d1d1f;color:#fff;flex:none}
+.ig-txt{display:flex;flex-direction:column;line-height:1.2}
+.ig-txt b{font-size:13px;font-weight:600}
+.ig-txt small{font-size:11px;color:#707070}
+.copy{margin-top:36px;padding:18px 20px max(24px,env(safe-area-inset-bottom));border-top:1px solid var(--line)}
+@media(max-width:700px){.fcols{grid-template-columns:1fr 1fr}}
+
+/* Boutique */
+.pdp{position:relative;z-index:1;max-width:980px;margin:0 auto;padding:clamp(24px,4vw,48px) max(20px,env(safe-area-inset-right)) 80px max(20px,env(safe-area-inset-left))}
+.pdp .sec-head h1{font-size:clamp(36px,6vw,64px);line-height:1.05;letter-spacing:-.03em}
+.viewer{max-width:680px;margin:0 auto}
+.stage{display:block;width:100%;aspect-ratio:1;overflow:hidden;border-radius:var(--r);background:var(--surface);cursor:zoom-in}
+.stage img{width:100%;height:100%;object-fit:contain;transition:opacity .25s var(--ease),transform .9s var(--ease)}
+.stage:hover img{transform:scale(1.02)}
+.thumbs{display:flex;justify-content:center;gap:10px;margin-top:14px}
+.th{width:clamp(48px,13vw,72px);aspect-ratio:1;overflow:hidden;border-radius:var(--r);background:var(--surface);opacity:.55;transition:opacity .3s var(--ease),transform .4s var(--ease),box-shadow .3s var(--ease)}
+.th img{width:100%;height:100%;object-fit:cover}
+.th:hover{opacity:1;transform:translateY(-3px)}
+.th.on{opacity:1;box-shadow:0 0 0 2px var(--ink)}
+.info{max-width:600px;margin:clamp(28px,4vw,48px) auto 0;padding:clamp(24px,4vw,44px);border-radius:var(--r);background:rgba(245,245,247,.78);-webkit-backdrop-filter:saturate(180%) blur(20px);backdrop-filter:saturate(180%) blur(20px)}
+.info h1{font-size:clamp(32px,4.6vw,48px);line-height:1.08;letter-spacing:-.03em}
+.info .price{margin:10px 0 6px}
+.tag{display:inline-block;margin-top:6px;padding:3px 12px;border-radius:var(--pill);background:var(--pink);font-size:12px;font-weight:600}
+.lead{max-width:44ch;margin:18px auto 28px;font-weight:300;font-size:clamp(17px,1.6vw,21px);line-height:1.3;color:var(--mute)}
+.row{display:flex;justify-content:center;align-items:baseline;gap:18px;margin-bottom:12px;font-size:14px;font-weight:600}
+.swatches{display:flex;justify-content:center;gap:14px;margin-bottom:26px}
+.sw{position:relative;width:36px;height:36px;padding:3px;border-radius:50%;box-shadow:inset 0 0 0 1px var(--line);transition:transform .3s var(--ease),box-shadow .3s var(--ease)}
+.sw i{display:block;width:100%;height:100%;border-radius:50%;box-shadow:inset 0 0 0 1px rgba(0,0,0,.14)}
+.sw:hover{transform:translateY(-3px);box-shadow:inset 0 0 0 1px var(--ink)}
+.sw.on{box-shadow:inset 0 0 0 2px var(--ink)}
+.sw.on::after{content:"";position:absolute;left:50%;bottom:-9px;width:4px;height:4px;margin-left:-2px;border-radius:50%;background:var(--ink)}
+.chips{display:flex;justify-content:center;flex-wrap:wrap;gap:8px;margin-bottom:10px}
+.chips span{min-width:48px;padding:9px 14px;border-radius:var(--pill);background:#fff;box-shadow:inset 0 0 0 1px var(--line);font-weight:600;font-size:14px}
+.note{margin-bottom:4px;font-size:14px;color:var(--mute)}
+.buy{margin-top:20px}
+.steps{list-style:none;counter-reset:s;display:grid;gap:12px;max-width:420px;margin:30px auto 0;padding:0;text-align:left}
+.steps li{counter-increment:s;display:flex;gap:14px;align-items:baseline;font-size:14px;line-height:1.43;color:var(--mute)}
+.steps li::before{content:counter(s);flex:none;width:22px;height:22px;display:grid;place-items:center;border-radius:50%;box-shadow:inset 0 0 0 1.5px var(--ink);color:var(--ink);font-size:12px;font-weight:600}
+.acc{margin-top:30px}
+details{padding:14px 0;border-top:1px solid var(--line)}
+details:last-of-type{border-bottom:1px solid var(--line)}
+summary{display:flex;justify-content:center;gap:12px;cursor:pointer;list-style:none;font-size:17px;font-weight:600;transition:opacity .3s var(--ease)}
+summary:hover{opacity:.6}
+summary::after{content:"+";font-weight:300}
+details[open] summary::after{content:"–"}
+details p,details li{margin-top:10px;font-size:14px;line-height:1.43;color:var(--mute)}
+details ul{list-style:none;padding:0}
+.lb{position:fixed;inset:0;z-index:60;display:none;place-items:center;padding:16px;background:rgba(0,0,0,.9);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px)}
+.lb.on{display:grid}
+.lb img{max-height:92vh;object-fit:contain;border-radius:var(--r)}
+.lb button{position:absolute;top:16px;right:20px;color:#fff;font-size:32px;transition:color .3s var(--ease)}.lb button:hover{color:var(--pink)}
+
+/* Page légale */
+.legal{text-align:left}
+.legal .sec-head{text-align:center}
+.legal section{margin-top:44px}
+.legal h2{margin-bottom:14px;font-size:clamp(24px,2.6vw,32px)}
+.legal p{margin-bottom:12px;color:var(--mute)}
+.legal b{color:var(--ink);font-weight:600}
+.todo{padding:0 4px;border-radius:4px;background:var(--pink);color:var(--ink)}
+.todo-note{color:var(--ink)}
+
+/* Compatibilité, performance, mouvement réduit */
+@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){.band,header,footer,.info{background:rgba(255,255,255,.92)}}
+@media(max-width:700px){.band,footer,.info{-webkit-backdrop-filter:none;backdrop-filter:none}.band{background:rgba(255,255,255,.72)}.band.alt{background:rgba(245,245,247,.78)}.band.wash{background:rgba(251,227,234,.85)}footer{background:rgba(245,245,247,.9)}.info{background:rgba(245,245,247,.86);padding:24px 16px}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+
+/* En-tête : menu burger à gauche, « BDE CESI  logo  LILLE » au centre, panier à droite */
+.brand:hover b{color:#c2557c}
+.burger{position:relative;width:44px;height:44px;border-radius:50%;display:grid;place-content:center;gap:5px;transition:background .3s var(--ease)}
+.burger:hover{background:var(--pink)}
+.burger span{display:block;width:20px;height:1.5px;border-radius:2px;background:var(--ink);transition:transform .35s var(--ease),opacity .2s}
+.burger[aria-expanded="true"] span:nth-child(1){transform:translateY(6.5px) rotate(45deg)}
+.burger[aria-expanded="true"] span:nth-child(2){opacity:0}
+.burger[aria-expanded="true"] span:nth-child(3){transform:translateY(-6.5px) rotate(-45deg)}
+.scrim{position:fixed;inset:0;z-index:40;background:rgba(29,29,31,.22);opacity:0;transition:opacity .35s var(--ease)}
+.scrim.on{opacity:1}
+.drawer{position:fixed;top:0;bottom:0;left:0;z-index:50;width:min(340px,86vw);padding:76px 28px 28px;display:flex;flex-direction:column;gap:6px;background:rgba(255,255,255,.97);-webkit-backdrop-filter:saturate(180%) blur(20px);backdrop-filter:saturate(180%) blur(20px);box-shadow:1px 0 0 var(--line);transform:translateX(-102%);visibility:hidden;transition:transform .45s var(--ease),visibility 0s .45s;overscroll-behavior:contain}
+.drawer.on{transform:none;visibility:visible;transition:transform .45s var(--ease),visibility 0s}
+.drawer a{padding:14px 18px;border-radius:var(--r);font-size:24px;font-weight:600;letter-spacing:-.01em;color:var(--ink);transition:background .3s var(--ease),transform .3s var(--ease)}
+.drawer a:hover,.drawer a:focus-visible{background:var(--pink);transform:translateX(4px)}
+.drawer a[aria-current="page"]{background:var(--pink)}
+body.menu-open{overflow:hidden}
+body.menu-open header{z-index:60}
+.burger{z-index:60}
+@media(max-width:700px){}
+@media(max-width:360px){}
+
+
+/* Logo « CESI Lille » centré dans la bande */
+.brand{position:absolute;left:50%;top:0;height:100%;transform:translateX(-50%);display:flex;align-items:center;justify-content:center}
+.brand img{display:block;height:46px;width:auto;transition:transform .5s var(--ease)}
+.brand:hover img{transform:scale(1.06)}
+@media(max-width:700px){.nav{height:52px}.brand img{height:42px}}
+
+/* Sous-menu « Boutique » du menu burger */
+.dtoggle{width:100%;display:flex;align-items:center;justify-content:center;gap:8px;padding:14px 18px;border-radius:var(--r);font-size:24px;font-weight:600;letter-spacing:-.01em;color:var(--ink);transition:background .3s var(--ease)}
+.dtoggle:hover,.dtoggle:focus-visible{background:var(--pink)}
+.dtoggle svg{transition:transform .35s var(--ease)}
+.dtoggle[aria-expanded="true"] svg{transform:rotate(180deg)}
+.dsub{display:flex;flex-direction:column;gap:2px;padding:2px 0 8px}
+.dsub[hidden]{display:none}
+.drawer .dsub a{padding:10px 18px;font-size:19px;font-weight:500;color:var(--mute)}
+.drawer .dsub a:hover,.drawer .dsub a:focus-visible{color:var(--ink)}
+
+/* Transitions entre les pages (mêmes réglages que site.css) */
+@view-transition{navigation:auto}
+::view-transition-old(root){animation:vt-out .45s cubic-bezier(.4,0,.2,1) both}
+::view-transition-new(root){animation:vt-in .75s cubic-bezier(.22,1,.36,1) both}
+@keyframes vt-out{to{opacity:0;transform:scale(.97) translateY(-18px);filter:blur(10px)}}
+@keyframes vt-in{from{opacity:0;transform:scale(1.04) translateY(28px);filter:blur(16px)}}
+@media (prefers-reduced-motion:reduce){@view-transition{navigation:none}}
+/* pas de barre de défilement visible */
+html{scrollbar-width:none}
+html::-webkit-scrollbar{display:none}
