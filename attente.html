@@ -8,38 +8,42 @@
 <meta name="robots" content="noindex">
 <meta name="theme-color" content="#f5f5f7">
 <title>Bientôt – BDE CESI Lille</title>
-<meta name="description" content="La collection 2026-2027 du BDE CESI Lille arrive lundi 23 novembre à 8 h 30.">
+<meta name="description" content="La collection 2026-2027 du BDE CESI Lille arrive mardi 24 novembre à 8 h 30.">
 <meta property="og:title" content="Bientôt – BDE CESI Lille">
-<meta property="og:description" content="La collection 2026-2027 du BDE CESI Lille arrive lundi 23 novembre à 8 h 30.">
+<meta property="og:description" content="La collection 2026-2027 du BDE CESI Lille arrive mardi 24 novembre à 8 h 30.">
 <meta property="og:image" content="images/og.jpg">
 <link rel="icon" type="image/png" href="favicon.png">
-<link rel="stylesheet" href="site.css?v=2026111906">
+<link rel="stylesheet" href="site.css?v=2026111907">
 <link rel="preload" as="image" href="images/pieces/pull-noir-dos.png">
-<script src="boot.js?v=2026111906"></script>
-<script src="attente.js?v=2026111906" defer></script>
+<script src="boot.js?v=2026111907"></script>
+<script src="attente.js?v=2026111907" defer></script>
 </head><body class="attente">
 <main class="wt" id="contenu">
-  <img class="wt-logo" src="images/logo-noir.png" alt="BDE CESI Lille" width="192" height="192">
+  <h1 class="wt-title"><span class="wt-q" data-q="?" aria-label="Bientôt">?</span></h1>
 
   <!-- le pull noir de dos, en mosaïque de pixels floutés qui s'affine jusqu'à l'ouverture -->
-  <div class="wt-visual" aria-hidden="true"><canvas id="wtPixels" width="600" height="600"></canvas></div>
+  <div class="wt-visual" aria-hidden="true"><canvas id="wtPixels" width="800" height="800"></canvas></div>
 
-  <p class="wt-kicker">Collection 2026–2027</p>
-  <h1 class="wt-title">Bientôt<span class="dot">.</span></h1>
-  <p class="wt-lead">Ouverture le <b>lundi 23 novembre à 8 h 30</b>.</p>
-
-  <div class="wt-count" role="timer" aria-live="off" aria-label="Temps restant avant l'ouverture">
+  <div class="wt-count" role="timer" aria-live="off" aria-label="Temps restant avant l'ouverture, mardi 24 novembre à 8 h 30">
     <div><b id="cdD">0</b><span>jours</span></div>
     <div><b id="cdH">00</b><span>heures</span></div>
     <div><b id="cdM">00</b><span>minutes</span></div>
     <div><b id="cdS">00</b><span>secondes</span></div>
   </div>
 
+  <div class="wt-cal">
+    <a class="pill blue" href="rappel.ics" download="bde-cesi-lille-ouverture.ics" type="text/calendar">Ajouter un rappel</a>
+    <a class="wt-gcal" href="https://calendar.google.com/calendar/render?action=TEMPLATE&amp;text=Ouverture%20de%20la%20collection%20BDE%20CESI%20Lille&amp;dates=20261124T073000Z%2F20261124T080000Z&amp;details=https%3A%2F%2Fbde-cesi-lille.fr&amp;location=https%3A%2F%2Fbde-cesi-lille.fr" target="_blank" rel="noopener noreferrer">ou dans Google Agenda</a>
+  </div>
+
   <div class="wt-foot">
-    <button type="button" class="wt-team" id="wtTeam" aria-expanded="false" aria-controls="wtForm">Accès équipe</button>
+    <!-- appuyer sur le logo fait apparaître le champ du code d'accès (équipe) -->
+    <button type="button" class="wt-logo-btn" id="wtTeam" aria-expanded="false" aria-controls="wtForm" aria-label="BDE CESI Lille">
+      <img class="wt-logo" src="images/logo-noir.png" alt="" width="192" height="192">
+    </button>
     <form class="wt-form" id="wtForm" hidden autocomplete="off" novalidate>
       <label class="sr" for="wtCode">Code d'accès</label>
-      <input id="wtCode" name="code" type="password" inputmode="text" autocomplete="off" autocapitalize="characters" spellcheck="false" maxlength="40" placeholder="Code d'accès" required>
+      <input id="wtCode" name="code" type="password" inputmode="text" autocomplete="off" autocapitalize="characters" spellcheck="false" maxlength="40" placeholder="Code" required>
       <button type="submit" class="pill blue" id="wtGo">Entrer</button>
       <p class="wt-msg" id="wtMsg" aria-live="polite"></p>
     </form>

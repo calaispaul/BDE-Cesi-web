@@ -7,16 +7,19 @@
     if(!same){ document.documentElement.style.display = "none";
       try{ window.top.location = window.location.href; }catch(e){} return; }
   }
-  /* Page d'attente : jusqu'à l'ouverture (lundi 23 novembre 2026, 8 h 30, heure de Paris), le site renvoie vers
+  /* Page d'attente : jusqu'à l'ouverture (mardi 24 novembre 2026, 8 h 30, heure de Paris), le site renvoie vers
      attente.html, sauf pour ceux qui ont saisi le code d'accès (jeton gardé dans ce navigateur, voir attente.js).
      Les infos légales restent accessibles. Après l'heure d'ouverture, plus rien n'est bloqué. */
-  var OUVERTURE = 1795419000000, JETON = "0596365f95335e86bf7c7678507404a6215dee8b839923a146de952866565c68";
+  var OUVERTURE = 1795505400000, JETON = "0596365f95335e86bf7c7678507404a6215dee8b839923a146de952866565c68";
   var page = location.pathname.split("/").pop() || "index.html";
   if(Date.now() < OUVERTURE && page !== "attente.html" && page !== "infos-legales.html"){
     var ok = false; try{ ok = localStorage.getItem("bde-acces") === JETON; }catch(e){}
     if(!ok){ document.documentElement.style.visibility = "hidden";
       location.replace("attente.html?suite=" + encodeURIComponent(page + location.hash)); return; }
   }
+  /* après l'ouverture, la page d'attente n'existe plus : on file directement à l'accueil */
+  if(Date.now() >= OUVERTURE && page === "attente.html"){ document.documentElement.style.visibility = "hidden";
+    location.replace("index.html"); return; }
   /* dernier moyen utilisé (clavier ou doigt/souris) : les fenêtres qui s'ouvrent ne mettent en évidence leur bouton
      « fermer » que pour le clavier (sinon un anneau bleu apparaît après chaque toucher) */
   window.__kbd = false;

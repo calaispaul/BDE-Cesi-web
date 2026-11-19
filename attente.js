@@ -4,7 +4,7 @@
    Limite : sur un site statique, ceci cache le site au public mais ne remplace pas une vraie authentification. */
 (function(){
 "use strict";
-const OUVERTURE = 1795419000000;                       /* lundi 23 novembre 2026, 8 h 30 (Paris) */
+const OUVERTURE = 1795505400000;                       /* mardi 24 novembre 2026, 8 h 30 (Paris) */
 const DEBUT = 1795100000000;                           /* mise en ligne de la page d'attente : pixels les plus gros */
 const EMPREINTE = "0596365f95335e86bf7c7678507404a6215dee8b839923a146de952866565c68";
 const SEL = "bde-cesi-lille|acces|2026", TOURS = 300000;
@@ -36,7 +36,7 @@ img.src = "images/pieces/pull-noir-dos.png";
 function draw(){
   if(!ready) return;
   const k = Math.min(1, Math.max(0, (Date.now() - DEBUT) / (OUVERTURE - DEBUT)));
-  const n = Math.round(12 + k * k * 52);               /* 12 pixels de large au début, 64 juste avant l'ouverture */
+  const n = Math.round(34 + k * k * 46);               /* 34 pixels de large au début (on reconnaît le pull), 80 juste avant l'ouverture */
   if(n === lastN) return; lastN = n;
   small.width = small.height = n;
   sx.clearRect(0, 0, n, n); sx.drawImage(img, 0, 0, n, n);
@@ -48,10 +48,11 @@ function draw(){
 tick(); setInterval(tick, 1000);
 
 /* ---------- Accès équipe ---------- */
+/* le champ du code est caché : un appui sur le logo du BDE (en bas) le fait apparaître ou disparaître */
 const btn = $("#wtTeam"), form = $("#wtForm"), input = $("#wtCode"), msg = $("#wtMsg"), go = $("#wtGo");
 btn.addEventListener("click", () => {
   const open = form.hidden; form.hidden = !open; btn.setAttribute("aria-expanded", open);
-  if(open) input.focus();
+  if(open){ input.focus(); form.scrollIntoView({block:"nearest"}); }
 });
 const hex = buf => [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2, "0")).join("");
 async function empreinte(code){

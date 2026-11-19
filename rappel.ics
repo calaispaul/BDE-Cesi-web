@@ -1,0 +1,21 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//BDE CESI Lille//Ouverture collection//FR
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+BEGIN:VEVENT
+UID:ouverture-collection-2026@bde-cesi-lille.fr
+DTSTAMP:20261119T120000Z
+DTSTART:20261124T073000Z
+DTEND:20261124T080000Z
+SUMMARY:Ouverture de la collection BDE CESI Lille
+DESCRIPTION:La collection 2026-2027 du BDE CESI Lille est en ligne : https://bde-cesi-lille.fr
+URL:https://bde-cesi-lille.fr
+LOCATION:https://bde-cesi-lille.fr
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:La collection BDE CESI Lille ouvre maintenant
+TRIGGER:PT0M
+END:VALARM
+END:VEVENT
+END:VCALENDAR
