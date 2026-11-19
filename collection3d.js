@@ -277,8 +277,46 @@ const stop = () => { running = false; };
    ===================================================================== */
 let booster = null;
 const ui = $("#boosterUi");
-if(!opened){ items.forEach(g => { g.visible = false; }); stage.classList.add("locked"); booster = makeBooster(); }
+/* Téléphone : le sachet 3D (relief du logo, reflets) demande plusieurs secondes de calcul et figeait la page.
+   On y ouvre à la place le sachet en image (même rendu, déjà affiché par la page), animé en CSS. */
+const PHONE = matchMedia("(max-width: 834px)").matches;
+if(!opened){ items.forEach(g => { g.visible = false; }); stage.classList.add("locked"); booster = PHONE ? makeLiteBooster() : makeBooster(); }
 else { ui.hidden = true; }
+
+function makeLiteBooster(){
+  const ph = ui.querySelector(".booster-ph"), body = ph && ph.querySelector("img");
+  const hint = $("#boosterHint"), btn = $("#boosterOpen");
+  if(!ph || !body) return makeBooster();
+  ui.classList.add("lite");
+  body.classList.add("bl-body");
+  const top = body.cloneNode(); top.className = "bl-top"; ph.append(top);       /* la bande du haut, détachable */
+  const line = document.createElement("i"); line.className = "bl-line"; ph.append(line);
+  const burst = document.createElement("div"); burst.className = "bl-burst";
+  for(let k = 0; k < 16; k++){ const s = document.createElement("i"), a = -Math.PI * (.08 + .84 * Math.random()), d = 60 + Math.random() * 110;
+    s.style.cssText = `--l:${10 + Math.random() * 80}%;--x:${(Math.cos(a) * d).toFixed(0)}px;--y:${(Math.sin(a) * d).toFixed(0)}px;--w:${(Math.random() * .15).toFixed(2)}s`;
+    burst.append(s); }
+  ph.append(burst);
+  let p = 0, holding = false, sx = 0, done = false;
+  const setP = v => { p = v; ph.style.setProperty("--p", v.toFixed(3)); };
+  ph.addEventListener("pointerdown", e => { if(done || e.button > 0) return; holding = true; sx = e.clientX; ui.classList.remove("snapback"); try{ ph.setPointerCapture(e.pointerId); }catch(err){} });
+  ph.addEventListener("pointermove", e => { if(!holding) return;
+    setP(Math.max(0, Math.min(1, (e.clientX - sx) / Math.max(140, ph.clientWidth * .7)))); if(p >= 1) finish(); });
+  const up = () => { if(!holding) return; holding = false;
+    if(!done){ ui.classList.add("snapback"); setP(0); setTimeout(() => ui.classList.remove("snapback"), 260); } };   /* lâché trop tôt */
+  ph.addEventListener("pointerup", up); ph.addEventListener("pointercancel", up);
+  btn.addEventListener("click", () => { if(done) return; btn.disabled = true; hint.textContent = "";
+    const t0 = performance.now(), step = now => { const k = Math.min(1, (now - t0) / 450); setP(k * k * (3 - 2 * k)); k < 1 ? requestAnimationFrame(step) : finish(); };
+    requestAnimationFrame(step); });
+  function finish(){
+    if(done) return; done = true; holding = false; setP(1); opened = true;
+    try{ sessionStorage.setItem(KEY, "1"); }catch(e){}
+    btn.disabled = true; hint.textContent = "";
+    ui.classList.add("bl-open");                                        /* la bande s'envole, éclat d'étoiles, le sachet tombe */
+    setTimeout(() => { stage.classList.remove("locked"); unlockPage(); landPieces(); }, 320);
+    setTimeout(() => { ui.hidden = true; }, 1400);
+  }
+  return {place(){}};
+}
 
 function makeBooster(){
   const r2 = makeRenderer();

@@ -499,17 +499,48 @@ footer .copy a:hover{text-decoration:underline}
 .booster-canvas{position:absolute;inset:0;width:100%;height:100%;display:block;cursor:grab}
 .booster-canvas.grabbing{cursor:grabbing}
 .booster-hint{position:absolute;left:50%;bottom:68px;transform:translateX(-50%);margin:0;font-size:14px;color:var(--slate);white-space:nowrap;pointer-events:none}
-/* aperçu du sachet pendant le chargement de la 3D (uniquement quand le booster est encore fermé) */
+/* Le sachet en image (images/booster.webp, rendu du sachet 3D) : affiché tout de suite quand le booster est fermé.
+   Ordinateur : le sachet 3D le remplace dès qu'il est prêt (.ready). Téléphone : c'est lui qu'on ouvre (.lite, collection3d.js). */
 .booster-ph{display:none}
-.pack-closed .booster-ph{position:absolute;left:50%;top:44%;transform:translate(-50%,-50%);height:min(66%,440px);aspect-ratio:1.5/2.1;
-  display:grid;place-items:center;border-radius:6px;overflow:hidden;pointer-events:none;transition:opacity .45s var(--ease);
-  background:linear-gradient(115deg,#d9dde3 0%,#f6f7f9 22%,#bfc4cc 45%,#f3f4f6 62%,#c7ccd4 82%,#eef0f3 100%);
-  box-shadow:0 30px 60px rgba(0,0,0,.18),inset 0 0 0 1px rgba(255,255,255,.6)}
-.pack-closed .booster-ph img{width:78%;height:auto;opacity:.78}
-.pack-closed .booster-ph::after{content:"";position:absolute;inset:0;background:linear-gradient(105deg,transparent 35%,rgba(255,255,255,.7) 50%,transparent 65%);
-  transform:translateX(-100%);animation:ph-shine 1.6s ease-in-out infinite}
-@keyframes ph-shine{to{transform:translateX(100%)}}
-.booster-ui.ready .booster-ph{opacity:0}
+.pack-closed .booster-ph{position:absolute;left:50%;top:44%;transform:translate(-50%,-50%);height:min(66%,440px);aspect-ratio:541/793;
+  display:block;pointer-events:none;transition:opacity .45s var(--ease);user-select:none;-webkit-user-select:none}
+.pack-closed .booster-ph img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;-webkit-user-drag:none}
+/* reflet qui passe sur le chrome, découpé à la forme du sachet */
+.pack-closed .booster-ph::after{content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(105deg,transparent 38%,rgba(255,255,255,.55) 50%,transparent 62%) -100% 0/200% 100% no-repeat;
+  -webkit-mask:url(images/booster.webp) center/100% 100% no-repeat;mask:url(images/booster.webp) center/100% 100% no-repeat;
+  animation:ph-shine 2.4s ease-in-out infinite}
+@keyframes ph-shine{0%{background-position:-100% 0}60%,100%{background-position:200% 0}}
+.booster-ui.ready:not(.lite) .booster-ph{opacity:0}
+/* --- booster léger (téléphone) : on tire la bande du haut vers la droite, elle se détache, le sachet tombe --- */
+.booster-ui.lite .booster-ph{display:block;position:absolute;left:50%;top:44%;transform:translate(-50%,-50%);height:min(66%,440px);
+  aspect-ratio:541/793;opacity:1;pointer-events:auto;cursor:grab;touch-action:pan-y;user-select:none;-webkit-user-select:none}
+.booster-ui.lite .booster-ph img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;-webkit-user-drag:none}
+.lite .bl-body{clip-path:inset(9.6% 0 0 0)}
+.lite .bl-top{clip-path:inset(0 0 90.4% 0);transform-origin:100% 9.6%;
+  transform:rotate(calc(var(--p, 0) * -3deg)) translateY(calc(var(--p, 0) * -4px))}
+.bl-line{position:absolute;left:0;top:9.6%;width:100%;height:3px;margin-top:-1px;border-radius:2px;transform-origin:0 50%;
+  transform:scaleX(var(--p, 0));background:#1f7bff;box-shadow:0 0 10px 3px rgba(40,130,255,.65);opacity:calc(var(--p, 0) * 30)}
+.lite.snapback .bl-line,.lite.snapback .bl-top{transition:transform .25s ease,opacity .25s}
+.bl-burst{position:absolute;left:0;right:0;top:9.6%;height:0;pointer-events:none}
+.bl-burst i{position:absolute;left:var(--l);top:0;width:12px;height:12px;margin:-6px 0 0 -6px;opacity:0;background:#fff3c4;
+  clip-path:polygon(50% 0,61% 39%,100% 50%,61% 61%,50% 100%,39% 61%,0 50%,39% 39%);filter:drop-shadow(0 0 4px #fff)}
+.bl-open .bl-top{transition:transform .9s cubic-bezier(.2,.7,.2,1),opacity .8s .1s;transform:translate(60%,-160%) rotate(32deg);opacity:0}
+.bl-open .bl-body{transition:transform 1s cubic-bezier(.55,0,.8,.2) .25s,opacity .35s .95s;transform:translateY(140%);opacity:0}
+.bl-open .booster-ph::after,.bl-open .bl-line{opacity:0;transition:opacity .2s}
+.bl-open .bl-burst i{animation:bl-star .95s cubic-bezier(.2,.7,.3,1) forwards;animation-delay:var(--w)}
+@keyframes bl-star{0%{opacity:1;transform:scale(.3)}100%{opacity:0;transform:translate(var(--x),var(--y)) scale(1.1) rotate(90deg)}}
+.bl-open .booster-hint,.bl-open .booster-open{opacity:0;transition:opacity .3s}
+@media (prefers-reduced-motion:reduce){ .pack-closed .booster-ph::after{animation:none} }
+/* téléphone : pas de flou (coûteux et laid pendant le chargement), un voile gris cache la suite tant que le booster est fermé */
+@media (max-width:834px){
+  .pack-closed body{background:#c4c4c5}
+  .pack-closed #portants ~ *{filter:none;opacity:0}
+  .rack-stage.locked .rack-canvas{filter:none;transform:none;opacity:0}   /* la tringle apparaît à l'ouverture */
+  .pack-closed .rack-stage{background:#c4c4c5}                           /* gris dès le premier affichage */
+  .rack-stage.locked::after{opacity:0}
+  .rack-canvas{transition:opacity .5s var(--ease)}
+}
 @media (prefers-reduced-motion:reduce){ .pack-closed .booster-ph::after{animation:none} }
 .booster-open{position:absolute;left:50%;bottom:12px;transform:translateX(-50%)}
 /* l'effet d'appui des boutons (.pill:active) remplaçait le centrage : le bouton sautait à droite sous le curseur

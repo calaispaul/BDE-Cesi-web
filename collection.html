@@ -12,20 +12,20 @@
 <meta property="og:description" content="La collection CESI Lille 2026-2027 : le blason imprimé au dos du pull et du T-shirt, face et dos, matière et détails.">
 <meta property="og:image" content="images/og.jpg">
 <link rel="icon" type="image/png" href="favicon.png">
-<link rel="stylesheet" href="site.css?v=2026111902">
+<link rel="stylesheet" href="site.css?v=2026111903">
 <link rel="preconnect" href="https://bde-cesi-lille.sumupstore.com">
-<script src="boot.js?v=2026111902"></script>
+<script src="boot.js?v=2026111903"></script>
 <script src="vendor/gsap.min.js" defer></script>
 <script src="vendor/ScrollTrigger.min.js" defer></script>
-<script src="products.js?v=2026111902" defer></script>
-<script src="nav.js?v=2026111902" defer></script>
-<script src="home.js?v=2026111902" defer></script>
-<script src="logo-shape.js?v=2026111902" defer></script>
+<script src="products.js?v=2026111903" defer></script>
+<script src="nav.js?v=2026111903" defer></script>
+<script src="home.js?v=2026111903" defer></script>
+<script src="logo-shape.js?v=2026111903" defer></script>
 <!-- la 3D (et sa bibliothèque) se télécharge dès le début de la page -->
-<link rel="modulepreload" href="collection3d.js?v=2026111902">
+<link rel="modulepreload" href="collection3d.js?v=2026111903">
 <link rel="modulepreload" href="vendor/three.module.min.js">
-<link rel="preload" as="image" href="images/logo-noir-grand.png">
-<script type="module" src="collection3d.js?v=2026111902"></script>
+<link rel="preload" as="image" href="images/booster.webp">
+<script type="module" src="collection3d.js?v=2026111903"></script>
 </head><body class="coll">
 <a class="skip" href="#contenu">Aller au contenu</a>
 
@@ -67,8 +67,9 @@
   <div class="rack-stage" id="rackStage">
     <!-- Booster : une fois par session, au centre de la zone tringle (floutée derrière) -->
     <div class="booster-ui" id="boosterUi">
-      <!-- aperçu du sachet affiché tout de suite, le temps que la 3D se charge (remplacé par le vrai sachet) -->
-      <div class="booster-ph" aria-hidden="true"><img src="images/logo-noir-grand.png" alt="" width="1000" height="1000" decoding="async"></div>
+      <!-- le sachet en image : affiché tout de suite. Sur téléphone c'est lui qu'on ouvre (léger, sans 3D) ;
+           sur ordinateur, le sachet 3D le remplace dès qu'il est prêt -->
+      <div class="booster-ph" aria-hidden="true"><img src="images/booster.webp" alt="" width="541" height="793" decoding="async" draggable="false"></div>
       <p class="booster-hint" id="boosterHint">Maintiens et fais glisser vers la droite pour l'ouvrir</p>
       <button type="button" class="pill blue lg booster-open" id="boosterOpen">Ouvrir</button>
     </div>
