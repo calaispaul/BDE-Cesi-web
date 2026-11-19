@@ -48,47 +48,57 @@ function draw(){
 tick(); setInterval(tick, 1000);
 
 /* ---------- Accès équipe ---------- */
-/* ---------- Fond : grille fixe de petits carrés ----------
-   Ordinateur (souris) : les carrés sous le curseur foncent en gris puis reviennent doucement.
-   Téléphone / tablette : des carrés changent au hasard entre le gris clair et le blanc.
+/* ---------- Fond : grille fixe de grands carrés presque noirs ----------
+   Quand un carré change de nuance (toujours proche de la couleur de base), les lignes qui l'entourent s'illuminent.
+   Ordinateur (souris) : le carré sous le curseur. Téléphone / tablette : des carrés au hasard.
    Si l'utilisateur demande moins d'animations, la grille reste immobile. */
 (() => {
   const bg = $("#wtBg"); if(!bg) return;
   const g = bg.getContext("2d");
   const calme = matchMedia("(prefers-reduced-motion: reduce)").matches;
   const souris = matchMedia("(hover: hover) and (pointer: fine)").matches;
-  const PAS = souris ? 30 : 26, ESP = 3;               /* taille d'une case et espace entre les cases (px) */
-  const clair = () => 232 + Math.random() * 23;         /* nuance entre gris clair (232) et blanc (255) */
-  let W = 0, H = 0, cols = 0, rows = 0, ox = 0, oy = 0, base, cur, chaud, actif = false;
+  const PAS = souris ? 64 : 48, ESP = 2;               /* taille d'une case et épaisseur des lignes (px) */
+  const LIGNE = "#0c0c0e";                              /* couleur des lignes au repos */
+  const teinte = () => 22 + Math.random() * 8;          /* nuance des carrés : 22 à 30 (presque noir, pas noir) */
+  let W = 0, H = 0, cols = 0, rows = 0, ox = 0, oy = 0, base, cur, lum, actif = false;
   const taille = () => {
     const dpr = Math.min(2, devicePixelRatio || 1); W = innerWidth; H = innerHeight;
     bg.width = W * dpr; bg.height = H * dpr; g.setTransform(dpr, 0, 0, dpr, 0, 0);
     cols = Math.ceil(W / PAS) + 1; rows = Math.ceil(H / PAS) + 1;
     ox = (W - cols * PAS) / 2; oy = (H - rows * PAS) / 2;  /* grille centrée */
     const n = cols * rows;
-    base = new Float32Array(n); cur = new Float32Array(n); chaud = new Float32Array(n);
-    for(let i = 0; i < n; i++){ base[i] = cur[i] = clair(); }
+    base = new Float32Array(n); cur = new Float32Array(n); lum = new Float32Array(n);
+    for(let i = 0; i < n; i++){ base[i] = cur[i] = teinte(); }
     dessine(); reveille();
   };
   function dessine(){
-    g.clearRect(0, 0, W, H);
+    g.fillStyle = LIGNE; g.fillRect(0, 0, W, H);
     const t = PAS - ESP;
     for(let r = 0; r < rows; r++) for(let c = 0; c < cols; c++){
-      const i = r * cols + c, v = Math.round(cur[i] - chaud[i] * 70);   /* survolé : jusqu'à 70 tons plus foncé */
-      g.fillStyle = `rgb(${v},${v},${Math.min(255, v + 2)})`;
-      g.fillRect(ox + c * PAS, oy + r * PAS, t, t);
+      const i = r * cols + c, v = Math.round(cur[i] + lum[i] * 12);    /* allumé : à peine plus clair */
+      g.fillStyle = `rgb(${v},${v},${v + 2})`;
+      g.fillRect(ox + c * PAS + ESP / 2, oy + r * PAS + ESP / 2, t, t);
     }
+    /* lignes illuminées autour des carrés qui changent */
+    g.lineWidth = ESP; g.shadowColor = "rgba(190,205,255,.9)";
+    for(let i = 0; i < lum.length; i++){
+      if(lum[i] <= .02) continue;
+      const c = i % cols, r = (i / cols) | 0;
+      g.shadowBlur = 14 * lum[i];
+      g.strokeStyle = `rgba(225,232,255,${(lum[i] * .85).toFixed(3)})`;
+      g.strokeRect(ox + c * PAS, oy + r * PAS, PAS, PAS);
+    }
+    g.shadowBlur = 0;
   }
+  function allume(i){ base[i] = teinte(); if(lum[i] < 1) lum[i] = 1; }
   function pas(){
     let bouge = false;
     const n = cols * rows;
-    if(!souris){                                        /* quelques cases changent de nuance au hasard */
-      for(let k = 0; k < Math.max(1, n / 300); k++) base[(Math.random() * n) | 0] = clair();
-    }
+    if(!souris && Math.random() < .12) allume((Math.random() * n) | 0);   /* un carré au hasard de temps en temps */
     for(let i = 0; i < n; i++){
       const d = base[i] - cur[i];
-      if(Math.abs(d) > .3){ cur[i] += d * .06; bouge = true; } else cur[i] = base[i];
-      if(chaud[i] > .004){ chaud[i] *= .94; bouge = true; } else chaud[i] = 0;
+      if(Math.abs(d) > .2){ cur[i] += d * .05; bouge = true; } else cur[i] = base[i];
+      if(lum[i] > .01){ lum[i] *= .955; bouge = true; } else lum[i] = 0;
     }
     dessine();
     if(bouge || !souris) requestAnimationFrame(pas); else actif = false;
@@ -96,14 +106,12 @@ tick(); setInterval(tick, 1000);
   function reveille(){ if(!calme && !actif){ actif = true; requestAnimationFrame(pas); } }
   taille(); addEventListener("resize", taille);
   if(souris && !calme){
+    let der = -1;
     addEventListener("pointermove", e => {
       const c = Math.floor((e.clientX - ox) / PAS), r = Math.floor((e.clientY - oy) / PAS);
-      for(let dr = -1; dr <= 1; dr++) for(let dc = -1; dc <= 1; dc++){   /* la case survolée et un halo autour */
-        const rr = r + dr, cc = c + dc; if(rr < 0 || cc < 0 || rr >= rows || cc >= cols) continue;
-        const i = rr * cols + cc, k = (dr || dc) ? .35 : 1;
-        if(chaud[i] < k) chaud[i] = k;
-      }
-      reveille();
+      if(r < 0 || c < 0 || r >= rows || c >= cols) return;
+      const i = r * cols + c; if(i === der) return; der = i;
+      allume(i); reveille();
     }, {passive: true});
   }
 })();
