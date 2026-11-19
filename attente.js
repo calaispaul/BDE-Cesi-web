@@ -92,8 +92,21 @@ tick(); setInterval(tick, 1000);
 
   /* source de lumière (ordinateur) : suit le curseur en douceur */
   const cible = {x: 0, y: 0, on: false}, lueur = {x: 0, y: 0, a: 0};
-  /* vagues (téléphone) : anneaux qui s'élargissent depuis un point au hasard */
+  /* vagues (téléphone) : anneaux qui s'élargissent depuis un point au hasard, jamais dans une autre vague
+     ni derrière le pull ; elles glissent lentement et rebondissent quand elles se touchent */
   const vagues = []; let prochaine = 0;
+  const pull = document.getElementById("wtPixels");
+  function point(){
+    const z = pull ? pull.getBoundingClientRect() : null;
+    for(let essai = 0; essai < 12; essai++){
+      const x = Math.random() * W, y = Math.random() * H;
+      if(z && x > z.left - 20 && x < z.right + 20 && y > z.top - 20 && y < z.bottom + 20) continue;
+      if(vagues.some(w => Math.hypot(x - w.x, y - w.y) < w.r + PAS)) continue;
+      const a = Math.random() * 6.283, v = .25 + Math.random() * .25;
+      return {x, y, r: 0, max: 180 + Math.random() * 160, vx: Math.cos(a) * v, vy: Math.sin(a) * v};
+    }
+    return null;                                        /* pas de place libre : on attend la prochaine */
+  }
 
   function intensite(x, y){
     let v = 0;
@@ -113,10 +126,17 @@ tick(); setInterval(tick, 1000);
       lueur.x += (cible.x - lueur.x) * .12; lueur.y += (cible.y - lueur.y) * .12;
     }else{
       if(now > prochaine){                              /* nouvelle vague toutes les 2,5 à 4,5 s */
-        vagues.push({x: Math.random() * W, y: Math.random() * H, r: 0, max: 180 + Math.random() * 160});
+        const p = point(); if(p) vagues.push(p);
         prochaine = now + 2500 + Math.random() * 2000;
       }
-      for(const w of vagues) w.r += .9;                 /* avance lentement */
+      for(const w of vagues){ w.r += .9; w.x += w.vx; w.y += w.vy; }   /* s'élargit et glisse lentement */
+      /* deux vagues qui se touchent rebondissent l'une sur l'autre (comme deux billes) */
+      for(let a = 0; a < vagues.length; a++) for(let b = a + 1; b < vagues.length; b++){
+        const A = vagues[a], B = vagues[b], dx = B.x - A.x, dy = B.y - A.y, d = Math.hypot(dx, dy) || 1;
+        if(d >= A.r + B.r) continue;
+        const nx = dx / d, ny = dy / d, rel = (A.vx - B.vx) * nx + (A.vy - B.vy) * ny;
+        if(rel > 0){ A.vx -= rel * nx; A.vy -= rel * ny; B.vx += rel * nx; B.vy += rel * ny; }
+      }
       for(let k = vagues.length - 1; k >= 0; k--) if(vagues[k].r >= vagues[k].max) vagues.splice(k, 1);
     }
     for(let r = 0; r < rows; r++) for(let c = 0; c < cols; c++){

@@ -846,11 +846,9 @@ form.cf{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 .wt{min-height:100svh;display:flex;flex-direction:column;align-items:center;text-align:center;
   padding:clamp(18px,4vh,40px) var(--gutter) clamp(16px,3vh,28px)}
 .wt-title{margin:0;font-family:var(--display);font-weight:600;font-size:clamp(56px,10vh,104px);line-height:1;color:var(--ink)}
-/* « ? » dont le point est bleu : deux fois le même signe superposés, le haut en noir et le bas (le point) en bleu */
-.wt-q{--q-cut:22%;position:relative;display:inline-block;color:transparent}
-.wt-q::before,.wt-q::after{content:attr(data-q);position:absolute;left:0;top:0}
-.wt-q::before{color:var(--ink);clip-path:inset(0 0 var(--q-cut) 0)}
-.wt-q::after{color:var(--blue-fill);clip-path:inset(calc(100% - var(--q-cut)) 0 0 0)}
+/* « ? » dessiné en SVG : la courbe en couleur du texte, le point entièrement bleu (identique sur tous les appareils) */
+.wt-q{display:block;height:1em;width:.6em;overflow:visible}
+.wt-q-dot{fill:var(--blue-fill)}
 /* le pull : grand et au centre de la page */
 .wt-visual{flex:1 1 auto;width:100%;min-height:0;display:flex;align-items:center;justify-content:center;margin:clamp(4px,1vh,12px) 0 0}
 .wt-visual canvas{width:min(100%,58svh,760px);height:auto;aspect-ratio:1;display:block;image-rendering:pixelated;filter:blur(1px)}
@@ -879,7 +877,7 @@ form.cf{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 @media (prefers-reduced-motion:reduce){ .wt-form.shake{animation:none} }
 /* fond sombre (grille presque noire) : textes clairs, logo en blanc, halo derrière le pull noir pour qu'il se détache */
 .attente{background:#0c0c0e;color:#f5f5f7}
-.attente .wt-title,.attente .wt-q::before{color:#f5f5f7}
+.attente .wt-title{color:#f5f5f7}
 .attente .wt-visual canvas{filter:blur(1px) drop-shadow(0 0 1px rgba(255,255,255,.55)) drop-shadow(0 0 28px rgba(200,212,255,.28))}
 .attente .wt-logo{filter:invert(1)}
 .attente .wt-links,.attente .wt-links a{color:#a1a1a6}
