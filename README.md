@@ -253,7 +253,7 @@ fichiers, remplacer ce numéro partout par la date du jour (rechercher/remplacer
 ## Page d'attente (jusqu'au mardi 24 novembre 2026, 8 h 30)
 
 Jusqu'à l'heure d'ouverture, toutes les pages (sauf les infos légales) renvoient vers `attente.html` :
-pull noir en pixels floutés, compte à rebours et bouton « Ajouter un rappel » (ouvre la création d'événement de Google Agenda, ou Calendrier sur iPhone/Mac via `rappel.ics` ; liens Google, Outlook et Apple en dessous). À 8 h 30 (heure de Paris), le site s'ouvre tout seul et `attente.html` renvoie vers l'accueil.
+pull noir en pixels floutés, compte à rebours et bouton « Ajouter un rappel » (ouvre la création d'événement de Google Agenda, ou Calendrier sur iPhone/Mac via `rappel.ics`). À 8 h 30 (heure de Paris), le site s'ouvre tout seul et `attente.html` renvoie vers l'accueil.
 
 - **Accès équipe** : appuyer sur le logo du BDE en bas de la page d'attente, puis saisir le code. L'accès ne dure que le temps de la visite : un rafraîchissement, un nouvel onglet ou la fermeture du navigateur ramènent sur la page d'attente (rien n'est gardé en mémoire).
   Le code n'est écrit nulle part dans le site : seule son empreinte (PBKDF2-SHA256, 300 000 tours) est enregistrée.
