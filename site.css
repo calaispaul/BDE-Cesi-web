@@ -845,7 +845,7 @@ form.cf{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 .attente .wt{position:relative;z-index:1}
 .wt{min-height:100svh;display:flex;flex-direction:column;align-items:center;text-align:center;
   padding:clamp(18px,4vh,40px) var(--gutter) clamp(16px,3vh,28px)}
-.wt-title{margin:0;font-family:var(--display);font-weight:600;font-size:clamp(40px,7.5vh,80px);line-height:1;letter-spacing:-.02em;color:var(--ink)}
+.wt-title{margin:0;font-family:var(--display);font-weight:600;font-size:clamp(20px,3.75vh,40px);line-height:1;letter-spacing:-.02em;color:var(--ink)}
 /* « Loading... » : les trois points apparaissent l'un après l'autre, en boucle ; le dernier est bleu */
 .wt-dots i{font-style:normal;opacity:0;animation:wt-dot 1.8s infinite steps(1,end)}
 .wt-dots i:nth-child(2){animation-name:wt-dot2}.wt-dots i:nth-child(3){animation-name:wt-dot3}
