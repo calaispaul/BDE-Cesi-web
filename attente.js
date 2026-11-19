@@ -102,7 +102,7 @@ tick(); setInterval(tick, 1000);
       const x = Math.random() * W, y = Math.random() * H;
       if(z && x > z.left - 20 && x < z.right + 20 && y > z.top - 20 && y < z.bottom + 20) continue;
       if(vagues.some(w => Math.hypot(x - w.x, y - w.y) < w.r + PAS)) continue;
-      const a = Math.random() * 6.283, v = .25 + Math.random() * .25;
+      const a = Math.random() * 6.283, v = .35 + Math.random() * .3;
       return {x, y, r: 0, max: 180 + Math.random() * 160, vx: Math.cos(a) * v, vy: Math.sin(a) * v};
     }
     return null;                                        /* pas de place libre : on attend la prochaine */
@@ -129,7 +129,7 @@ tick(); setInterval(tick, 1000);
         const p = point(); if(p) vagues.push(p);
         prochaine = now + 2500 + Math.random() * 2000;
       }
-      for(const w of vagues){ w.r += .9; w.x += w.vx; w.y += w.vy; }   /* s'élargit et glisse lentement */
+      for(const w of vagues){ w.r += 1.2; w.x += w.vx; w.y += w.vy; }   /* s'élargit et glisse lentement */
       /* deux vagues qui se touchent rebondissent l'une sur l'autre (comme deux billes) */
       for(let a = 0; a < vagues.length; a++) for(let b = a + 1; b < vagues.length; b++){
         const A = vagues[a], B = vagues[b], dx = B.x - A.x, dy = B.y - A.y, d = Math.hypot(dx, dy) || 1;
@@ -163,7 +163,7 @@ tick(); setInterval(tick, 1000);
 const apple = /iPhone|iPad|iPod|Macintosh/.test(navigator.userAgent);
 if(apple){ const c = $("#wtCal"); c.href = "rappel.ics"; c.removeAttribute("target"); c.type = "text/calendar"; }
 
-/* le champ du code est caché : un appui sur le logo du BDE (en bas) le fait apparaître ou disparaître */
+/* le champ du code est caché : un appui sur le pull le fait apparaître ou disparaître */
 const btn = $("#wtTeam"), form = $("#wtForm"), input = $("#wtCode"), msg = $("#wtMsg"), go = $("#wtGo");
 btn.addEventListener("click", () => {
   const open = form.hidden; form.hidden = !open; btn.setAttribute("aria-expanded", open);
