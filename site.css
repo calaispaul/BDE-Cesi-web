@@ -846,7 +846,9 @@ form.cf{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 .wt{min-height:100svh;display:flex;flex-direction:column;align-items:center;text-align:center;
   padding:clamp(18px,4vh,40px) var(--gutter) clamp(16px,3vh,28px)}
 /* le pull sert aussi de bouton (caché) pour l'accès équipe */
-.wt-pull{border:0;background:none;padding:0;margin:0;cursor:default;display:block;width:min(100%,54svh,760px);-webkit-tap-highlight-color:transparent}
+.wt-pull{border:0;background:none;padding:0;margin:0;cursor:default;display:block;width:min(108vw,61svh,840px);flex-shrink:0;-webkit-tap-highlight-color:transparent}
+/* le dessin du pull a des marges transparentes : le cadre peut dépasser un peu des bords sans que le pull touche l'écran */
+.attente .wt{overflow-x:clip}
 .wt-pull:focus:not(:focus-visible){outline:none}
 /* le pull : grand et au centre de la page */
 .wt-visual{flex:0 0 auto;width:100%;display:flex;align-items:center;justify-content:center;margin:clamp(6px,1.5vh,16px) 0 0}
