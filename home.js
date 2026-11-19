@@ -6,6 +6,36 @@ const $ = (s, c = document) => c.querySelector(s);
 const $$ = (s, c = document) => [...c.querySelectorAll(s)];
 const root = document.documentElement;
 
+/* ---------- Préchargement du reste du site (accueil, pendant l'écran de chargement) ----------
+   Les pages, la 3D de la collection, les visuels et la boutique sont téléchargés en arrière-plan, en priorité basse,
+   une fois l'accueil chargé : ouvrir ensuite la Collection ou la Boutique prend presque tout dans le cache.
+   La boutique SumUp est lente seulement « à froid » (~3 s) : la demander d'avance la rend rapide ensuite.
+   Mode « économie de données » ou connexion très lente : seulement l'essentiel. */
+if($("#hero")) (() => {
+  const conn = navigator.connection || {}, light = !!conn.saveData || /(^|-)2g$/.test(conn.effectiveType || "");
+  const me = $('script[src*="home.js"]'), V = me && (me.getAttribute("src").match(/\?v=[^&]+/) || [""])[0] || "";
+  const add = (href, as, rel = "prefetch") => { const l = document.createElement("link"); l.rel = rel; l.href = href; if(as) l.as = as; document.head.appendChild(l); };
+  const views = [], more = [];
+  if(typeof PRODUCTS !== "undefined") PRODUCTS.forEach(p => { const k = {hoodie:"pull", tshirt:"tee"}[p.id]; if(!k) return;
+    p.colors.forEach(c => { views.push(`images/pieces/${k}-${c.id}-side.png`); more.push(`images/pieces/${k}-${c.id}-face.png`, `images/pieces/${k}-${c.id}-dos.png`); }); });
+  const SUMUP = "https://bde-cesi-lille.sumupstore.com";
+  const first = [
+    ["collection.html", "document"], ["boutique.html", "document"], ["contact.html", "document"], ["infos-legales.html", "document"],
+    ["collection3d.js" + V, "script"], ["vendor/three.module.min.js", "script"], ["contact.js" + V, "script"],
+    ["images/booster.webp", "image"], ...views.map(v => [v, "image"]),
+    ["images/sweat-face.jpg", "image"], ["images/sweat-dos.jpg", "image"], ["images/tshirt-black-face.jpg", "image"], ["images/tshirt-black-dos.jpg", "image"],
+    ["images/collab/cesi-lille.png", "image"], ["images/collab/maison-vitali.jpg", "image"]
+  ];
+  const go = () => {
+    add(SUMUP, null, "preconnect");
+    first.forEach(([h, as]) => add(h, as));
+    [SUMUP + "/", SUMUP + "/product/pull", SUMUP + "/product/t-shirt", SUMUP + "/product/pack-t-shirt-pull-1"].forEach(h => add(h, "document"));
+    if(!light) setTimeout(() => more.forEach(h => add(h, "image")), 2000);   /* faces et dos des pièces, après le reste */
+  };
+  const start = () => setTimeout(go, 150);
+  document.readyState === "complete" ? start() : addEventListener("load", start, {once:true});
+})();
+
 /* ---------- Sans GSAP ou mouvement réduit : on s'arrête là ---------- */
 const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
 if(!window.gsap || !window.ScrollTrigger || reduce){
