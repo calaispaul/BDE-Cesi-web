@@ -50,7 +50,7 @@ tick(); setInterval(tick, 1000);
 /* ---------- Accès équipe ---------- */
 /* ---------- Fond : grille fixe de grands carrés presque noirs ----------
    Les lignes autour des carrés s'illuminent doucement, de proche en proche :
-   - ordinateur (souris) : une lueur douce qui suit le curseur, avec une traîne ;
+   - ordinateur (souris) : la case sous le curseur s'allume (traîne douce), un clic gauche lance une vague ;
    - téléphone / tablette : des vagues douces qui partent d'un point au hasard et s'éteignent avant de couvrir l'écran.
    Si l'utilisateur demande moins d'animations, la grille reste immobile. */
 (() => {
@@ -110,10 +110,7 @@ tick(); setInterval(tick, 1000);
 
   function intensite(x, y){
     let v = 0;
-    if(souris && lueur.a > .01){
-      const d = Math.hypot(x - lueur.x, y - lueur.y), R = PAS * 2.4;
-      if(d < R){ const k = 1 - d / R; v = k * k * lueur.a; }
-    }
+    if(souris && lueur.a > .01 && Math.abs(x - cible.x) < PAS / 2 && Math.abs(y - cible.y) < PAS / 2) v = lueur.a;   /* seulement la case sous le curseur */
     for(const w of vagues){
       const d = Math.hypot(x - w.x, y - w.y), e = Math.abs(d - w.r), L = PAS * 1.3;
       if(e < L){ const k = 1 - e / L; v = Math.max(v, k * k * (1 - w.r / w.max)); }
@@ -154,7 +151,7 @@ tick(); setInterval(tick, 1000);
     }, {passive: true});
     document.documentElement.addEventListener("pointerleave", () => { cible.on = false; });
     /* clic sur le fond : une vague de taille aléatoire part du point cliqué */
-    addEventListener("pointerdown", e => {
+    addEventListener("click", e => {                    /* clic gauche uniquement (le clic droit ne fait rien) */
       if(e.button !== 0 || e.target.closest("button, a, input, form, .wt-count")) return;
       const a = Math.random() * 6.283, v = .2 + Math.random() * .3;
       vagues.push({x: e.clientX, y: e.clientY, r: 0, max: 100 + Math.random() * 320, vx: Math.cos(a) * v, vy: Math.sin(a) * v});

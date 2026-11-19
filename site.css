@@ -840,25 +840,28 @@ form.cf{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 /* =====================================================================
    PAGE D'ATTENTE (attente.html) : pull en pixels floutés, compte à rebours, accès équipe (logo)
    ===================================================================== */
-.attente{background:var(--mist);min-height:100svh}
+.attente{background:var(--mist);min-height:100svh;
+  /* taille du pull : --pull ; --pull-old = l'ancienne taille, qui sert de référence pour que le compteur ne bouge pas */
+  --pull-old:min(100vw - 2 * var(--gutter),54svh,760px);--pull:min(108vw,61svh,840px)}
 .wt-bg{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
 .attente .wt{position:relative;z-index:1}
 .wt{min-height:100svh;display:flex;flex-direction:column;align-items:center;text-align:center;
   padding:clamp(18px,4vh,40px) var(--gutter) clamp(16px,3vh,28px)}
 /* le pull sert aussi de bouton (caché) pour l'accès équipe */
-.wt-pull{border:0;background:none;padding:0;margin:0;cursor:default;display:block;width:min(108vw,61svh,840px);flex-shrink:0;-webkit-tap-highlight-color:transparent}
+.wt-pull{border:0;background:none;padding:0;margin:0;cursor:default;display:block;width:var(--pull);flex-shrink:0;-webkit-tap-highlight-color:transparent}
 /* le dessin du pull a des marges transparentes : le cadre peut dépasser un peu des bords sans que le pull touche l'écran */
 .attente .wt{overflow-x:clip}
 .wt-pull:focus:not(:focus-visible){outline:none}
 /* le pull : grand et au centre de la page */
-.wt-visual{flex:0 0 auto;width:100%;display:flex;align-items:center;justify-content:center;margin:clamp(6px,1.5vh,16px) 0 0}
+.wt-visual{flex:0 0 auto;width:100%;display:flex;align-items:flex-start;justify-content:center;margin:clamp(6px,1.5vh,16px) 0 calc(var(--pull-old) - var(--pull))}
+/* le pull grandit vers le bas sans changer la mise en page : le compteur reste en place, le bouton suit le bas du pull */
 .wt-visual canvas{width:100%;height:auto;aspect-ratio:1;display:block;image-rendering:pixelated;filter:blur(1px)}
 .wt-count{display:flex;gap:clamp(8px,2vw,18px);margin:auto 0 0}   /* compteur + pull + rappel groupés au centre de l'écran */
 .wt-count div{min-width:clamp(74px,20vw,124px);padding:clamp(12px,1.8vh,18px) 8px clamp(10px,1.4vh,14px);border-radius:18px;background:var(--white);box-shadow:0 0 0 1px var(--control)}
 .wt-count b{display:block;font-family:var(--display);font-weight:600;font-size:clamp(34px,8vw,60px);line-height:1;color:var(--ink);font-variant-numeric:tabular-nums}
 .wt-count span{display:block;margin-top:6px;font-size:12px;color:var(--steel)}
 .wt-foot{margin-top:auto;padding-top:clamp(20px,4vh,40px);display:flex;flex-direction:column;align-items:center;gap:10px}
-.wt-cal{margin:clamp(4px,1vh,10px) 0 0;display:flex;flex-direction:column;align-items:center;gap:8px}
+.wt-cal{margin:clamp(4px,1vh,10px) 0 0;position:relative;top:calc(var(--pull) - var(--pull-old));display:flex;flex-direction:column;align-items:center;gap:8px}
 .wt-cal .pill{font-size:clamp(16px,1.6vw,19px);line-height:1.2;padding:14px clamp(26px,3vw,36px);max-width:100%}
 .wt-gcal{margin:0;font-size:13px;color:var(--steel)}
 .wt-gcal a{color:var(--steel);text-underline-offset:3px}
