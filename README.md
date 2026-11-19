@@ -187,6 +187,15 @@ On peut aussi modifier un fichier directement sur github.com (icône crayon), pu
 
 Si un changement n'apparaît pas : recharger la page avec `Ctrl + F5` (le navigateur garde des fichiers en cache).
 
+**Forcer les visiteurs à recharger le CSS et le JavaScript** : dans les pages, les liens vers `site.css` et
+les fichiers `.js` portent un numéro de version (`site.css?v=20261119`). Après une modification de ces
+fichiers, remplacer ce numéro partout par la date du jour (rechercher/remplacer `?v=20261119` dans les
+`.html`) : les navigateurs téléchargent alors la nouvelle version au lieu de garder l'ancienne en cache.
+
+> **Page 404** : ses liens commencent par `/` pour fonctionner quelle que soit l'adresse introuvable. Elle
+> s'affiche donc correctement à la racine d'un domaine (après le branchement du domaine IONOS), mais sans
+> mise en forme sur l'adresse provisoire `calaispaul.github.io/BDE-Cesi-web/`.
+
 ---
 
 ## 8. Sécurité et vie privée
