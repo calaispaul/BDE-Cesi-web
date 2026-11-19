@@ -188,8 +188,8 @@ On peut aussi modifier un fichier directement sur github.com (icône crayon), pu
 Si un changement n'apparaît pas : recharger la page avec `Ctrl + F5` (le navigateur garde des fichiers en cache).
 
 **Forcer les visiteurs à recharger le CSS et le JavaScript** : dans les pages, les liens vers `site.css` et
-les fichiers `.js` portent un numéro de version (`site.css?v=2026111910`). Après une modification de ces
-fichiers, remplacer ce numéro partout par la date du jour (rechercher/remplacer `?v=2026111910` dans les
+les fichiers `.js` portent un numéro de version (`site.css?v=2026111911`). Après une modification de ces
+fichiers, remplacer ce numéro partout par la date du jour (rechercher/remplacer `?v=2026111911` dans les
 `.html`) : les navigateurs téléchargent alors la nouvelle version au lieu de garder l'ancienne en cache.
 
 > **Page 404** : ses liens commencent par `/` pour fonctionner quelle que soit l'adresse introuvable. Elle
@@ -253,7 +253,7 @@ fichiers, remplacer ce numéro partout par la date du jour (rechercher/remplacer
 ## Page d'attente (jusqu'au mardi 24 novembre 2026, 8 h 30)
 
 Jusqu'à l'heure d'ouverture, toutes les pages (sauf les infos légales) renvoient vers `attente.html` :
-pull noir en pixels floutés, fond de petits carrés gris qui montent (ils fuient le curseur sur ordinateur, bougent au hasard sur téléphone), compte à rebours et bouton « Ajouter un rappel » (ouvre la création d'événement de Google Agenda, ou Calendrier sur iPhone/Mac via `rappel.ics`). À 8 h 30 (heure de Paris), le site s'ouvre tout seul et `attente.html` renvoie vers l'accueil.
+pull noir en pixels floutés, fond en grille fixe de petits carrés (ils foncent au passage du curseur sur ordinateur, changent au hasard entre gris clair et blanc sur téléphone), compte à rebours et bouton « Ajouter un rappel » (ouvre la création d'événement de Google Agenda, ou Calendrier sur iPhone/Mac via `rappel.ics`). À 8 h 30 (heure de Paris), le site s'ouvre tout seul et `attente.html` renvoie vers l'accueil.
 
 - **Accès équipe** : appuyer sur le logo du BDE en bas de la page d'attente, puis saisir le code. L'accès ne dure que le temps de la visite : un rafraîchissement, un nouvel onglet ou la fermeture du navigateur ramènent sur la page d'attente (rien n'est gardé en mémoire).
   Le code n'est écrit nulle part dans le site : seule son empreinte (PBKDF2-SHA256, 300 000 tours) est enregistrée.
