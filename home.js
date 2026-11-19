@@ -15,6 +15,8 @@ if(!window.gsap || !window.ScrollTrigger || reduce){
 }
 
 gsap.registerPlugin(ScrollTrigger);
+/* téléphone : la barre d'adresse qui apparaît/disparaît ne recalcule plus la page (la mise en page sautait après un scroll) */
+ScrollTrigger.config({ignoreMobileResize:true});
 gsap.config({nullTargetWarn:false});
 gsap.ticker.lagSmoothing(0); /* sur un appareil lent, l'animation saute des images au lieu de ralentir : le contenu ne reste jamais caché */
 gsap.defaults({ease:"power3.out"});
@@ -284,7 +286,7 @@ $$(".member").forEach((m, i) => {
 (() => {
   const thumbs = $$(".m-extra, .ep-pola"); if(!thumbs.length) return;
   const box = document.createElement("div");
-  box.className = "zoom-box"; box.hidden = true;
+  box.className = "zoom-box"; box.hidden = true; box.tabIndex = -1;
   box.setAttribute("role", "dialog"); box.setAttribute("aria-modal", "true"); box.setAttribute("aria-label", "Photo agrandie");
   box.innerHTML = '<img alt=""><button type="button" class="zoom-x" aria-label="Fermer">×</button>';
   document.body.appendChild(box);
@@ -299,7 +301,7 @@ $$(".member").forEach((m, i) => {
     box.hidden = false; root.classList.add("sheet-open");
     gsap.fromTo(box, {opacity:0}, {opacity:1, duration:.3});
     gsap.fromTo(big, {scale:.85, rotation:img.closest(".flip") ? -6 : 6}, {scale:1, rotation:0, duration:.5, ease:"expo.out"});
-    x.focus();
+    (window.__kbd ? x : box).focus({preventScroll:true});   /* clavier : sur « fermer » ; doigt : sur la fenêtre, sans anneau */
   };
   thumbs.forEach(img => {
     /* photo d'un membre : « la photo de <nom> » ; selfie de l'exécutif : son texte alternatif */
@@ -333,7 +335,7 @@ if($(".socle")) gsap.timeline({scrollTrigger:{trigger:"#design", start:"top 40%"
   const box = $("#medalTarget"), design = $("#design");
   const landed = () => !P || P.travel > .97;
   if(design && box){
-    gsap.timeline({scrollTrigger:{trigger:design, start:"top top", end:"+=120%", pin:true, scrub:.5, anticipatePin:1}})
+    gsap.timeline({scrollTrigger:{trigger:design, start:"top top", end:() => innerWidth <= 834 ? "+=55%" : "+=120%", pin:true, scrub:.5, anticipatePin:1, invalidateOnRefresh:true}})   /* plus court sur téléphone */
       .fromTo(root, {"--cit":0}, {"--cit":1, duration:.55, ease:"power1.inOut"})
       .to({}, {duration:.45});                              /* petit arrêt : le plan reste affiché pour la lecture */
     /* Écran tactile : un toucher fait aussi apparaître ou disparaître le plan */
@@ -409,8 +411,11 @@ if($("#colorsPin")){
 $$("[data-count]").forEach(el => {
   const to = +el.dataset.count, o = {v:0};
   el.textContent = "0";
-  ScrollTrigger.create({trigger:el, start:"top 90%", once:true,
-    onEnter:() => gsap.to(o, {v:to, duration:to > 10 ? 1.6 : .9, ease:"power2.out", onUpdate:() => el.textContent = Math.round(o.v)})});
+  /* le comptage repart à chaque passage (en descendant comme en remontant), pas seulement la première fois */
+  let tw = null;
+  const run = () => { if(tw) tw.kill(); o.v = 0; el.textContent = "0";
+    tw = gsap.to(o, {v:to, duration:to > 10 ? 1.6 : 1.1, ease:"power2.out", onUpdate:() => el.textContent = Math.round(o.v)}); };
+  ScrollTrigger.create({trigger:el, start:"top 90%", end:"bottom 10%", onEnter:run, onEnterBack:run});
 });
 
 /* Recalcul une fois toutes les images chargées */
@@ -438,6 +443,23 @@ if($("#hero") && $("#inkZone")){
    COLLECTION EN DIAPORAMA (ordinateur) : chaque partie fait un écran et la page s'aimante sur la plus proche.
    « Face et dos » s'arrête sur chaque vue.
    ===================================================================== */
+/* Téléphone : dans « Face et dos », chaque geste de défilement s'arrête sur la vue suivante (ailleurs, défilement libre) */
+if(document.body.classList.contains("coll") && $("#colorsPin")) mm.add(MOB, () => {
+  let pts = [], lo = 0, hi = 0;
+  const compute = () => {
+    const max = ScrollTrigger.maxScroll(window) || 1;
+    const col = ScrollTrigger.getAll().find(s => s.pin && s.trigger && s.trigger.id === "colorsPin"); if(!col) return;
+    const n = document.querySelectorAll("#colorPics img").length - 1, T = n + .8, L = col.end - col.start, list = [col.start];
+    for(let k = 1; k <= n; k++) list.push(col.start + L * (k - .2) / T);
+    list.push(col.end);
+    pts = list.map(v => v / max); lo = col.start / max - .02; hi = col.end / max + .02;
+  };
+  ScrollTrigger.addEventListener("refresh", compute); compute();
+  const snap = ScrollTrigger.create({start:0, end:"max", snap:{
+    snapTo:v => v < lo || v > hi || !pts.length ? v : pts.reduce((b, p) => Math.abs(p - v) < Math.abs(b - v) ? p : b, pts[0]),
+    duration:{min:.3, max:.6}, delay:.05, ease:"power2.inOut"}});
+  return () => { ScrollTrigger.removeEventListener("refresh", compute); snap.kill(); };
+});
 if(document.body.classList.contains("coll")) mm.add(DESK, () => {
   let pts = [0], free = [];
   const compute = () => {

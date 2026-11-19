@@ -7,6 +7,11 @@
     if(!same){ document.documentElement.style.display = "none";
       try{ window.top.location = window.location.href; }catch(e){} return; }
   }
+  /* dernier moyen utilisé (clavier ou doigt/souris) : les fenêtres qui s'ouvrent ne mettent en évidence leur bouton
+     « fermer » que pour le clavier (sinon un anneau bleu apparaît après chaque toucher) */
+  window.__kbd = false;
+  addEventListener("keydown", function(e){ if(e.key === "Tab" || e.key === "Enter" || e.key === " ") window.__kbd = true; }, true);
+  addEventListener("pointerdown", function(){ window.__kbd = false; }, true);
   if(window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches) return;
   var d = document.documentElement;
   d.classList.add("js-anim");

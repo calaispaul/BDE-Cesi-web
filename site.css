@@ -67,6 +67,11 @@ a{color:inherit;text-decoration:none}
 button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer}
 h1,h2,h3,h4,p{margin:0}
 :focus-visible{outline:2px solid var(--blue-fill);outline-offset:3px;border-radius:6px}
+/* téléphone : pas de carré bleu à chaque toucher (surbrillance par défaut du navigateur) ; le contour de focus
+   reste pour la navigation au clavier, mais pas après un toucher ou un clic */
+html{-webkit-tap-highlight-color:transparent}
+:focus:not(:focus-visible){outline:none}
+.ps-card:focus,.zoom-box:focus{outline:none}
 .skip{position:absolute;left:-9999px;top:8px;z-index:200;background:var(--ink);color:#fff;padding:10px 16px;border-radius:var(--r-pill);font-size:14px}
 .skip:focus{left:16px}
 .wrap{width:100%;max-width:var(--maxw);margin:0 auto;padding:0 var(--gutter)}
@@ -220,8 +225,9 @@ h1,h2,h3,h4,p{margin:0}
 .focus-1 .socle .keys li:not([data-k="1"]) > *,.focus-2 .socle .keys li:not([data-k="2"]) > *,.focus-3 .socle .keys li:not([data-k="3"]) > *{opacity:.4}
 .notes-layer .notes{position:absolute;inset:0}
 /* Section design sur fond noir (pleine largeur), couleurs inversées ; le bleu des repères reste le même */
-.socle{background:transparent;isolation:isolate;color:#f5f5f7}
-.socle::before{content:"";position:absolute;top:0;bottom:0;left:calc(50% - 50vw);right:calc(50% - 50vw);background:#000;z-index:-1}
+.socle{isolation:isolate;color:#f5f5f7}
+/* fond noir pleine largeur sans dépendre de 100vw (sur certains téléphones, 100vw laissait une bande blanche à gauche) */
+.socle{background:#000;box-shadow:0 0 0 100vmax #000;clip-path:inset(0 -100vmax)}
 .socle .num{color:#86868b}
 .socle .display,.socle .lead,.socle .keys b{color:#f5f5f7}
 .socle .keys p{color:#a1a1a6}
@@ -241,6 +247,9 @@ h1,h2,h3,h4,p{margin:0}
 .medal{position:fixed;left:0;top:0;z-index:40;pointer-events:none;transform-origin:50% 50%;will-change:transform}
 .medal-inner{width:100%;height:100%}
 .medal canvas{display:block;width:100%;height:100%}
+/* posé dans le socle (pendant.js) : il défile avec la page au lieu d'être recalé en JavaScript */
+.medal.docked{position:absolute;z-index:1}
+.notes-layer.docked{position:absolute;inset:0;z-index:2}
 /* reflet qui balaie le chrome à l'entrée */
 .stage .shine{position:absolute;inset:0;-webkit-mask:url(images/logo-noir-grand.png) center/contain no-repeat;mask:url(images/logo-noir-grand.png) center/contain no-repeat;pointer-events:none;overflow:hidden}
 .stage .shine::before{content:"";position:absolute;top:-20%;bottom:-20%;left:-60%;width:40%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.95),transparent);transform:translateX(var(--sx,-50%)) skewX(-12deg)}
@@ -373,8 +382,10 @@ footer .copy a:hover{text-decoration:underline}
   .colors .pics{max-width:min(420px,44svh);order:-1}
   .colors .grid > div:first-child{text-align:center}
   .colors .names{justify-content:center}
-  .colors .names{display:flex;flex-wrap:wrap;gap:6px 20px;margin-top:20px}
-  .colors .names li{font-size:24px;gap:10px}
+  /* téléphone : la liste reste empilée (une vue par ligne), centrée sous la photo */
+  .colors .names{display:flex;flex-direction:column;align-items:center;gap:2px;margin-top:18px}
+  .colors .names li{font-size:22px;gap:10px}
+  .colors-pin{height:100svh;padding-top:var(--nav)}
   .spec-grid{grid-template-columns:repeat(2,minmax(0,1fr));row-gap:40px}
   .card{min-height:0}
   .card h3{margin-top:32px}
@@ -488,6 +499,18 @@ footer .copy a:hover{text-decoration:underline}
 .booster-canvas{position:absolute;inset:0;width:100%;height:100%;display:block;cursor:grab}
 .booster-canvas.grabbing{cursor:grabbing}
 .booster-hint{position:absolute;left:50%;bottom:68px;transform:translateX(-50%);margin:0;font-size:14px;color:var(--slate);white-space:nowrap;pointer-events:none}
+/* aperçu du sachet pendant le chargement de la 3D (uniquement quand le booster est encore fermé) */
+.booster-ph{display:none}
+.pack-closed .booster-ph{position:absolute;left:50%;top:44%;transform:translate(-50%,-50%);height:min(66%,440px);aspect-ratio:1.5/2.1;
+  display:grid;place-items:center;border-radius:6px;overflow:hidden;pointer-events:none;transition:opacity .45s var(--ease);
+  background:linear-gradient(115deg,#d9dde3 0%,#f6f7f9 22%,#bfc4cc 45%,#f3f4f6 62%,#c7ccd4 82%,#eef0f3 100%);
+  box-shadow:0 30px 60px rgba(0,0,0,.18),inset 0 0 0 1px rgba(255,255,255,.6)}
+.pack-closed .booster-ph img{width:78%;height:auto;opacity:.78}
+.pack-closed .booster-ph::after{content:"";position:absolute;inset:0;background:linear-gradient(105deg,transparent 35%,rgba(255,255,255,.7) 50%,transparent 65%);
+  transform:translateX(-100%);animation:ph-shine 1.6s ease-in-out infinite}
+@keyframes ph-shine{to{transform:translateX(100%)}}
+.booster-ui.ready .booster-ph{opacity:0}
+@media (prefers-reduced-motion:reduce){ .pack-closed .booster-ph::after{animation:none} }
 .booster-open{position:absolute;left:50%;bottom:12px;transform:translateX(-50%)}
 /* l'effet d'appui des boutons (.pill:active) remplaçait le centrage : le bouton sautait à droite sous le curseur
    et le clic n'était pas pris ; on garde le centrage pendant l'appui */
@@ -771,3 +794,14 @@ form.cf{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 .nf-page .display{font-size:clamp(40px,7vw,72px);line-height:1.05;margin:0}
 .nf-page .lead{margin:16px auto 28px;max-width:40ch;color:var(--slate)}
 .nf-ctas{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:14px 24px}
+
+/* =====================================================================
+   TÉLÉPHONE : photos du BDE entières (pas de recadrage), photo bonus des membres en bas du portrait
+   ===================================================================== */
+@media (max-width:834px){
+  /* « Nous » et « Les quatre » : la photo garde son format 3:2 au lieu d'être étirée sur la hauteur de l'écran */
+  .team-photo,.exec-photo{flex:none;margin-top:auto;margin-bottom:auto}
+  .tp-media,.ep-media{flex:none;height:auto;aspect-ratio:3/2}
+  /* la photo bonus se pose en bas du portrait (sans déborder sur le texte en dessous) */
+  .m-extra,.member.flip .m-extra{top:auto;bottom:4%}
+}

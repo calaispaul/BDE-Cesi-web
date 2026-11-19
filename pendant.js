@@ -64,7 +64,25 @@ function init(){
   const smoothstep = v => v * v * (3 - 2 * v);
 
   /* Position du calque : interpolation entre la place dans la hero et la place dans la section design */
+  /* Une fois posé dans le socle, le médaillon (et les repères du plan) entre DANS le socle : il défile alors
+     nativement avec la page, sans décalage. Sur téléphone, un calque fixe recalé en JavaScript à chaque image
+     prend du retard sur le défilement et le médaillon semble flotter. Il ressort dès qu'il repart vers la hero. */
+  let docked = false;
+  const dock = on => {
+    if(on === docked || !target) return; docked = on;
+    medal.classList.toggle("docked", on); if(layer) layer.classList.toggle("docked", on);
+    if(on){ target.append(medal); if(layer) target.append(layer); }
+    else{ document.body.append(medal); if(layer) document.body.append(layer); }
+  };
   const place = p => {
+    if(target && p >= .999){
+      dock(true);
+      const r = target.getBoundingClientRect(), ts = Math.min(r.width, r.height) * .97;
+      if(layer) layer.style.cssText = "";
+      medal.style.transform = `translate3d(${((r.width - base) / 2).toFixed(1)}px,${((r.height - base) / 2).toFixed(1)}px,0) scale(${(ts / base).toFixed(4)})`;
+      return r.bottom > -50 && r.top < innerHeight + 50;
+    }
+    dock(false);
     if(layer){ const r = target.getBoundingClientRect();
       layer.style.cssText = `width:${r.width}px;height:${r.height}px;transform:translate3d(${r.left.toFixed(1)}px,${r.top.toFixed(1)}px,0)`; }
     const a = host.getBoundingClientRect();
