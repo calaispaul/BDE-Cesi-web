@@ -124,11 +124,11 @@ tick(); setInterval(tick, 1000);
     if(souris){
       lueur.a += ((cible.on ? 1 : 0) - lueur.a) * .05;
       lueur.x += (cible.x - lueur.x) * .12; lueur.y += (cible.y - lueur.y) * .12;
-    }else{
-      if(now > prochaine){                              /* nouvelle vague toutes les 2,5 à 4,5 s */
-        const p = point(); if(p) vagues.push(p);
-        prochaine = now + 2500 + Math.random() * 2000;
-      }
+    }else if(now > prochaine){                          /* téléphone : nouvelle vague toutes les 2,5 à 4,5 s */
+      const p = point(); if(p) vagues.push(p);
+      prochaine = now + 2500 + Math.random() * 2000;
+    }
+    {                                                   /* vagues (téléphone, ou clic sur ordinateur) */
       for(const w of vagues){ w.r += 1.2; w.x += w.vx; w.y += w.vy; }   /* s'élargit et glisse lentement */
       /* deux vagues qui se touchent rebondissent l'une sur l'autre (comme deux billes) */
       for(let a = 0; a < vagues.length; a++) for(let b = a + 1; b < vagues.length; b++){
@@ -153,6 +153,12 @@ tick(); setInterval(tick, 1000);
       if(!cible.on){ cible.on = true; if(lueur.a < .02){ lueur.x = cible.x; lueur.y = cible.y; } }
     }, {passive: true});
     document.documentElement.addEventListener("pointerleave", () => { cible.on = false; });
+    /* clic sur le fond : une vague de taille aléatoire part du point cliqué */
+    addEventListener("pointerdown", e => {
+      if(e.button !== 0 || e.target.closest("button, a, input, form, .wt-count")) return;
+      const a = Math.random() * 6.283, v = .2 + Math.random() * .3;
+      vagues.push({x: e.clientX, y: e.clientY, r: 0, max: 100 + Math.random() * 320, vx: Math.cos(a) * v, vy: Math.sin(a) * v});
+    });
   }
   requestAnimationFrame(pas);
 })();
