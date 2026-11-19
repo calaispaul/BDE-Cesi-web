@@ -836,3 +836,38 @@ form.cf{display:grid;grid-template-columns:1fr 1fr;gap:16px}
   /* la photo bonus se pose en bas du portrait (sans déborder sur le texte en dessous) */
   .m-extra,.member.flip .m-extra{top:auto;bottom:4%}
 }
+
+/* =====================================================================
+   PAGE D'ATTENTE (attente.html) : pull en pixels floutés, compte à rebours, accès équipe
+   ===================================================================== */
+.attente{background:var(--mist);min-height:100svh}
+.wt{min-height:100svh;display:flex;flex-direction:column;align-items:center;text-align:center;
+  padding:clamp(18px,4vh,40px) var(--gutter) clamp(16px,3vh,28px)}
+.wt-logo{width:clamp(44px,6vw,60px);height:auto}
+.wt-visual{width:min(46svh,78vw,440px);aspect-ratio:1;margin:clamp(8px,2vh,20px) 0 0;position:relative}
+.wt-visual canvas{width:100%;height:100%;display:block;image-rendering:pixelated;filter:blur(2.4px) saturate(.9)}
+.wt-visual::after{content:"";position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(closest-side,transparent 62%,var(--mist) 100%)}
+.wt-kicker{margin:clamp(6px,1.5vh,14px) 0 4px;font-size:15px;font-weight:600;color:var(--blue-fill)}
+.wt-title{margin:0;font-family:var(--display);font-weight:600;font-size:clamp(48px,9vw,96px);line-height:1;letter-spacing:-.02em;color:var(--ink)}
+.wt-title .dot{color:var(--blue-fill)}
+.wt-lead{margin:12px 0 0;font-size:clamp(16px,1.6vw,19px);color:var(--slate)}
+.wt-lead b{color:var(--ink);font-weight:600}
+.wt-count{display:flex;gap:clamp(8px,2vw,16px);margin:clamp(16px,3vh,28px) 0 0}
+.wt-count div{min-width:clamp(64px,16vw,96px);padding:12px 8px 10px;border-radius:18px;background:var(--white);box-shadow:0 0 0 1px var(--control)}
+.wt-count b{display:block;font-family:var(--display);font-weight:600;font-size:clamp(28px,6vw,44px);line-height:1;color:var(--ink);font-variant-numeric:tabular-nums}
+.wt-count span{display:block;margin-top:6px;font-size:12px;color:var(--steel)}
+.wt-foot{margin-top:auto;padding-top:clamp(20px,4vh,40px);display:flex;flex-direction:column;align-items:center;gap:10px}
+.wt-team{border:0;background:none;padding:8px 10px;font:inherit;font-size:13px;color:var(--steel);cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+.wt-form{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:8px}
+.wt-form[hidden]{display:none}
+.wt-form input{width:min(220px,60vw);height:44px;padding:0 14px;border:0;border-radius:var(--r-pill);background:var(--white);
+  box-shadow:inset 0 0 0 1px var(--control);font:inherit;font-size:15px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink)}
+.wt-form input:focus{outline:none;box-shadow:inset 0 0 0 2px var(--blue-fill)}
+.wt-msg{flex-basis:100%;margin:2px 0 0;min-height:18px;font-size:13px;color:var(--slate)}
+.wt-msg.ok{color:#0a7d2c}.wt-msg.bad{color:#e30000}
+.wt-form.shake{animation:wt-shake .45s}
+@keyframes wt-shake{20%,60%{transform:translateX(-7px)}40%,80%{transform:translateX(7px)}}
+.wt-links{margin:0;font-size:12px;color:var(--steel)}
+.wt-links a{color:var(--steel)}
+@media (prefers-reduced-motion:reduce){ .wt-form.shake{animation:none} }

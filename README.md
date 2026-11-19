@@ -188,8 +188,8 @@ On peut aussi modifier un fichier directement sur github.com (icône crayon), pu
 Si un changement n'apparaît pas : recharger la page avec `Ctrl + F5` (le navigateur garde des fichiers en cache).
 
 **Forcer les visiteurs à recharger le CSS et le JavaScript** : dans les pages, les liens vers `site.css` et
-les fichiers `.js` portent un numéro de version (`site.css?v=2026111904`). Après une modification de ces
-fichiers, remplacer ce numéro partout par la date du jour (rechercher/remplacer `?v=2026111904` dans les
+les fichiers `.js` portent un numéro de version (`site.css?v=2026111906`). Après une modification de ces
+fichiers, remplacer ce numéro partout par la date du jour (rechercher/remplacer `?v=2026111906` dans les
 `.html`) : les navigateurs téléchargent alors la nouvelle version au lieu de garder l'ancienne en cache.
 
 > **Page 404** : ses liens commencent par `/` pour fonctionner quelle que soit l'adresse introuvable. Elle
@@ -249,3 +249,22 @@ fichiers, remplacer ce numéro partout par la date du jour (rechercher/remplacer
 - **Broderie et impressions** : Agathe Huguet, Maison Vitali — [@lamaisonvitali](https://www.instagram.com/lamaisonvitali/)
 - **Site** : BDE CESI Lille — responsable de la publication : Paul Calais
 - Bibliothèques : [GSAP](https://gsap.com) et [Three.js](https://threejs.org) (licences dans leurs fichiers `vendor/`)
+
+## Page d'attente (jusqu'au lundi 23 novembre 2026, 8 h 30)
+
+Jusqu'à l'heure d'ouverture, toutes les pages (sauf les infos légales) renvoient vers `attente.html` :
+pull noir en pixels floutés et compte à rebours. À 8 h 30 (heure de Paris), le site s'ouvre tout seul, rien à faire.
+
+- **Accès équipe** : bouton en bas de la page d'attente, puis saisir le code. Le navigateur s'en souvient ensuite.
+  Le code n'est écrit nulle part dans le site : seule son empreinte (PBKDF2-SHA256, 300 000 tours) est enregistrée.
+- **Limite** : le site est statique et le dépôt public, donc ce verrou cache le site au public mais n'est pas
+  une vraie protection (quelqu'un de technique peut lire les fichiers du dépôt). Ne rien mettre de secret derrière.
+- **Changer l'heure d'ouverture** : modifier `OUVERTURE` (millisecondes depuis 1970, en UTC) dans `boot.js` **et** `attente.js`.
+- **Ouvrir le site plus tôt** : mettre `OUVERTURE = 0` dans `boot.js`.
+- **Changer le code** : calculer la nouvelle empreinte (console du navigateur sur la page d'attente) puis remplacer
+  `EMPREINTE` dans `attente.js` et `JETON` dans `boot.js` :
+  ```js
+  (async c=>{const e=new TextEncoder(),k=await crypto.subtle.importKey("raw",e.encode(c),"PBKDF2",false,["deriveBits"]);
+  return [...new Uint8Array(await crypto.subtle.deriveBits({name:"PBKDF2",hash:"SHA-256",salt:e.encode("bde-cesi-lille|acces|2026"),iterations:300000},k,256))].map(b=>b.toString(16).padStart(2,"0")).join("")})("NOUVEAUCODE")
+  ```
+- Après l'ouverture, on peut supprimer `attente.html`, `attente.js` et le bloc « Page d'attente » de `boot.js`.
