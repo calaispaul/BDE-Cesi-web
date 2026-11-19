@@ -881,9 +881,6 @@ form.cf{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 .attente{background:#0c0c0e;color:#f5f5f7}
 .attente .wt-title,.attente .wt-q::before{color:#f5f5f7}
 .attente .wt-visual canvas{filter:blur(1px) drop-shadow(0 0 1px rgba(255,255,255,.55)) drop-shadow(0 0 28px rgba(200,212,255,.28))}
-.attente .wt-count div{background:rgba(255,255,255,.06);box-shadow:0 0 0 1px rgba(255,255,255,.14);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
-.attente .wt-count b{color:#f5f5f7}
-.attente .wt-count span{color:#a1a1a6}
 .attente .wt-logo{filter:invert(1)}
 .attente .wt-links,.attente .wt-links a{color:#a1a1a6}
 .attente .wt-form input{background:rgba(255,255,255,.08);box-shadow:inset 0 0 0 1px rgba(255,255,255,.18);color:#f5f5f7}
