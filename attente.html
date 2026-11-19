@@ -13,10 +13,10 @@
 <meta property="og:description" content="La collection 2026-2027 du BDE CESI Lille arrive mardi 24 novembre à 8 h 30.">
 <meta property="og:image" content="images/og.jpg">
 <link rel="icon" type="image/png" href="favicon.png">
-<link rel="stylesheet" href="site.css?v=2026111908">
+<link rel="stylesheet" href="site.css?v=2026111909">
 <link rel="preload" as="image" href="images/pieces/pull-noir-dos.png">
-<script src="boot.js?v=2026111908"></script>
-<script src="attente.js?v=2026111908" defer></script>
+<script src="boot.js?v=2026111909"></script>
+<script src="attente.js?v=2026111909" defer></script>
 </head><body class="attente">
 <main class="wt" id="contenu">
   <h1 class="wt-title"><span class="wt-q" data-q="?" aria-label="Bientôt">?</span></h1>
@@ -32,8 +32,12 @@
   </div>
 
   <div class="wt-cal">
-    <a class="pill blue" href="rappel.ics" download="bde-cesi-lille-ouverture.ics" type="text/calendar">Ajouter un rappel</a>
-    <a class="wt-gcal" href="https://calendar.google.com/calendar/render?action=TEMPLATE&amp;text=Ouverture%20de%20la%20collection%20BDE%20CESI%20Lille&amp;dates=20261124T073000Z%2F20261124T080000Z&amp;details=https%3A%2F%2Fbde-cesi-lille.fr&amp;location=https%3A%2F%2Fbde-cesi-lille.fr" target="_blank" rel="noopener noreferrer">ou dans Google Agenda</a>
+    <!-- le bouton principal ouvre directement l'agenda le plus probable (iPhone/Mac : Calendrier Apple ; sinon Google Agenda) -->
+    <a class="pill blue" id="wtCal" href="https://calendar.google.com/calendar/render?action=TEMPLATE&amp;text=Ouverture%20de%20la%20collection%20BDE%20CESI%20Lille&amp;dates=20261124T073000Z%2F20261124T080000Z&amp;details=https%3A%2F%2Fbde-cesi-lille.fr&amp;location=https%3A%2F%2Fbde-cesi-lille.fr" target="_blank" rel="noopener noreferrer">Ajouter un rappel</a>
+    <p class="wt-gcal">Autre agenda :
+      <a id="calGoogle" href="https://calendar.google.com/calendar/render?action=TEMPLATE&amp;text=Ouverture%20de%20la%20collection%20BDE%20CESI%20Lille&amp;dates=20261124T073000Z%2F20261124T080000Z&amp;details=https%3A%2F%2Fbde-cesi-lille.fr&amp;location=https%3A%2F%2Fbde-cesi-lille.fr" target="_blank" rel="noopener noreferrer">Google</a> ·
+      <a id="calOutlook" href="https://outlook.live.com/calendar/0/deeplink/compose?path=%2Fcalendar%2Faction%2Fcompose&amp;rru=addevent&amp;subject=Ouverture%20de%20la%20collection%20BDE%20CESI%20Lille&amp;startdt=2026-11-24T07%3A30%3A00Z&amp;enddt=2026-11-24T08%3A00%3A00Z&amp;body=https%3A%2F%2Fbde-cesi-lille.fr&amp;location=https%3A%2F%2Fbde-cesi-lille.fr" target="_blank" rel="noopener noreferrer">Outlook</a> ·
+      <a id="calApple" href="rappel.ics" type="text/calendar">Apple</a></p>
   </div>
 
   <div class="wt-foot">

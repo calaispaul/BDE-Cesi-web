@@ -48,6 +48,12 @@ function draw(){
 tick(); setInterval(tick, 1000);
 
 /* ---------- Accès équipe ---------- */
+/* ---------- Rappel dans l'agenda ---------- */
+/* iPhone, iPad et Mac : le fichier rappel.ics s'ouvre dans Calendrier avec « Ajouter » ;
+   ailleurs (Android, Windows…) : la création d'événement de Google Agenda, déjà remplie */
+const apple = /iPhone|iPad|iPod|Macintosh/.test(navigator.userAgent);
+if(apple){ const c = $("#wtCal"); c.href = "rappel.ics"; c.removeAttribute("target"); c.type = "text/calendar"; }
+
 /* le champ du code est caché : un appui sur le logo du BDE (en bas) le fait apparaître ou disparaître */
 const btn = $("#wtTeam"), form = $("#wtForm"), input = $("#wtCode"), msg = $("#wtMsg"), go = $("#wtGo");
 btn.addEventListener("click", () => {
