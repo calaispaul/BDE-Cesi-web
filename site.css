@@ -861,7 +861,14 @@ form.cf{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 .wt-count b{display:block;font-family:var(--display);font-weight:600;font-size:clamp(34px,8vw,60px);line-height:1;color:var(--ink);font-variant-numeric:tabular-nums}
 .wt-count span{display:block;margin-top:6px;font-size:12px;color:var(--steel)}
 .wt-foot{margin-top:auto;padding-top:clamp(20px,4vh,40px);display:flex;flex-direction:column;align-items:center;gap:10px}
-.wt-cal{margin:clamp(4px,1vh,10px) 0 0;position:relative;top:calc(var(--pull) - var(--pull-old));display:flex;flex-direction:column;align-items:center;gap:8px}
+.wt-cal{margin:clamp(4px,1vh,10px) 0 0;position:relative;top:calc(var(--pull) - var(--pull-old));display:grid;place-items:center}
+/* bouton rappel et champ du code au même endroit (l'un remplace l'autre) : la hauteur ne change pas, le compteur ne bouge pas */
+.wt-cal > *{grid-area:1 / 1}
+.wt-cal.code #wtCal{visibility:hidden}
+.wt-cal .wt-form{position:relative;flex-wrap:nowrap}
+.wt-cal .wt-msg{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;margin:0}
+.attente .wt-form[data-etat="bad"] input::placeholder{color:#ff6961;letter-spacing:.04em}
+.attente .wt-form[data-etat="ok"] input::placeholder{color:#30d158;letter-spacing:.04em}
 .wt-cal .pill{font-size:clamp(16px,1.6vw,19px);line-height:1.2;padding:14px clamp(26px,3vw,36px);max-width:100%}
 .wt-gcal{margin:0;font-size:13px;color:var(--steel)}
 .wt-gcal a{color:var(--steel);text-underline-offset:3px}

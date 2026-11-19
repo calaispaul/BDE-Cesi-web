@@ -170,7 +170,7 @@ if(apple){ const c = $("#wtCal"); c.href = "rappel.ics"; c.removeAttribute("targ
 /* le champ du code est caché : un appui sur le pull le fait apparaître ou disparaître */
 const btn = $("#wtTeam"), form = $("#wtForm"), input = $("#wtCode"), msg = $("#wtMsg"), go = $("#wtGo");
 btn.addEventListener("click", () => {
-  const open = form.hidden; form.hidden = !open; btn.setAttribute("aria-expanded", open);
+  const open = form.hidden; form.hidden = !open; btn.setAttribute("aria-expanded", open); form.parentElement.classList.toggle("code", open);
   if(open){ input.focus(); form.scrollIntoView({block:"nearest"}); }
 });
 const hex = buf => [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2, "0")).join("");
@@ -179,22 +179,28 @@ async function empreinte(code){
   const key = await crypto.subtle.importKey("raw", enc.encode(code), "PBKDF2", false, ["deriveBits"]);
   return hex(await crypto.subtle.deriveBits({name:"PBKDF2", hash:"SHA-256", salt:enc.encode(SEL), iterations:TOURS}, key, 256));
 }
+/* le message s'affiche dans le champ lui-même (texte d'attente), pour ne rien chevaucher ; lu aussi par les lecteurs d'écran */
+function dire(t, etat){
+  msg.textContent = t; msg.className = "wt-msg" + (etat ? " " + etat : "");
+  input.value = ""; input.placeholder = t; form.dataset.etat = etat;
+}
+input.addEventListener("input", () => { if(input.placeholder !== "Code"){ input.placeholder = "Code"; form.dataset.etat = ""; } });
 let essais = 0, bloqueJusqua = 0;
 form.addEventListener("submit", async e => {
   e.preventDefault();
-  if(Date.now() < bloqueJusqua){ msg.textContent = "Trop d'essais : patiente quelques secondes."; return; }
+  if(Date.now() < bloqueJusqua){ dire("Trop d'essais, patiente…", "bad"); return; }
   const code = input.value.trim().toUpperCase();
   if(!code) return;
-  go.disabled = true; msg.textContent = "Vérification…"; msg.className = "wt-msg";
+  go.disabled = true; dire("Vérification…", "");
   let ok = false;
-  try{ ok = (await empreinte(code)) === EMPREINTE; }catch(err){ msg.textContent = "Ton navigateur ne permet pas la vérification."; go.disabled = false; return; }
+  try{ ok = (await empreinte(code)) === EMPREINTE; }catch(err){ dire("Navigateur non compatible", "bad"); go.disabled = false; return; }
   if(ok){
     try{ sessionStorage.setItem("bde-acces", EMPREINTE); }catch(err){}
-    msg.textContent = "Bienvenue !"; msg.className = "wt-msg ok";
+    dire("Bienvenue !", "ok");
     setTimeout(entrer, 400);
   }else{
     essais++; input.value = ""; go.disabled = false;
-    msg.textContent = "Code incorrect."; msg.className = "wt-msg bad";
+    dire("Code incorrect", "bad");
     form.classList.remove("shake"); void form.offsetWidth; form.classList.add("shake");
     if(essais >= 5){ bloqueJusqua = Date.now() + 30000; essais = 0; }   /* freine les essais en rafale */
   }
