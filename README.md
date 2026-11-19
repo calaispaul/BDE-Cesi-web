@@ -188,8 +188,8 @@ On peut aussi modifier un fichier directement sur github.com (icône crayon), pu
 Si un changement n'apparaît pas : recharger la page avec `Ctrl + F5` (le navigateur garde des fichiers en cache).
 
 **Forcer les visiteurs à recharger le CSS et le JavaScript** : dans les pages, les liens vers `site.css` et
-les fichiers `.js` portent un numéro de version (`site.css?v=2026111907`). Après une modification de ces
-fichiers, remplacer ce numéro partout par la date du jour (rechercher/remplacer `?v=2026111907` dans les
+les fichiers `.js` portent un numéro de version (`site.css?v=2026111908`). Après une modification de ces
+fichiers, remplacer ce numéro partout par la date du jour (rechercher/remplacer `?v=2026111908` dans les
 `.html`) : les navigateurs téléchargent alors la nouvelle version au lieu de garder l'ancienne en cache.
 
 > **Page 404** : ses liens commencent par `/` pour fonctionner quelle que soit l'adresse introuvable. Elle
@@ -255,7 +255,7 @@ fichiers, remplacer ce numéro partout par la date du jour (rechercher/remplacer
 Jusqu'à l'heure d'ouverture, toutes les pages (sauf les infos légales) renvoient vers `attente.html` :
 pull noir en pixels floutés, compte à rebours et bouton « Ajouter un rappel » (fichier `rappel.ics`, lu par les agendas iPhone, Android, Outlook ; lien Google Agenda en plus). À 8 h 30 (heure de Paris), le site s'ouvre tout seul et `attente.html` renvoie vers l'accueil.
 
-- **Accès équipe** : appuyer sur le logo du BDE en bas de la page d'attente, puis saisir le code. Le navigateur s'en souvient ensuite.
+- **Accès équipe** : appuyer sur le logo du BDE en bas de la page d'attente, puis saisir le code. L'accès ne dure que le temps de la visite : un rafraîchissement, un nouvel onglet ou la fermeture du navigateur ramènent sur la page d'attente (rien n'est gardé en mémoire).
   Le code n'est écrit nulle part dans le site : seule son empreinte (PBKDF2-SHA256, 300 000 tours) est enregistrée.
 - **Limite** : le site est statique et le dépôt public, donc ce verrou cache le site au public mais n'est pas
   une vraie protection (quelqu'un de technique peut lire les fichiers du dépôt). Ne rien mettre de secret derrière.

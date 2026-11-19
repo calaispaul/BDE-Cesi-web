@@ -70,7 +70,7 @@ form.addEventListener("submit", async e => {
   let ok = false;
   try{ ok = (await empreinte(code)) === EMPREINTE; }catch(err){ msg.textContent = "Ton navigateur ne permet pas la vérification."; go.disabled = false; return; }
   if(ok){
-    try{ localStorage.setItem("bde-acces", EMPREINTE); }catch(err){}
+    try{ sessionStorage.setItem("bde-acces", EMPREINTE); }catch(err){}
     msg.textContent = "Bienvenue !"; msg.className = "wt-msg ok";
     setTimeout(entrer, 400);
   }else{

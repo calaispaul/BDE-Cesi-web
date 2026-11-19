@@ -13,7 +13,12 @@
   var OUVERTURE = 1795505400000, JETON = "0596365f95335e86bf7c7678507404a6215dee8b839923a146de952866565c68";
   var page = location.pathname.split("/").pop() || "index.html";
   if(Date.now() < OUVERTURE && page !== "attente.html" && page !== "infos-legales.html"){
-    var ok = false; try{ ok = localStorage.getItem("bde-acces") === JETON; }catch(e){}
+    /* accès gardé seulement pour la visite en cours (même onglet) : un rafraîchissement, un nouvel onglet ou
+       la fermeture du navigateur renvoient sur la page d'attente */
+    var ok = false; try{ localStorage.removeItem("bde-acces");
+      var nav = performance.getEntriesByType && performance.getEntriesByType("navigation")[0];
+      if(nav && nav.type === "reload") sessionStorage.removeItem("bde-acces");
+      ok = sessionStorage.getItem("bde-acces") === JETON; }catch(e){}
     if(!ok){ document.documentElement.style.visibility = "hidden";
       location.replace("attente.html?suite=" + encodeURIComponent(page + location.hash)); return; }
   }
