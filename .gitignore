@@ -1,0 +1,6 @@
+# Outils de prévisualisation locale (pas utiles en ligne)
+.claude/
+# Fichiers système
+Thumbs.db
+Desktop.ini
+.DS_Store

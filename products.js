@@ -1,37 +1,18 @@
 /* =====================================================================
-   RÉGLAGES + CATALOGUE : le seul fichier à modifier pour le contenu
+   RÉGLAGES + CATALOGUE : le fichier à modifier pour le contenu des fiches produit (page Collection)
    ===================================================================== */
 const SHOP = {
-  // Adresse de votre boutique de paiement (SumUp, HelloAsso ou autre) : doit commencer par https://
-  // Tant qu'elle est vide, les boutons affichent « Précommandes bientôt ouvertes » (aucun lien cassé).
-  shopUrl: "https://bde-cesi-lille.sumupstore.com/",   // la boutique SumUp du BDE (le panier y est envoyé pour le paiement)
-  payLabel: "Précommander",                          // texte du bouton
-  payNote: "Paiement par carte sécurisé par SumUp.", // petite mention sous le bouton ("" pour la retirer)
-  trustedHosts: ["sumupstore.com"],                  // seuls les liens vers ces domaines sont acceptés
-  contactEmail: "bde-cesi-lille@viacesi.fr",
-  // Facultatif : adresse Formspree pour recevoir les inscriptions « Reste informé » (sinon, ouverture de la messagerie)
-  newsletterEndpoint: "",
+  contactEmail: "bde-lille@viacesi.fr",
   // Facultatif : adresse Formspree (https://formspree.io/f/...) pour recevoir le formulaire de la page Contact
-  // sans passer par la messagerie du visiteur. Vide = le formulaire ouvre la messagerie avec le message pré-rempli.
-  contactEndpoint: "",
-  // Date limite des précommandes, au format "2026-12-15" ("" = pas de date). Après cette date, les boutons se désactivent.
-  preorderEnd: ""
+  // sans passer par la messagerie du visiteur. Vide = le formulaire ouvre la messagerie avec le message prérempli.
+  contactEndpoint: ""
 };
 
-/* Un produit = des couleurs, chacune avec ses images.
-   Tout correspond à la boutique SumUp du BDE : mêmes articles, prix, tailles et couleurs.
+/* Un produit = une ou plusieurs couleurs. Tout correspond à la boutique SumUp du BDE : mêmes articles, prix,
+   tailles et couleurs.
    - sumupName / sumupUrl : nom et page de l'article sur SumUp
-   - colors[].sumup : libellé exact de la couleur sur SumUp
-   La commande se fait dans la page SumUp de l'article, intégrée à la fiche produit (le panier SumUp est aussi intégré, icône en haut).
-   Les photos des autres coloris ne sont pas encore prêtes : en attendant, ils reprennent les photos du noir. */
-const PULL_IMG = [
-  { src: "images/sweat-face.jpg", thumb: "images/t-sweat-face.jpg", alt: "Hoodie CESI Lille, vue de face" },
-  { src: "images/sweat-dos.jpg",  thumb: "images/t-sweat-dos.jpg",  alt: "Hoodie CESI Lille, dos : blason CESI Lille et 2026-2027" }
-];
-const TEE_IMG = [
-  { src: "images/tshirt-black-face.jpg", thumb: "images/tt-black-face.jpg", alt: "T-shirt CESI Lille, devant : petit logo en haut du torse" },
-  { src: "images/tshirt-black-dos.jpg",  thumb: "images/tt-black-dos.jpg",  alt: "T-shirt CESI Lille, dos : grande illustration au trait et texte manuscrit" }
-];
+   - colors[].sumup : libellé exact de la couleur sur SumUp (affiché sous le nom dans la fiche)
+   - colors[].id : sert aussi à trouver les visuels de la tringle, images/pieces/<pull|tee>-<id>-<face|dos|side>.png */
 const SIZES = ["XS", "S", "M", "L", "XL", "XXL", "3XL"];
 
 const PRODUCTS = [
@@ -41,9 +22,8 @@ const PRODUCTS = [
     sumupName: "Pull",
     sumupUrl: "https://bde-cesi-lille.sumupstore.com/product/pull",
     price: 45,
-    tag: "Édition limitée 2026-2027",
     // {print} est remplacé par la couleur d'impression du coloris (colors[].print)
-    desc: "Sweat à capuche à coupe oversize, épaules tombantes, poche kangourou et intérieur gratté. Petit logo étoile sur la poitrine et blason CESI Lille 2026-2027 au dos, imprimés en {print}.",
+    desc: "Sweat à capuche à coupe oversize, épaules tombantes, poche kangourou et intérieur gratté. Logo étoile brodé sur la poitrine, blason CESI Lille 2026-2027 imprimé au dos, en {print}.",
     material: "70 % coton, 30 % polyester. 330 g/m², intérieur gratté. Poignets et ourlet côtelés.",
     sizes: SIZES,
     // Guide des tailles en cm, vêtement posé à plat. A = largeur de poitrine, B = longueur totale.
@@ -51,28 +31,27 @@ const PRODUCTS = [
     guideNote: "Tolérance de fabrication : ± 2 cm.",
     colors: [
       // print / printLabel : couleur réelle de l'impression, d'après les visuels finaux (le libellé SumUp reste inchangé)
-      { id: "noir",  name: "Noir",  sumup: "Noir (écriture blanche)",  print: "blanc",  printLabel: "Impression blanche", hex: "#1d1d1f", images: PULL_IMG },
-      { id: "beige", name: "Beige", sumup: "Beige (écriture noire)",   print: "marron", printLabel: "Impression marron",  hex: "#ece4d0", images: PULL_IMG },
-      { id: "bleu",  name: "Bleu",  sumup: "Bleu (écriture blanche)",  print: "blanc",  printLabel: "Impression blanche", hex: "#232b4f", images: PULL_IMG }
+      { id: "noir",  name: "Noir",  sumup: "Noir (écriture blanche)",  print: "blanc",  printLabel: "Impression blanche", hex: "#1d1d1f" },
+      { id: "beige", name: "Beige", sumup: "Beige (écriture noire)",   print: "marron", printLabel: "Impression marron",  hex: "#ece4d0" },
+      { id: "bleu",  name: "Bleu",  sumup: "Bleu (écriture blanche)",  print: "blanc",  printLabel: "Impression blanche", hex: "#232b4f" }
     ]
-  }
-
-  ,{
+  },
+  {
     id: "tshirt",
     name: "T-shirt CESI Lille",
     sumupName: "T-shirt",
     sumupUrl: "https://bde-cesi-lille.sumupstore.com/product/t-shirt",
     price: 25,
-    tag: "Édition limitée 2026-2027",
-    desc: "Le T-shirt CESI Lille, avec deux faces : devant, un petit logo en haut du torse ; au dos, une grande illustration au trait accompagnée d'un texte manuscrit sur Lille et ses étudiants. Impression blanche ou crème selon le coloris.",
+    desc: "Le T-shirt CESI Lille : devant, un petit logo étoile sur le cœur ; au dos, « CESI Lille » en grandes lettres autour du blason, avec 2026-2027. Impression blanche ou crème selon le coloris.",
     sizes: SIZES,
     colors: [
-      { id: "noir",     name: "Noir",        sumup: "Noir (écriture blanche)",        hex: "#141414", images: TEE_IMG },
-      { id: "marron",   name: "Marron",      sumup: "Marron (écriture Crème)",        hex: "#5b3e2c", images: TEE_IMG },
-      { id: "rose",     name: "Rose clair",  sumup: "Rose clair (écriture blanche)",  hex: "#efc6cc", images: TEE_IMG },
-      { id: "vert",     name: "Vert forêt",  sumup: "Vert forêt (écriture blanche)",  hex: "#24493a", images: TEE_IMG },
-      { id: "bordeaux", name: "Bordeaux",    sumup: "Bordeaux (écriture crème)",      hex: "#6b1f2d", images: TEE_IMG }
+      { id: "noir",     name: "Noir",        sumup: "Noir (écriture blanche)",        hex: "#141414" },
+      { id: "marron",   name: "Marron",      sumup: "Marron (écriture Crème)",        hex: "#5b3e2c" },
+      { id: "rose",     name: "Rose clair",  sumup: "Rose clair (écriture blanche)",  hex: "#efc6cc" },
+      { id: "vert",     name: "Vert forêt",  sumup: "Vert forêt (écriture blanche)",  hex: "#24493a" },
+      { id: "bordeaux", name: "Bordeaux",    sumup: "Bordeaux (écriture crème)",      hex: "#6b1f2d" }
     ]
   }
-  // Pack T-shirt + Pull (65 € sur SumUp) : à ajouter ici quand il sera finalisé.
+  // Pack T-shirt + Pull (65 € sur SumUp) : https://bde-cesi-lille.sumupstore.com/product/pack-t-shirt-pull-1
+  // (carte présente sur la boutique version téléphone ; à ajouter ici s'il doit aussi apparaître sur la tringle)
 ];

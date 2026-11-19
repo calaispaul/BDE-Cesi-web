@@ -1,18 +1,10 @@
-/* BDE CESI Lille — Accueil / lookbook
+/* BDE CESI Lille — animations de l'accueil et de la page Collection
    Animations : GSAP + ScrollTrigger (vendor/). Tout reste lisible sans JS ou avec « moins d'animations ». */
 (function(){
 "use strict";
 const $ = (s, c = document) => c.querySelector(s);
 const $$ = (s, c = document) => [...c.querySelectorAll(s)];
 const root = document.documentElement;
-
-/* ---------- Données (products.js) ---------- */
-try{
-  if(typeof PRODUCTS !== "undefined"){
-    const h = PRODUCTS.find(p => p.id === "hoodie");
-    if(h && h.price) $$("[data-price]").forEach(e => e.textContent = h.price.toLocaleString("fr-FR", {style:"currency", currency:"EUR", minimumFractionDigits: Number.isInteger(h.price) ? 0 : 2}));
-  }
-}catch(e){}
 
 /* ---------- Sans GSAP ou mouvement réduit : on s'arrête là ---------- */
 const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -65,7 +57,7 @@ intro
   .add(() => { if(logo){ logo.style.filter = ""; startTilt(); } });
 
 /* Écran de chargement : la page est noire et le médaillon 3D lui-même (à sa place exacte dans la hero) se remplit
-   de chrome liquide de bas en haut, pendant que le compteur descend de 100 à 000. Il attend la fin du chargement
+   de chrome liquide de bas en haut, pendant que le compteur monte de 000 à 100. Il attend la fin du chargement
    (6 s au plus), puis un reflet balaie le chrome et le noir se fond en blanc autour de lui : aucun déplacement. */
 if(loading){
   const L = $("#loader"), count = $("#ldCount"), hero = $("#hero"), st = {p:0};
@@ -73,9 +65,12 @@ if(loading){
   if(P){ P.spinIn = 0; P.fill = 0; }
   const wait = ms => new Promise(r => setTimeout(r, ms));
   const pageLoaded = new Promise(r => document.readyState === "complete" ? r() : addEventListener("load", r, {once:true}));
-  const counting = gsap.to(st, {p:1, duration:2.6, ease:"power1.inOut", onUpdate:() => {
+  /* le compteur se place juste au-dessus du médaillon */
+  const placeCount = () => { const r = logo.getBoundingClientRect(); count.style.top = Math.max(16, r.top - 28) + "px"; };
+  placeCount(); addEventListener("resize", placeCount);
+  const counting = gsap.to(st, {p:1, duration:3.8, ease:"power1.inOut", onUpdate:() => {
     if(P) P.fill = st.p;
-    count.textContent = String(Math.round(100 - st.p * 100)).padStart(3, "0");
+    count.textContent = String(Math.round(st.p * 100)).padStart(3, "0");
   }});
   Promise.all([Promise.race([pageLoaded, wait(6000)]), counting.then()]).then(() => {
     try{ sessionStorage.setItem("bde-cesi-lille-loader", "1"); }catch(e){}
@@ -263,7 +258,10 @@ if(matchMedia("(hover: hover) and (pointer: fine)").matches && $("#inkZone")){
 /* photo de groupe et photo de l'exécutif : elles s'ouvrent (découpe qui s'élargit) et dézooment en entrant */
 [["#teamPhoto", 1.18], ["#execPhoto", 1.22]].forEach(([sel, z]) => {
   const box = $(sel); if(!box) return;
-  gsap.timeline({scrollTrigger:{refreshPriority:-1, trigger:box, start:"top 92%", end:"center 55%", scrub:1}})
+  /* la photo de groupe est entièrement ouverte pile quand sa section remplit l'écran, plus rien ne bouge ensuite */
+  const team = sel === "#teamPhoto" && box.closest("section");
+  const end = team ? {endTrigger:team, end:"top top"} : {end:"center 55%"};
+  gsap.timeline({scrollTrigger:{refreshPriority:-1, trigger:box, start:"top 92%", ...end, scrub:team ? true : 1}})
     .fromTo(box, {clipPath:"inset(10% 14% round 28px)"}, {clipPath:"inset(0% 0% round 28px)", ease:"none"}, 0)
     .fromTo($("img", box), {scale:z}, {scale:1, ease:"none"}, 0);
 });
@@ -277,9 +275,45 @@ $$(".member").forEach((m, i) => {
     scrollTrigger:{refreshPriority:-1, trigger:m, start:"top 95%", end:"top 45%", scrub:1}});
   gsap.fromTo(main, {objectPosition:"50% 30%"}, {objectPosition:"50% 70%", ease:"none",
     scrollTrigger:{refreshPriority:-1, trigger:m, start:"top bottom", end:"bottom top", scrub:true}});
-  if(extra) gsap.fromTo(extra, {y:120, rotation:side * -14}, {y:-60, rotation:side * -6, ease:"none",
+  /* y vaut 0 quand l'écran est calé sur le membre : la photo bonus reste alors entière dans sa diapo */
+  if(extra) gsap.fromTo(extra, {y:90, rotation:side * -14}, {y:-90, rotation:side * -6, ease:"none",
     scrollTrigger:{refreshPriority:-1, trigger:m, start:"top bottom", end:"bottom top", scrub:true}});
 });
+
+/* Photos bonus des membres : un clic (ou Entrée) les agrandit en plein écran ; clic, Échap ou × pour fermer */
+(() => {
+  const thumbs = $$(".m-extra, .ep-pola"); if(!thumbs.length) return;
+  const box = document.createElement("div");
+  box.className = "zoom-box"; box.hidden = true;
+  box.setAttribute("role", "dialog"); box.setAttribute("aria-modal", "true"); box.setAttribute("aria-label", "Photo agrandie");
+  box.innerHTML = '<img alt=""><button type="button" class="zoom-x" aria-label="Fermer">×</button>';
+  document.body.appendChild(box);
+  const big = $("img", box), x = $(".zoom-x", box);
+  let last = null;
+  const close = () => {
+    if(box.hidden) return;
+    gsap.to(box, {opacity:0, duration:.25, onComplete:() => { box.hidden = true; root.classList.remove("sheet-open"); if(last) last.focus(); }});
+  };
+  const open = img => {
+    last = img; big.src = img.currentSrc || img.src; big.alt = img.dataset.zoomAlt;
+    box.hidden = false; root.classList.add("sheet-open");
+    gsap.fromTo(box, {opacity:0}, {opacity:1, duration:.3});
+    gsap.fromTo(big, {scale:.85, rotation:img.closest(".flip") ? -6 : 6}, {scale:1, rotation:0, duration:.5, ease:"expo.out"});
+    x.focus();
+  };
+  thumbs.forEach(img => {
+    /* photo d'un membre : « la photo de <nom> » ; selfie de l'exécutif : son texte alternatif */
+    const member = img.closest(".member"), h3 = member && member.querySelector("h3");
+    const what = h3 ? "la photo de " + h3.textContent.replace(/\.$/, "").trim() : (img.alt || "la photo");
+    img.dataset.zoomAlt = h3 ? what.replace(/^la p/, "P") : what;
+    img.tabIndex = 0; img.setAttribute("role", "button");
+    img.setAttribute("aria-label", "Agrandir " + (h3 ? what : "la photo : " + what));
+    img.addEventListener("click", () => open(img));
+    img.addEventListener("keydown", e => { if(e.key === "Enter" || e.key === " "){ e.preventDefault(); open(img); } });
+  });
+  box.addEventListener("click", close);
+  document.addEventListener("keydown", e => { if(e.key === "Escape") close(); else if(e.key === "Tab" && !box.hidden){ e.preventDefault(); x.focus(); } });
+})();
 
 /* Le médaillon 3D glisse jusqu'à la section design en tournant, et devient le logo noir (pendant.js) */
 if(P && $("#medalTarget")){
@@ -327,125 +361,56 @@ ScrollTrigger.batch("[data-rise]", {
 });
 
 /* =====================================================================
-   3. OUVERTURE PLEIN CADRE (image qui s'agrandit jusqu'aux bords)
-   ===================================================================== */
-if($("#frame")) mm.add(DESK, () => {
-  gsap.timeline({scrollTrigger:{trigger:"#frame", start:"top top", end:"+=110%", scrub:1, pin:true, anticipatePin:1}})
-    .fromTo("#frame .media", {clipPath:"inset(10% 14% round 28px)"}, {clipPath:"inset(0% 0% round 0px)", ease:"none"}, 0)
-    .fromTo("#frame .media img", {scale:1.22}, {scale:1, ease:"none"}, 0)
-    .fromTo("#frame .caption", {opacity:0, y:30}, {opacity:1, y:0, duration:.3, ease:"power2.out"}, .7);
-});
-if($("#frame")) mm.add(MOB, () => {
-  gsap.timeline({scrollTrigger:{trigger:"#frame", start:"top 85%", end:"center center", scrub:1}})
-    .fromTo("#frame .media", {clipPath:"inset(12% 10% round 28px)"}, {clipPath:"inset(6% 4% round 28px)", ease:"none"}, 0)
-    .fromTo("#frame .media img", {scale:1.25}, {scale:1.02, ease:"none"}, 0)
-    .fromTo("#frame .caption", {opacity:0}, {opacity:1, duration:.3}, .6);
-});
-
-/* =====================================================================
-   4. MANIFESTE : les mots se remplissent au fil du scroll
-   ===================================================================== */
-const man = $("#manifesto");
-if(man){
-  man.setAttribute("aria-label", man.textContent);
-  man.innerHTML = man.textContent.trim().split(/\s+/).map(w => `<span class="w" aria-hidden="true">${w}</span>`).join(" ");
-  gsap.to($$(".w", man), {color:"#1d1d1f", stagger:.08, ease:"none",
-    scrollTrigger:{trigger:man, start:"top 78%", end:"bottom 45%", scrub:true}});
-}
-
-/* =====================================================================
-   5. LOOKBOOK HORIZONTAL (épinglé sur ordinateur, glisser au doigt sur mobile)
-   ===================================================================== */
-if($("#track")) mm.add(DESK, () => {
-  const track = $("#track");
-  const dist = () => Math.max(0, track.scrollWidth - window.innerWidth);
-  const h = gsap.to(track, {x:() => -dist(), ease:"none",
-    scrollTrigger:{trigger:"#trackWrap", start:"center 52%", end:() => "+=" + dist(), pin:true, scrub:1, anticipatePin:1, invalidateOnRefresh:true,
-      onUpdate:s => gsap.set("#lbProgress", {scaleX:s.progress})}});
-  /* parallaxe des visuels dans leurs cartes */
-  $$(".look").forEach(card => {
-    gsap.fromTo($(".img img", card), {xPercent:-5}, {xPercent:5, ease:"none",
-      scrollTrigger:{trigger:card, containerAnimation:h, start:"left right", end:"right left", scrub:true}});
-    gsap.fromTo(card, {scale:.94}, {scale:1, ease:"none",
-      scrollTrigger:{trigger:card, containerAnimation:h, start:"left right", end:"left 60%", scrub:true}});
-  });
-  /* arrivée des cartes */
-  gsap.from(".look", {y:80, opacity:0, duration:1.2, stagger:.08, ease:"power3.out",
-    scrollTrigger:{trigger:"#trackWrap", start:"top 85%", once:true}});
-});
-if($("#track")) mm.add(MOB, () => {
-  gsap.from(".look", {x:60, opacity:0, duration:1, stagger:.08,
-    scrollTrigger:{trigger:"#trackWrap", start:"top 85%", once:true}});
-});
-
-/* =====================================================================
-   6. ÉDITORIAL : images qui entrent par le côté + parallaxe interne
-   ===================================================================== */
-$$("[data-enter]").forEach(el => {
-  const fromRight = el.dataset.enter === "right";
-  gsap.fromTo(el,
-    {x:fromRight ? 140 : -140, clipPath:fromRight ? "inset(0% 0% 0% 30% round 28px)" : "inset(0% 30% 0% 0% round 28px)"},
-    {x:0, clipPath:"inset(0% 0% 0% 0% round 28px)", ease:"none",
-     scrollTrigger:{trigger:el, start:"top 95%", end:"top 35%", scrub:1}});
-});
-$$("[data-parallax]").forEach(img => {
-  gsap.fromTo(img, {yPercent:-7}, {yPercent:7, ease:"none",
-    scrollTrigger:{trigger:img.parentElement, start:"top bottom", end:"bottom top", scrub:true}});
-});
-
-/* =====================================================================
-   7. COLORIS ÉPINGLÉS : le hoodie change de teinte au scroll
+   3. FACE ET DOS ÉPINGLÉS (collection) : les vues s'enchaînent au scroll
    ===================================================================== */
 if($("#colorsPin")){
   const pics = $$("#colorPics img"), names = $$("#colorNames li");
   const n = pics.length - 1;
   gsap.set(pics, {opacity:0}); gsap.set(pics[0], {opacity:1});
-  const tl = gsap.timeline({scrollTrigger:{trigger:"#colorsPin", start:"top top", end:"+=" + (n * 70) + "%", pin:true, scrub:.8, anticipatePin:1,
-    onUpdate:s => { const i = Math.round(s.progress * n); names.forEach((li, k) => li.classList.toggle("on", k === i)); }}});
+  /* zoom sur la photo affichée : clic (ou Entrée) = ×2,5 à l'endroit visé, l'image suit le pointeur ;
+     re-clic, Échap ou passage à une autre vue = retour */
+  const zb = $("#cpZoom"), zin = zb && $(".cp-in", zb);
+  let zoomed = false, view = 0;
+  /* au-dessus de la photo : brodé ou imprimé (data-tech de chaque photo) */
+  const tech = $("#cpTech");
+  const setTech = () => { if(!tech) return; const t = pics[view] && pics[view].dataset.tech;
+    tech.textContent = t || ""; tech.hidden = !t; tech.classList.toggle("brode", t === "Brodé"); };
+  setTech();
+  const zoom = on => { if(!zb) return; zoomed = on; zb.classList.toggle("on", on); zb.setAttribute("aria-pressed", on);
+    zb.setAttribute("aria-label", on ? "Dézoomer la photo" : "Zoomer sur la photo"); if(!on) zin.style.transformOrigin = ""; };
+  const aim = e => { const r = zb.getBoundingClientRect();
+    zin.style.transformOrigin = `${Math.min(100, Math.max(0, (e.clientX - r.left) / r.width * 100))}% ${Math.min(100, Math.max(0, (e.clientY - r.top) / r.height * 100))}%`; };
+  if(zb){
+    zb.addEventListener("click", e => { if(!zoomed && e.detail) aim(e); zoom(!zoomed); });
+    zb.addEventListener("pointermove", e => { if(zoomed) aim(e); });
+    zb.addEventListener("pointerleave", e => { if(e.pointerType === "mouse") zoom(false); });
+    document.addEventListener("keydown", e => { if(e.key === "Escape" && zoomed) zoom(false); });
+  }
+  /* durée : n changements de vue + un temps d'arrêt sur la dernière avant de passer à la suite */
+  const T = n + .8;
+  const tl = gsap.timeline({scrollTrigger:{trigger:"#colorsPin", start:"top top", end:"+=" + (T * 70) + "%", pin:true, scrub:.8, anticipatePin:1,
+    onUpdate:s => { const i = Math.min(n, Math.round(s.progress * T)); names.forEach((li, k) => li.classList.toggle("on", k === i));
+      if(i !== view){ view = i; if(zoomed) zoom(false); setTech(); } }}});
   for(let i = 1; i <= n; i++){
     tl.to(pics[i - 1], {opacity:0, scale:.94, rotation:-2, duration:.6, ease:"power2.inOut"}, i - 1 + .2)
       .fromTo(pics[i], {opacity:0, scale:1.06, rotation:2}, {opacity:1, scale:1, rotation:0, duration:.6, ease:"power2.inOut"}, i - 1 + .2);
   }
-  tl.to({}, {duration:.2});
+  tl.to({}, {duration:1});                       /* dernière vue : on y reste un cran avant la suite */
   /* clic sur un nom = aller à ce coloris */
   names.forEach((li, k) => li.addEventListener("click", () => {
     const st = tl.scrollTrigger;
-    window.scrollTo({top: st.start + (st.end - st.start) * (k / n) + 2, behavior:"smooth"});
+    window.scrollTo({top: st.start + (st.end - st.start) * (k ? (k - .2) / T : 0) + 2, behavior:"smooth"});
   }));
 }
 
 /* =====================================================================
-   8. CHIFFRES QUI DÉFILENT
+   4. CHIFFRES QUI DÉFILENT
    ===================================================================== */
 $$("[data-count]").forEach(el => {
   const to = +el.dataset.count, o = {v:0};
   el.textContent = "0";
   ScrollTrigger.create({trigger:el, start:"top 90%", once:true,
     onEnter:() => gsap.to(o, {v:to, duration:to > 10 ? 1.6 : .9, ease:"power2.out", onUpdate:() => el.textContent = Math.round(o.v)})});
-});
-
-/* =====================================================================
-   9. CARTES « ÉCOLE » : légère profondeur au scroll
-   ===================================================================== */
-mm.add(DESK, () => {
-  $$(".school .card").forEach((c, i) => {
-    gsap.fromTo(c, {yPercent:10 + (i % 3) * 10}, {yPercent:0, ease:"none",
-      scrollTrigger:{trigger:".school .cards", start:"top bottom", end:"top 30%", scrub:true}});
-  });
-});
-
-/* Logo du contact qui tourne doucement à l'entrée */
-gsap.fromTo(".contact .mark", {rotation:-90, scale:.6}, {rotation:0, scale:1, ease:"none",
-  scrollTrigger:{trigger:".contact", start:"top bottom", end:"top 40%", scrub:true}});
-
-/* =====================================================================
-   10. NAVIGATION LOCALE : section active
-   ===================================================================== */
-$$(".lnav .anchors a").forEach(a => {
-  const sec = $(a.getAttribute("href"));
-  if(!sec) return;
-  ScrollTrigger.create({trigger:sec, start:"top 55%", end:"bottom 55%",
-    onToggle:s => a.classList.toggle("on", s.isActive)});
 });
 
 /* Recalcul une fois toutes les images chargées */
@@ -469,4 +434,26 @@ if($("#hero") && $("#inkZone")){
     snapTo:v => pts.reduce((b, p) => Math.abs(p - v) < Math.abs(b - v) ? p : b, 0),
     duration:{min:.35, max:.8}, delay:.08, ease:"power2.inOut"}});
 }
+/* =====================================================================
+   COLLECTION EN DIAPORAMA (ordinateur) : chaque partie fait un écran et la page s'aimante sur la plus proche.
+   « Face et dos » s'arrête sur chaque vue.
+   ===================================================================== */
+if(document.body.classList.contains("coll")) mm.add(DESK, () => {
+  let pts = [0], free = [];
+  const compute = () => {
+    const max = ScrollTrigger.maxScroll(window) || 1, list = [0];
+    const pinOf = id => ScrollTrigger.getAll().find(s => s.pin && s.trigger && s.trigger.id === id);
+    const col = pinOf("colorsPin");
+    if(col){ const n = $$("#colorPics img").length - 1; for(let k = 1; k <= n; k++) list.push(col.start + (col.end - col.start) * (k - .2) / (n + .8));   /* vue k entièrement affichée */
+      list.push(col.start, col.end); }
+    $$(".coll main > section:not(.racks):not(.colors)").forEach(el => list.push(el.getBoundingClientRect().top + scrollY));
+    list.push(max);
+    pts = [...new Set(list.map(v => Math.round(Math.min(1, Math.max(0, v / max)) * 1e4) / 1e4))].sort((a, b) => a - b);
+  };
+  ScrollTrigger.addEventListener("refresh", compute); compute();
+  const snap = ScrollTrigger.create({start:0, end:"max", snap:{
+    snapTo:v => free.some(([a, b]) => v > a + .002 && v < b - .002) ? v : pts.reduce((b, p) => Math.abs(p - v) < Math.abs(b - v) ? p : b, 0),
+    duration:{min:.35, max:.8}, delay:.08, ease:"power2.inOut"}});
+  return () => { ScrollTrigger.removeEventListener("refresh", compute); snap.kill(); };
+});
 })();

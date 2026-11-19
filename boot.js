@@ -1,5 +1,12 @@
 /* Chargé dans <head> : prépare les états de départ des animations (sauf si l'utilisateur demande moins d'animations) */
 (function(){
+  /* Anti « clickjacking » : GitHub Pages ne permet pas d'envoyer l'en-tête qui interdit l'intégration du site dans une
+     autre page ; si le site est affiché dans le cadre d'un autre site, on le masque et on ouvre la vraie page à la place. */
+  if(window.top !== window.self){
+    var same = false; try{ same = window.top.location.origin === window.location.origin; }catch(e){}
+    if(!same){ document.documentElement.style.display = "none";
+      try{ window.top.location = window.location.href; }catch(e){} return; }
+  }
   if(window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches) return;
   var d = document.documentElement;
   d.classList.add("js-anim");

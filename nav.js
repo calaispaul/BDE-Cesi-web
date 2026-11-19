@@ -4,12 +4,42 @@
   var gnav = document.getElementById("gnav");
   if(!gnav) return;
   var burger = gnav.querySelector(".burger");
+  /* Le logo : sur téléphone/tablette il ouvre et ferme le menu (le bouton ☰ est masqué) en faisant un tour sur lui-même ;
+     sur ordinateur c'est un simple lien vers l'accueil. */
+  var brand = gnav.querySelector(".wrap > .brand"), small = matchMedia("(max-width: 834px)");
+  /* le tour est fait aussi par le logo de la copie noire de la barre (visible sur les sections noires) */
+  /* ouverture : tour de droite à gauche ; fermeture : tour de gauche à droite */
+  var spin = function(back){ gnav.querySelectorAll(".brand").forEach(function(b){ b.classList.remove("spin", "spin-back"); void b.offsetWidth; b.classList.add(back ? "spin-back" : "spin"); }); };
+  /* le menu sort du côté de l'étoile (en haut à gauche) et glisse vers la droite, poussé par ses pieds qui tournent ;
+     à la fermeture il repart par le même chemin (classe .closing le temps de l'animation, voir site.css) */
+  var closeTimer = 0, calm = matchMedia("(prefers-reduced-motion: reduce)");
+  var isOpen = function(){ return gnav.classList.contains("open") && !gnav.classList.contains("closing"); };
   var setMenu = function(open){
-    gnav.classList.toggle("open", open);
-    burger.setAttribute("aria-expanded", open);
-    burger.setAttribute("aria-label", open ? "Fermer le menu" : "Ouvrir le menu");
+    clearTimeout(closeTimer);
+    if(open){ gnav.classList.remove("closing"); gnav.classList.add("open"); }
+    else if(gnav.classList.contains("open") && !calm.matches){
+      gnav.classList.add("closing");
+      closeTimer = setTimeout(function(){ gnav.classList.remove("open", "closing"); }, 480);
+    }else gnav.classList.remove("open", "closing");
+    [burger, small.matches ? brand : null].forEach(function(b){ if(!b) return; b.setAttribute("aria-expanded", open); b.setAttribute("aria-label", open ? "Fermer le menu" : "Ouvrir le menu"); });
   };
-  burger.addEventListener("click", function(){ setMenu(!gnav.classList.contains("open")); });
+  var mode = function(){                        /* rôle du logo selon la taille d'écran */
+    if(!brand) return;
+    if(small.matches){ brand.setAttribute("role", "button"); brand.setAttribute("aria-controls", "sheet"); brand.setAttribute("aria-expanded", isOpen()); brand.setAttribute("aria-label", "Ouvrir le menu"); }
+    else { setMenu(false); ["role", "aria-controls", "aria-expanded"].forEach(function(k){ brand.removeAttribute(k); }); brand.setAttribute("aria-label", "BDE CESI Lille – accueil"); }
+  };
+  mode(); if(small.addEventListener) small.addEventListener("change", mode);
+  var toggle = function(e){ if(e) e.preventDefault(); setMenu(!isOpen()); };
+  if(burger) burger.addEventListener("click", toggle);
+  if(brand){
+    brand.addEventListener("click", function(e){
+      if(e.metaKey || e.ctrlKey || e.shiftKey || e.button > 0) return;     /* ouverture dans un nouvel onglet : on laisse faire */
+      if(small.matches){ spin(!isOpen()); toggle(e); }   /* ordinateur : simple lien vers l'accueil, sans rotation */
+    });
+    brand.addEventListener("keydown", function(e){ if(e.key === " " && small.matches){ spin(!isOpen()); toggle(e); } });
+  }
+  /* clic à côté du menu (sur ordinateur il ne couvre pas tout l'écran) : on le ferme */
+  document.addEventListener("click", function(e){ if(isOpen() && !gnav.contains(e.target) && !e.target.closest("#sheet")) setMenu(false); });
   document.querySelectorAll("#sheet a").forEach(function(a){ a.addEventListener("click", function(){ setMenu(false); }); });
   document.addEventListener("keydown", function(e){ if(e.key === "Escape") setMenu(false); });
 

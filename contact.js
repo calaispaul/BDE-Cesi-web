@@ -6,7 +6,7 @@ const $$ = (s, c = document) => [...c.querySelectorAll(s)];
 const root = document.documentElement;
 const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
 const anim = !!(window.gsap && window.ScrollTrigger) && !reduce;
-const EMAIL = (typeof SHOP !== "undefined" && SHOP.contactEmail) || "bde-cesi-lille@viacesi.fr";
+const EMAIL = (typeof SHOP !== "undefined" && SHOP.contactEmail) || "bde-lille@viacesi.fr";
 const ENDPOINT = (() => {
   const raw = typeof SHOP !== "undefined" ? SHOP.contactEndpoint : "";
   try{ const u = new URL(raw); return u.protocol === "https:" && u.hostname === "formspree.io" ? u.href : ""; }catch(e){ return ""; }
@@ -95,7 +95,7 @@ gsap.ticker.lagSmoothing(0);
 
 /* Entrée */
 gsap.timeline({defaults:{ease:"expo.out"}})
-  .fromTo(["#gnav", ".lnav"], {opacity:0, y:-14}, {opacity:1, y:0, duration:1, stagger:.08}, 0)
+  .fromTo("#gnav", {opacity:0, y:-14}, {opacity:1, y:0, duration:1, stagger:.08}, 0)
   .fromTo(".c-hero .kicker", {opacity:0, y:18}, {opacity:1, y:0, duration:1.1}, .2)
   .fromTo(".c-hero h1 .ln > span", {y:0, yPercent:110}, {y:0, yPercent:0, duration:1.4}, .3)
   .fromTo(".c-hero .lead", {opacity:0, y:22}, {opacity:1, y:0, duration:1.1}, .7)
@@ -111,12 +111,6 @@ ScrollTrigger.batch("[data-rise]", {start:"top 90%", once:true,
 /* Champs du formulaire qui arrivent un par un */
 gsap.from("#cf > *", {opacity:0, y:24, duration:.9, stagger:.06, ease:"power3.out",
   scrollTrigger:{trigger:"#cf", start:"top 80%", once:true}});
-
-/* Navigation locale : section active */
-$$(".lnav .anchors a").forEach(a => {
-  const sec = $(a.getAttribute("href")); if(!sec) return;
-  ScrollTrigger.create({trigger:sec, start:"top 55%", end:"bottom 55%", onToggle:s => a.classList.toggle("on", s.isActive)});
-});
 
 window.addEventListener("load", () => ScrollTrigger.refresh());
 })();

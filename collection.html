@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self' https://formspree.io; base-uri 'self'; form-action 'self' https://formspree.io; object-src 'none'; frame-src https://*.sumupstore.com https://*.sumup.com">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self' https://formspree.io; base-uri 'self'; form-action 'self' https://formspree.io; object-src 'none'">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#ffffff">
 <title>Collection – BDE CESI Lille</title>
@@ -21,7 +21,7 @@
 <script src="home.js" defer></script>
 <script src="logo-shape.js" defer></script>
 <script type="module" src="collection3d.js"></script>
-</head><body>
+</head><body class="coll">
 <a class="skip" href="#contenu">Aller au contenu</a>
 
 <header class="gnav" id="gnav">
@@ -68,96 +68,43 @@
   </div>  <div class="rack-fallback sr" id="rackFallback"></div>
 </section>
 <!-- Ouverture plein cadre -->
-<section class="reveal" aria-label="Le pull CESI Lille, face et dos">
-  <div class="frame" id="frame">
-    <div class="media">
-      <picture>
-        <source media="(max-width:700px)" srcset="images/banner-sweat-m.jpg">
-        <img src="images/banner-sweat.jpg" alt="Le hoodie CESI Lille noir, de face et de dos avec le blason CESI Lille 2026-2027" width="2400" height="1000" loading="lazy" decoding="async">
-      </picture>
-    </div>
-  </div>
-</section>
-
-<!-- Lookbook horizontal -->
-<section class="lookbook" id="lookbook" aria-labelledby="lb-title">
-  <div class="wrap">
-    <div class="sec-head">
-      <h2 class="h2" id="lb-title" data-rise>Lookbook.</h2>
-      <a class="link" href="boutique.html" data-rise>Commander</a>
-    </div>
-  </div>
-  <div class="track-wrap" id="trackWrap">
-    <div class="track" id="track">
-      <article class="look">
-        <div class="txt"><h3>Le noir, en signature.</h3><p>Hoodie · Noir</p></div>
-        <div class="img"><img src="images/sweat-face.jpg" alt="Hoodie CESI Lille noir, vue de face" width="1200" height="1200" loading="lazy" decoding="async"></div>
-      </article>
-      <article class="look">
-        <div class="txt"><h3>Le blason, au dos.</h3><p>Impression blanche sur noir</p></div>
-        <div class="img"><img src="images/sweat-dos.jpg" alt="Dos du hoodie noir avec le blason CESI Lille 2026-2027" width="1200" height="1200" loading="lazy" decoding="async"></div>
-      </article>
-      <article class="look">
-        <div class="txt"><h3>Discret, devant.</h3><p>T-shirt · Noir</p></div>
-        <div class="img"><img src="images/tshirt-black-face.jpg" alt="T-shirt CESI Lille noir, devant : petit logo chromé en haut du torse" width="1200" height="1200" loading="lazy" decoding="async"></div>
-      </article>
-      <article class="look">
-        <div class="txt"><span class="label-new">Nouveau</span><h3>Lille, écrite à la main.</h3><p>T-shirt · Noir</p></div>
-        <div class="img"><img src="images/tshirt-black-dos.jpg" alt="Dos du T-shirt CESI Lille noir : illustration au trait et texte manuscrit" width="1200" height="1200" loading="lazy" decoding="async"></div>
-      </article>
-    </div>
-    <div class="progress" aria-hidden="true"><i id="lbProgress"></i></div>
-  </div>
-</section>
-
 <!-- Face et dos, épinglé -->
 <section class="colors" id="coloris" aria-labelledby="col-title">
   <div class="colors-pin" id="colorsPin">
     <div class="wrap">
       <div class="grid">
         <div>
-          <p class="kicker">Face et dos</p>
+          <p class="kicker" id="col-title">Face et dos</p>
           <ul class="names" id="colorNames">
             <li class="on"><i style="background:#1d1d1f"></i>Hoodie</li>
             <li><i style="background:#1d1d1f"></i>Hoodie, dos</li>
             <li><i style="background:#1d1d1f"></i>T-shirt</li>
             <li><i style="background:#1d1d1f"></i>T-shirt, dos</li>
           </ul>
-          <p class="note" id="col-title">Aperçu en noir. Les autres coloris sont dans la boutique.</p>
+          <p class="cp-credit">Designs par <b>Josué Trésor Boupana Moukoumi</b><br><a class="link" href="https://www.instagram.com/i.w.2.s.u.i.t.f/" target="_blank" rel="noopener noreferrer">@i.w.2.s.u.i.t.f sur Instagram</a></p>
         </div>
         <div class="pics" id="colorPics">
-          <img src="images/sweat-face.jpg" alt="Hoodie noir, face" width="1200" height="1200" loading="lazy" decoding="async">
-          <img src="images/sweat-dos.jpg" alt="Hoodie noir, dos" width="1200" height="1200" loading="lazy" decoding="async">
-          <img src="images/tshirt-black-face.jpg" alt="T-shirt noir, face" width="1200" height="1200" loading="lazy" decoding="async">
-          <img src="images/tshirt-black-dos.jpg" alt="T-shirt noir, dos" width="1200" height="1200" loading="lazy" decoding="async">
+          <button type="button" class="cp-zoom" id="cpZoom" aria-pressed="false" aria-label="Zoomer sur la photo"><span class="cp-in">
+            <img src="images/sweat-face.jpg" data-tech="Brodé" alt="Hoodie noir, face : logo étoile brodé" width="1200" height="1200" loading="lazy" decoding="async">
+            <img src="images/sweat-dos.jpg" data-tech="Imprimé" alt="Hoodie noir, dos : blason imprimé" width="1200" height="1200" loading="lazy" decoding="async">
+            <img src="images/tshirt-black-face.jpg" data-tech="Imprimé" alt="T-shirt noir, face : logo étoile imprimé" width="1200" height="1200" loading="lazy" decoding="async">
+            <img src="images/tshirt-black-dos.jpg" data-tech="Imprimé" alt="T-shirt noir, dos : impression CESI Lille" width="1200" height="1200" loading="lazy" decoding="async">
+          </span></button>
+          <p class="cp-tech" id="cpTech" aria-live="polite">Brodé</p>
         </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- La matière -->
-<section class="editorial" aria-label="La matière">
-  <div class="wrap">
-    <div class="ed-row rev">
-      <div class="ed-txt">
-        <p class="kicker" data-rise>La matière</p>
-        <h2 class="h2" data-rise>330 g/m².<br>Ça se sent.</h2>
-        <p data-rise><b>Un molleton gratté</b>, 70 % coton et 30 % polyester, avec une grande poche kangourou.</p>
-        <p data-rise>Coupe oversize, épaules tombantes, poignets et ourlet côtelés. Le genre de pièce qui traverse plusieurs promos.</p>
-      </div>
-      <div class="ed-media" data-enter="left">
-        <img src="images/detail-dos.jpg" alt="Gros plan du blason CESI Lille 2026-2027 imprimé au dos du pull" width="1000" height="1000" loading="lazy" decoding="async" data-parallax>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- Chiffres -->
+<!-- La matière + chiffres -->
 <section class="specs" aria-labelledby="specs-title">
   <div class="wrap">
     <div class="head">
-      <h2 class="h2" id="specs-title" data-rise>En chiffres.</h2>
+      <p class="kicker" data-rise>La matière</p>
+      <h2 class="h2" id="specs-title" data-rise>330 g/m². Ça se sent.</h2>
+      <p data-rise><b>Un molleton gratté</b>, 70 % coton et 30 % polyester, avec une grande poche kangourou.
+        Coupe oversize, épaules tombantes, poignets et ourlet côtelés. Le genre de pièce qui traverse plusieurs promos.</p>
     </div>
     <div class="spec-grid">
       <div class="spec" data-rise><span class="num"><span data-count="2">2</span><small>pièces</small></span><h3>Pull et T-shirt</h3><p>Le même blason, deux façons de le porter.</p></div>
@@ -170,6 +117,25 @@
 
 
 <!-- Module à venir -->
+
+<!-- L'atelier : Agathe (La Maison Vitali) brode et imprime la collection -->
+<section class="atelier" aria-labelledby="at-title">
+  <div class="wrap at-in">
+    <div class="at-collab" role="img" aria-label="Collaboration CESI Lille × Maison Vitali" data-rise>
+      <img class="at-word" src="images/collab/cesi-lille.png" alt="" width="600" height="540" loading="lazy" decoding="async">
+      <span class="at-x" aria-hidden="true">×</span>
+      <img src="images/collab/maison-vitali.jpg" alt="" width="640" height="640" loading="lazy" decoding="async">
+    </div>
+    <p class="kicker" data-rise>L'atelier</p>
+    <h2 class="h2" id="at-title" data-rise>Brodé par Agathe.</h2>
+    <p class="at-lead" data-rise><b>Agathe Huguet</b>, de la <b>Maison Vitali</b>, brode le logo étoile sur le devant de nos pulls et réalise aussi les impressions de la collection. Issue du CESI, elle brode localement, en France.</p>
+    <ul class="at-list" data-rise>
+      <li><span class="at-tag brode">Brodé</span>Devant du pull</li>
+      <li><span class="at-tag">Imprimé</span>Dos du pull, devant et dos du T-shirt</li>
+    </ul>
+    <a class="pill blue lg" href="https://www.instagram.com/lamaisonvitali/" target="_blank" rel="noopener noreferrer" data-rise>Voir son travail sur Instagram</a>
+  </div>
+</section>
 
 <!-- Fin de page : vers la boutique -->
 <section class="next-step" aria-labelledby="next-shop">
@@ -194,12 +160,12 @@
         </div>
       </div>
       <div class="ctas">
-        <a class="pill blue lg" href="mailto:bde-cesi-lille@viacesi.fr" data-mail>Écrire au BDE</a>
+        <a class="pill blue lg" href="mailto:bde-lille@viacesi.fr" data-mail>Écrire au BDE</a>
         <a class="link" href="contact.html">Page contact</a>
       </div>
     </div>
     <div class="fcols">
-      <div><h4>Contact</h4><a href="mailto:bde-cesi-lille@viacesi.fr" data-mail data-mail-text>bde-cesi-lille@viacesi.fr</a><span>1 Rue Héloïse, Lille</span></div>
+      <div><h4>Contact</h4><a href="mailto:bde-lille@viacesi.fr" data-mail data-mail-text>bde-lille@viacesi.fr</a><span>1 Rue Héloïse, Lille</span></div>
       <div><h4>Collection</h4><a href="collection.html">La collection</a><a href="boutique.html">Boutique</a></div>
       <div><h4>BDE</h4><a href="index.html#design">Le logo</a><a href="index.html#nous">Nous</a><a href="contact.html">Contact</a></div>
       <div><h4>Légal</h4><a href="infos-legales.html#mentions">Mentions légales</a><a href="infos-legales.html#cgv">Conditions de vente</a><a href="infos-legales.html#confidentialite">Confidentialité</a></div>

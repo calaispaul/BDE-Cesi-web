@@ -23,9 +23,10 @@ const D = THREE.MathUtils.degToRad;
 const KIND = {hoodie:"pull", tshirt:"tee"};
 const pieces = [];
 PRODUCTS.forEach(p => { const k = KIND[p.id]; if(!k) return;
-  /* T-shirts : en attendant les photos de chaque coloris, tous reprennent celles du noir */
-  p.colors.forEach(c => { const img = k === "tee" ? "noir" : c.id;
+  p.colors.forEach(c => { const img = c.id;
     pieces.push({p, c, kind:k, face:`images/pieces/${k}-${img}-face.png`, dos:`images/pieces/${k}-${img}-dos.png`, side:`images/pieces/${k}-${img}-side.png`}); }); });
+/* le T-shirt noir ferme la tringle */
+{ const i = pieces.findIndex(x => x.kind === "tee" && x.c.id === "noir"); if(i >= 0) pieces.push(pieces.splice(i, 1)[0]); }
 
 const sheet = buildSheet();
 buildList();
@@ -99,7 +100,36 @@ function makeHanger(){
   return g;
 }
 const loader = new THREE.TextureLoader(), texCache = {};
-const tex = src => { if(!texCache[src]){ const t = loader.load(src); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 4; texCache[src] = t; } return texCache[src]; };
+const texReady = {};
+/* Texture 3D d'une photo : le liseré clair laissé par le détourage (fond blanc d'origine) est remplacé par la
+   couleur du tissu juste à l'intérieur, sinon il dessine un contour blanc sur la tranche quand le vêtement tourne.
+   Les fichiers ne changent pas (la fiche produit garde les photos d'origine). */
+function cleanEdges(img){
+  const c = document.createElement("canvas"), w = c.width = img.naturalWidth || img.width, h = c.height = img.naturalHeight || img.height;
+  const x = c.getContext("2d", {willReadFrequently:true}); x.drawImage(img, 0, 0);
+  const id = x.getImageData(0, 0, w, h), d = id.data, n = w * h, RIM = 4;
+  const solid = new Uint8Array(n); for(let i = 0; i < n; i++) solid[i] = d[i * 4 + 3] >= 250 ? 1 : 0;
+  /* le bord : pixels opaques à moins de RIM px d'un pixel non opaque */
+  let edge = new Uint8Array(n);
+  for(let y = 0; y < h; y++) for(let X = 0; X < w; X++){ const i = y * w + X; if(!d[i * 4 + 3]) continue;
+    let near = !solid[i];
+    for(let k = 1; k <= RIM && !near; k++) near = X < k || y < k || X >= w - k || y >= h - k || !solid[i - k] || !solid[i + k] || !solid[i - k * w] || !solid[i + k * w];
+    edge[i] = near ? 1 : 0; }
+  /* on repeint le bord de proche en proche avec la couleur intérieure voisine */
+  for(let pass = 0; pass < RIM + 2; pass++){ const next = edge.slice(); let left = 0;
+    for(let y = 1; y < h - 1; y++) for(let X = 1; X < w - 1; X++){ const i = y * w + X; if(!edge[i] || !d[i * 4 + 3]) continue;
+      let r = 0, g = 0, b = 0, m = 0;
+      for(const j of [i - 1, i + 1, i - w, i + w]) if(d[j * 4 + 3] && !edge[j]){ r += d[j * 4]; g += d[j * 4 + 1]; b += d[j * 4 + 2]; m++; }
+      if(m){ d[i * 4] = r / m; d[i * 4 + 1] = g / m; d[i * 4 + 2] = b / m; next[i] = 0; } else left++; }
+    edge = next; if(!left) break; }
+  x.putImageData(id, 0, 0); return c;
+}
+const tex = src => { if(!texCache[src]){ let ok; texReady[src] = new Promise(r => { ok = r; });
+  const t = new THREE.Texture(); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 4; texCache[src] = t;
+  const img = new Image(); img.decoding = "async";
+  img.onload = () => { try{ t.image = cleanEdges(img); }catch(e){ t.image = img; } t.needsUpdate = true; ok(t); };
+  img.src = src; } return texCache[src]; };
+
 const rail = new THREE.Group(); scene.add(rail);                  /* tout ce qui glisse le long de la tringle */
 /* carrousel : chaque pièce n'existe qu'une fois ; poussée hors du cadre d'un côté, elle revient de l'autre.
    La boucle fait au moins la largeur visible, pour que le passage d'un bord à l'autre se fasse hors champ. */
@@ -122,16 +152,38 @@ const items = pieces.map((pc, i) => { const n = i;
   front.userData.item = back.userData.item = side.userData.item = g;
   const x = (i - (pieces.length - 1) / 2) * SPACING;
   g.position.set(x, BAR_Y, 0);
-  g.userData = {pc, i, n, x, turn, swing, angle:0, vel:0, hover:0, shift:0, front, back, side};
+  g.userData = {pc, i, n, x, turn, swing, angle:0, vel:0, hover:0, shift:0, front, back, side, barY:BAR_Y, row:0};
   rail.add(g); return g;
 });
 
 /* Cadrage : on cadre sur la hauteur des vêtements, la tringle déborde des deux côtés */
 let viewW = 6;
+/* Téléphone : deux tringles, les pulls en haut et les T-shirts en dessous, bien espacés pour viser au doigt.
+   Tout tient dans l'écran : pas de carrousel, on touche directement la pièce. */
+const SPLIT_W = 640, ROW_GAP = 1.6, SPACE2 = .52;
+let split = false;
+const bar2 = bar.clone(); bar2.visible = false; scene.add(bar2);
+function layout(){
+  split = (stage.clientWidth || 0) < SPLIT_W;
+  if(split){
+    [items.filter(g => g.userData.pc.kind !== "tee"), items.filter(g => g.userData.pc.kind === "tee")].forEach((row, r) =>
+      row.forEach((g, i) => { const u = g.userData; u.x = (i - (row.length - 1) / 2) * SPACE2; u.barY = r ? BAR_Y - ROW_GAP : BAR_Y; u.row = r; }));
+  }else items.forEach((g, i) => { const u = g.userData; u.x = (i - (items.length - 1) / 2) * SPACING; u.barY = BAR_Y; u.row = 0; });
+  bar2.visible = split; bar2.position.y = BAR_Y - ROW_GAP;
+  if(split){ offset = target = vel = 0; }
+}
 function place(){
+  layout();
   const w = stage.clientWidth || 1, h = stage.clientHeight || 1, aspect = w / h;
   renderer.setSize(w, h, false); camera.aspect = aspect;
-  const t = Math.tan(D(camera.fov / 2)), d = Math.max(1.15 / t, 1.45 / (t * aspect));   /* au moins ~2,5 pièces en largeur sur mobile */
+  const t = Math.tan(D(camera.fov / 2));
+  if(split){                                  /* cadre les deux tringles et la plus longue rangée (5 T-shirts) */
+    const top = BAR_Y + .2, bot = BAR_Y - ROW_GAP - 1.2, cy = (top + bot) / 2, wide = 5 * SPACE2 + .2;
+    const d = Math.max((top - bot) / 2 / t, wide / 2 / (t * aspect));
+    camera.position.set(0, cy, d); camera.lookAt(0, cy, 0); camera.updateProjectionMatrix();
+    viewW = 2 * d * t * aspect; LOOP = 1e6; clampLimits(); if(booster) booster.place(); return;
+  }
+  const d = Math.max(1.15 / t, 1.45 / (t * aspect));   /* au moins ~2,5 pièces en largeur sur mobile */
   camera.position.set(0, .62, d); camera.lookAt(0, .62, 0); camera.updateProjectionMatrix();
   viewW = 2 * d * t * aspect;
   LOOP = Math.max((pieces.length + 1) * SPACING, viewW + .6);   /* une pièce qui sort d'un bord rentre aussitôt par l'autre */
@@ -155,6 +207,7 @@ canvas.addEventListener("pointermove", e => {
   if(dragging){
     const dx = (e.clientX - lastX) * worldPerPx, now = performance.now();
     moved += Math.abs(e.clientX - lastX);
+    if(split){ lastX = e.clientX; lastT = now; return; }
     /* résistance élastique au-delà des bouts */
     const over = target < minOff ? minOff - target : target > maxOff ? target - maxOff : 0;
     target += dx * (over ? Math.max(.2, 1 - over * 1.5) : 1);
@@ -177,7 +230,7 @@ canvas.addEventListener("pointercancel", release);
 canvas.addEventListener("pointerleave", () => { if(!dragging){ hovered = null; canvas.style.cursor = ""; } });
 /* molette / pavé tactile horizontal */
 canvas.addEventListener("wheel", e => {
-  if(!opened || Math.abs(e.deltaX) < Math.abs(e.deltaY)) return;
+  if(!opened || split || Math.abs(e.deltaX) < Math.abs(e.deltaY)) return;
   e.preventDefault(); target -= e.deltaX * worldPerPx;
 }, {passive:false});
 
@@ -191,12 +244,13 @@ function pick(e){
      se chevauchent (zones transparentes comprises), ce qui faisait attraper la voisine, surtout au doigt.
      La pièce la plus proche horizontalement gagne ; celle déjà tournée de face compte un peu plus large. */
   if(!ray.ray.intersectPlane(railPlane, hitPt)) return null;
-  if(hitPt.y > BAR_Y + .15 || hitPt.y < BAR_Y - 1.3) return null;
+  const sp = split ? SPACE2 : SPACING;
   let best = null, bestD = Infinity;
-  items.forEach(g => { if(!g.visible) return;
-    const half = SPACING * .5 + g.userData.hover * .3, d = Math.abs(hitPt.x - g.position.x) - half;
+  items.forEach(g => { const u = g.userData; if(!g.visible) return;
+    if(hitPt.y > u.barY + .15 || hitPt.y < u.barY - 1.3) return;             /* la bonne tringle */
+    const half = sp * .5 + u.hover * .3, d = Math.abs(hitPt.x - g.position.x) - half;
     if(d < bestD){ bestD = d; best = g; } });
-  return bestD < SPACING * .25 ? best : null;
+  return bestD < sp * .25 ? best : null;
 }
 const railPlane = new THREE.Plane(new THREE.Vector3(0, 0, 1), 0), hitPt = new THREE.Vector3();
 
@@ -214,9 +268,9 @@ function frame(now){
   }
   offset += (target - offset) * .18;
   const speed = offset - prevOffset; prevOffset = offset;
-  const hx = hovered ? wrap(hovered.userData.x + offset) : 0;
+  const hx = hovered ? (split ? hovered.userData.x : wrap(hovered.userData.x + offset)) : 0;
   items.forEach((g, i) => {
-    const u = g.userData, px = wrap(u.x + offset);
+    const u = g.userData, px = split ? u.x : wrap(u.x + offset);
     /* balancement léger : les vêtements traînent un peu derrière le mouvement, sans s'emballer */
     const force = -speed * 1.3 - u.angle * .07 - u.vel * .2;
     u.vel += force; u.angle = Math.max(-.16, Math.min(.16, u.angle + u.vel));
@@ -224,13 +278,13 @@ function frame(now){
     /* survol : les voisines s'écartent */
     u.hover += ((g === hovered ? 1 : 0) - u.hover) * .14;
     /* les voisines s'écartent pour laisser la pièce survolée se tourner face à nous */
-    const dh = wrap(px - hx);
-    u.shift += ((!hovered || g === hovered ? 0 : dh < 0 ? -.42 : .42) - u.shift) * .12;
+    const dh = split ? px - hx : wrap(px - hx), same = !hovered || hovered.userData.row === u.row;
+    u.shift += ((!hovered || g === hovered || !same ? 0 : dh < 0 ? -.42 : .42) - u.shift) * .12;
     u.turn.rotation.y = YAW * (1 - .92 * u.hover);
     const show = u.hover > .04; u.front.visible = u.back.visible = show;
     u.side.material.opacity = Math.max(0, 1 - u.hover * 2.2); u.side.visible = u.side.material.opacity > .01;
     u.side.parent.rotation.z = u.swing.rotation.z;
-    if(!flying){ g.position.x = px + u.shift; g.position.y = BAR_Y + .02 * u.hover; }
+    if(!flying){ g.position.x = px + u.shift; g.position.y = u.barY + .02 * u.hover; }
     g.scale.setScalar(1);
   });
   renderer.render(scene, camera);
@@ -489,15 +543,16 @@ function landPieces(){
   flying = true;
   const from = new THREE.Vector3(0, BAR_Y - .3, .3);   /* le haut du sachet ouvert */
   /* seules les pièces visibles s'envolent du booster (de gauche à droite) ; les autres sont déjà en place hors champ */
-  const shown = items.filter(g => Math.abs(wrap(g.userData.x + offset)) < viewW / 2 + .4).sort((a, b) => a.userData.x - b.userData.x);
+  const posX = g => split ? g.userData.x : wrap(g.userData.x + offset);
+  const shown = items.filter(g => Math.abs(posX(g)) < viewW / 2 + .4).sort((a, b) => a.userData.x - b.userData.x);
   let left = shown.length; if(!left){ flying = false; return; }
-  items.forEach(g => { if(!shown.includes(g)) g.position.set(wrap(g.userData.x + offset), BAR_Y, 0); });
+  items.forEach(g => { if(!shown.includes(g)) g.position.set(posX(g), g.userData.barY, 0); });
   shown.forEach((g, i) => {
-    const u = g.userData, o = {t:0}, tx = wrap(u.x + offset);
+    const u = g.userData, o = {t:0}, tx = posX(g), ty = u.barY;
     g.position.copy(from); g.scale.setScalar(.15);
     G.to(o, {t:1, duration:1.1, delay:.15 + i * .07, ease:"power3.out", onUpdate:() => {
-      const k = o.t, a = 1 - k, midY = BAR_Y + .9;
-      g.position.set(a * a * from.x + 2 * a * k * (tx * .5) + k * k * tx, a * a * from.y + 2 * a * k * midY + k * k * BAR_Y, a * a * from.z + k * k * 0);
+      const k = o.t, a = 1 - k, midY = ty + .9;
+      g.position.set(a * a * from.x + 2 * a * k * (tx * .5) + k * k * tx, a * a * from.y + 2 * a * k * midY + k * k * ty, a * a * from.z + k * k * 0);
       g.scale.setScalar(.15 + .85 * k);
       u.swing.rotation.z = Math.sin(k * Math.PI) * .25 * (i % 2 ? 1 : -1);
     }, onComplete:() => { if(--left === 0) flying = false; }});
@@ -520,7 +575,7 @@ function buildSheet(){
     <div class="ps-card">
       <button type="button" class="ps-x" aria-label="Fermer la fiche"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
       <div class="ps-media">
-        <img id="psImg" alt="" width="640" height="640">
+        <button type="button" class="ps-zoom" id="psZoom" aria-pressed="false" aria-label="Zoomer sur la photo"><span class="ps-zin"><img id="psImg" alt="" width="640" height="640"></span></button>
         <div class="ps-views" role="group" aria-label="Vue"><button type="button" data-v="face" aria-pressed="true">Face</button><button type="button" data-v="dos" aria-pressed="false">Dos</button><button type="button" data-v="side" aria-pressed="false">Côté</button></div>
       </div>
       <div class="ps-info" id="psInfo"></div>
@@ -530,6 +585,16 @@ function buildSheet(){
   </div>`);
   const el = $("#pieceSheet"), card = $(".ps-card", el), img = $("#psImg"), info = $("#psInfo");
   let idx = 0, view = "face", last = null;
+  /* Zoom sur la photo : clic (ou Entrée) = ×2,5 à l'endroit visé, l'image suit ensuite le pointeur ; re-clic ou Échap = retour */
+  const zb = $("#psZoom", el), zin = $(".ps-zin", el);
+  let zoomed = false;
+  const aim = e => { const r = zb.getBoundingClientRect();
+    const x = Math.min(100, Math.max(0, (e.clientX - r.left) / r.width * 100)), y = Math.min(100, Math.max(0, (e.clientY - r.top) / r.height * 100));
+    zin.style.transformOrigin = `${x}% ${y}%`; };
+  const zoom = on => { zoomed = on; zb.classList.toggle("on", on); zb.setAttribute("aria-pressed", on);
+    zb.setAttribute("aria-label", on ? "Dézoomer la photo" : "Zoomer sur la photo"); if(!on) zin.style.transformOrigin = ""; };
+  zb.addEventListener("click", e => { if(!zoomed && e.detail) aim(e); zoom(!zoomed); });
+  zb.addEventListener("pointermove", e => { if(zoomed) aim(e); });
   const guide = p => {
     if(!p.guideTable) return "";
     const sz = p.sizes.filter(s => p.guideTable[s]), n = v => String(v).replace(".", ",");
@@ -540,6 +605,7 @@ function buildSheet(){
   };
   const paint = () => {
     const pc = pieces[idx], p = pc.p, c = pc.c, m = /^(.*?)\s*\((.*)\)$/.exec(c.sumup || c.name);
+    zoom(false);
     img.src = pc[view];
     img.alt = `${p.sumupName || p.name} ${c.name}, ${({face:"de face", dos:"de dos", side:"de côté"})[view]}`;
     el.querySelectorAll(".ps-views button").forEach(b => b.setAttribute("aria-pressed", b.dataset.v === view));
@@ -575,7 +641,7 @@ function buildSheet(){
   el.querySelectorAll(".ps-views button").forEach(b => b.addEventListener("click", () => { view = b.dataset.v; paint(); }));
   document.addEventListener("keydown", e => {
     if(el.hidden) return;
-    if(e.key === "Escape") api.close();
+    if(e.key === "Escape"){ if(zoomed) zoom(false); else api.close(); }
     if(e.key === "ArrowLeft") api.step(-1);
     if(e.key === "ArrowRight") api.step(1);
     if(e.key === "Tab"){ const f = [...el.querySelectorAll("button, a[href], summary")].filter(x => x.offsetParent !== null);
