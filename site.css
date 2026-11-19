@@ -489,6 +489,9 @@ footer .copy a:hover{text-decoration:underline}
 .booster-canvas.grabbing{cursor:grabbing}
 .booster-hint{position:absolute;left:50%;bottom:68px;transform:translateX(-50%);margin:0;font-size:14px;color:var(--slate);white-space:nowrap;pointer-events:none}
 .booster-open{position:absolute;left:50%;bottom:12px;transform:translateX(-50%)}
+/* l'effet d'appui des boutons (.pill:active) remplaçait le centrage : le bouton sautait à droite sous le curseur
+   et le clic n'était pas pris ; on garde le centrage pendant l'appui */
+.booster-open:active{transform:translateX(-50%) scale(.97)}
 .rack-fallback ul{list-style:none;margin:0;padding:0 var(--gutter);display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:14px;max-width:var(--maxw);margin:0 auto}
 .rack-fallback button{width:100%;border:0;background:var(--mist);border-radius:20px;padding:12px;cursor:pointer;font:inherit;font-size:14px;color:var(--ink);display:flex;flex-direction:column;gap:8px;align-items:center}
 .rack-fallback img{width:100%;height:auto}
