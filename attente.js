@@ -126,7 +126,8 @@ tick(); setInterval(tick, 1000);
       prochaine = now + 2500 + Math.random() * 2000;
     }
     {                                                   /* vagues (téléphone, ou clic sur ordinateur) */
-      for(const w of vagues){ w.r += 1.2; w.x += w.vx; w.y += w.vy; }   /* s'élargit et glisse lentement */
+      const VIT = souris ? 2 : 1;                       /* vagues deux fois plus rapides sur ordinateur */
+      for(const w of vagues){ w.r += 1.2 * VIT; w.x += w.vx * VIT; w.y += w.vy * VIT; }   /* s'élargit et glisse lentement */
       /* deux vagues qui se touchent rebondissent l'une sur l'autre (comme deux billes) */
       for(let a = 0; a < vagues.length; a++) for(let b = a + 1; b < vagues.length; b++){
         const A = vagues[a], B = vagues[b], dx = B.x - A.x, dy = B.y - A.y, d = Math.hypot(dx, dy) || 1;
