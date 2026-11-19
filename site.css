@@ -841,6 +841,8 @@ form.cf{display:grid;grid-template-columns:1fr 1fr;gap:16px}
    PAGE D'ATTENTE (attente.html) : pull en pixels floutés, compte à rebours, accès équipe (logo)
    ===================================================================== */
 .attente{background:var(--mist);min-height:100svh}
+.wt-bg{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
+.attente .wt{position:relative;z-index:1}
 .wt{min-height:100svh;display:flex;flex-direction:column;align-items:center;text-align:center;
   padding:clamp(18px,4vh,40px) var(--gutter) clamp(16px,3vh,28px)}
 .wt-title{margin:0;font-family:var(--display);font-weight:600;font-size:clamp(56px,10vh,104px);line-height:1;color:var(--ink)}

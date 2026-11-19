@@ -48,6 +48,60 @@ function draw(){
 tick(); setInterval(tick, 1000);
 
 /* ---------- Accès équipe ---------- */
+/* ---------- Fond : petits carrés gris qui montent ----------
+   Ordinateur (souris) : les carrés s'écartent du curseur. Téléphone / tablette : petites rafales aléatoires.
+   Si l'utilisateur demande moins d'animations, les carrés restent immobiles. */
+(() => {
+  const bg = $("#wtBg"); if(!bg) return;
+  const g = bg.getContext("2d");
+  const calme = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const souris = matchMedia("(hover: hover) and (pointer: fine)").matches;
+  let W = 0, H = 0, dpr = 1, carres = [];
+  const mx = {x: -1e4, y: -1e4};
+  const nouveau = (y) => {
+    const t = 4 + Math.random() * 12;                    /* côté : 4 à 16 px */
+    const gris = Math.round(120 + Math.random() * 95);   /* nuance de gris */
+    return {x: Math.random() * W, y: y ?? Math.random() * H, t, c: `rgba(${gris},${gris},${gris + 3},${(.35 + Math.random() * .45).toFixed(2)})`,
+      v: .15 + Math.random() * .45 + t * .02, ph: Math.random() * 6.28, f: .004 + Math.random() * .01, a: Math.random() * 6.28,
+      va: (Math.random() - .5) * .01, dx: 0, dy: 0};
+  };
+  const taille = () => {
+    dpr = Math.min(2, devicePixelRatio || 1); W = innerWidth; H = innerHeight;
+    bg.width = W * dpr; bg.height = H * dpr; g.setTransform(dpr, 0, 0, dpr, 0, 0);
+    const n = Math.min(160, Math.round(W * H / 8000));
+    while(carres.length < n) carres.push(nouveau());
+    carres.length = n;
+  };
+  const dessine = () => {
+    g.clearRect(0, 0, W, H);
+    for(const q of carres){
+      g.save(); g.translate(q.x + Math.sin(q.ph) * 6, q.y); g.rotate(q.a);
+      g.fillStyle = q.c; g.fillRect(-q.t / 2, -q.t / 2, q.t, q.t); g.restore();
+    }
+  };
+  const pas = () => {
+    for(const q of carres){
+      if(souris){                                        /* le curseur repousse les carrés proches */
+        const ex = q.x - mx.x, ey = q.y - mx.y, d2 = ex * ex + ey * ey, R = 150;
+        if(d2 < R * R){ const d = Math.sqrt(d2) || 1, k = (1 - d / R) * 1.6; q.dx += ex / d * k; q.dy += ey / d * k; }
+      }else if(Math.random() < .002){                    /* rafale aléatoire */
+        q.dx += (Math.random() - .5) * 4; q.dy -= Math.random() * 2;
+      }
+      q.dx *= .93; q.dy *= .93;
+      q.x += q.dx; q.y += q.dy - q.v; q.ph += q.f; q.a += q.va + q.dx * .01;
+      if(q.y < -20){ Object.assign(q, nouveau(H + 20)); }
+      if(q.x < -20) q.x = W + 20; else if(q.x > W + 20) q.x = -20;
+    }
+    dessine(); requestAnimationFrame(pas);
+  };
+  taille(); addEventListener("resize", taille);
+  if(souris){
+    addEventListener("pointermove", e => { mx.x = e.clientX; mx.y = e.clientY; }, {passive: true});
+    document.addEventListener("pointerleave", () => { mx.x = mx.y = -1e4; });
+  }
+  if(calme) dessine(); else requestAnimationFrame(pas);
+})();
+
 /* ---------- Rappel dans l'agenda ---------- */
 /* iPhone, iPad et Mac : le fichier rappel.ics s'ouvre dans Calendrier avec « Ajouter » ;
    ailleurs (Android, Windows…) : la création d'événement de Google Agenda, déjà remplie */
