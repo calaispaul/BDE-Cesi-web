@@ -62,7 +62,7 @@ sur ordinateur, le logo ramène à l'accueil et le menu est affiché dans la bar
 ├── vendor/             bibliothèques : GSAP, ScrollTrigger, Three.js (hébergées avec le site)
 └── images/
     ├── logo-noir.png, logo-noir-grand.png   logo noir (barre du haut, pied de page, plan)
-    ├── og.jpg                               image affichée quand on partage le lien
+    ├── partage.jpg                          image affichée quand on partage le lien (logo noir sur fond blanc, 1200 × 630)
     ├── sweat-*.jpg, tshirt-black-*.jpg      photos face / dos de « Face et dos »
     ├── pieces/                              visuels de la tringle : <pull|tee>-<coloris>-<face|dos|side>.png
     ├── equipe/                              photos du BDE et des membres
