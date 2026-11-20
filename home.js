@@ -6,35 +6,80 @@ const $ = (s, c = document) => c.querySelector(s);
 const $$ = (s, c = document) => [...c.querySelectorAll(s)];
 const root = document.documentElement;
 
-/* ---------- Préchargement du reste du site (accueil, pendant l'écran de chargement) ----------
-   Les pages, la 3D de la collection, les visuels et la boutique sont téléchargés en arrière-plan, en priorité basse,
-   une fois l'accueil chargé : ouvrir ensuite la Collection ou la Boutique prend presque tout dans le cache.
-   La boutique SumUp est lente seulement « à froid » (~3 s) : la demander d'avance la rend rapide ensuite.
-   Mode « économie de données » ou connexion très lente : seulement l'essentiel. */
-if($("#hero")) (() => {
-  const conn = navigator.connection || {}, light = !!conn.saveData || /(^|-)2g$/.test(conn.effectiveType || "");
-  const me = $('script[src*="home.js"]'), V = me && (me.getAttribute("src").match(/\?v=[^&]+/) || [""])[0] || "";
-  const add = (href, as, rel = "prefetch") => { const l = document.createElement("link"); l.rel = rel; l.href = href; if(as) l.as = as; document.head.appendChild(l); };
-  const views = [], more = [];
-  if(typeof PRODUCTS !== "undefined") PRODUCTS.forEach(p => { const k = {hoodie:"pull", tshirt:"tee"}[p.id]; if(!k) return;
-    p.colors.forEach(c => { views.push(`images/pieces/${k}-${c.id}-side.png`); more.push(`images/pieces/${k}-${c.id}-face.png`, `images/pieces/${k}-${c.id}-dos.png`); }); });
+/* ---------- Chargement réel de tout le site (accueil, pendant l'écran de chargement) ----------
+   1. On lit les pages du site et on y trouve tous les fichiers utilisés (images, scripts, styles, polices, 3D),
+      plus les visuels de la collection donnés par le catalogue (products.js). Rien à tenir à jour à la main :
+      une image ajoutée dans une page est trouvée toute seule.
+   2. On télécharge chaque fichier (6 à la fois) : il est alors dans le cache du navigateur et toutes les pages
+      s'affichent ensuite complètes, sans attente.
+   Le pourcentage de l'écran de chargement = fichiers téléchargés / fichiers du site (SITE.progress()).
+   La boutique SumUp (autre site) est seulement préparée : elle ne compte pas dans le pourcentage. */
+const SITE = $("#hero") ? (() => {
+  const PAGES = ["index.html", "collection.html", "boutique.html", "contact.html", "infos-legales.html"];
   const SUMUP = "https://bde-cesi-lille.sumupstore.com";
-  const first = [
-    ["collection.html", "document"], ["boutique.html", "document"], ["contact.html", "document"], ["infos-legales.html", "document"],
-    ["collection3d.js" + V, "script"], ["vendor/three.module.min.js", "script"], ["contact.js" + V, "script"],
-    ["images/booster.webp", "image"], ...views.map(v => [v, "image"]),
-    ["images/sweat-face.jpg", "image"], ["images/sweat-dos.jpg", "image"], ["images/tshirt-black-face.jpg", "image"], ["images/tshirt-black-dos.jpg", "image"],
-    ["images/collab/cesi-lille.png", "image"], ["images/collab/maison-vitali.jpg", "image"]
-  ];
-  const go = () => {
-    add(SUMUP, null, "preconnect");
-    first.forEach(([h, as]) => add(h, as));
-    [SUMUP + "/", SUMUP + "/product/pull", SUMUP + "/product/t-shirt", SUMUP + "/product/pack-t-shirt-pull-1"].forEach(h => add(h, "document"));
-    if(!light) setTimeout(() => more.forEach(h => add(h, "image")), 2000);   /* faces et dos des pièces, après le reste */
+  const seen = new Set(), queue = [];
+  let done = 0, total = 0, listed = false, fin;
+  const finished = new Promise(r => fin = r);
+  /* adresse d'un fichier du site, ou null (autre site, ancre, data:) */
+  const own = (u, from) => { try{ const x = new URL(u, from || location.href);
+    if(x.origin !== location.origin || !/^https?:$/.test(x.protocol)) return null;
+    return (x.pathname.replace(/^\//, "") || "index.html") + x.search; }catch(e){ return null; } };
+  const add = u => { if(u && !seen.has(u)){ seen.add(u); queue.push(u); } };
+  const count = () => { done++; if(listed && done >= total) fin(); };
+  const get = (u, kind) => fetch(u, {credentials:"same-origin"})
+    .then(r => r.ok ? (kind === "text" ? r.text() : r.blob()) : null).catch(() => null);
+
+  /* fichiers cités dans une page HTML */
+  const fromPage = (html, base) => {
+    const d = new DOMParser().parseFromString(html, "text/html"), found = [];
+    d.querySelectorAll("img[src],script[src],video[src],source[src],audio[src],[data-src]").forEach(e => found.push(e.getAttribute("src") || e.getAttribute("data-src")));
+    d.querySelectorAll("img[srcset],source[srcset]").forEach(e => e.getAttribute("srcset").split(",").forEach(s => found.push(s.trim().split(/\s+/)[0])));
+    d.querySelectorAll("video[poster]").forEach(e => found.push(e.getAttribute("poster")));
+    d.querySelectorAll("link[href]").forEach(e => { if(/stylesheet|preload|modulepreload|icon/.test(e.rel)) found.push(e.getAttribute("href")); });
+    return found.map(u => own(u, base)).filter(Boolean);
   };
-  const start = () => setTimeout(go, 150);
-  document.readyState === "complete" ? start() : addEventListener("load", start, {once:true});
-})();
+  /* fichiers cités dans une feuille de style (images, polices) ou importés par un module JS */
+  const fromText = (txt, base) => {
+    const found = [];
+    for(const m of txt.matchAll(/url\(\s*(['"]?)([^'")]+)\1\s*\)/g)) if(!m[2].startsWith("#") && !m[2].startsWith("data:")) found.push(m[2]);
+    for(const m of txt.matchAll(/(?:from|import)\s*\(?\s*["'](\.{1,2}\/[^"']+)["']/g)) found.push(m[1]);
+    return found.map(u => own(u, new URL(base, location.href).href)).filter(Boolean);
+  };
+
+  const list = async () => {
+    PAGES.forEach(add);
+    /* visuels de la collection (tringle 3D, fiches) : chaque coloris a une vue de côté, de face et de dos */
+    if(typeof PRODUCTS !== "undefined") PRODUCTS.forEach(p => { const k = {hoodie:"pull", tshirt:"tee"}[p.id]; if(!k) return;
+      p.colors.forEach(c => ["side", "face", "dos"].forEach(v => add(`images/pieces/${k}-${c.id}-${v}.png`))); });
+    /* lecture des pages (elles comptent déjà comme fichiers téléchargés) */
+    const pages = await Promise.all(PAGES.map(u => get(u, "text")));
+    pages.forEach((h, i) => { if(h) fromPage(h, new URL(PAGES[i], location.href).href).forEach(add); });
+    /* styles et modules : leurs propres fichiers (polices, images de fond, Three.js) */
+    const texts = [...seen].filter(u => /\.(css|js)(\?|$)/.test(u) && !/^vendor\//.test(u));
+    const contents = await Promise.all(texts.map(u => get(u, "text")));
+    contents.forEach((t, i) => { if(t) fromText(t, texts[i]).forEach(add); });
+    total = seen.size; done += PAGES.length + texts.length;   /* ceux-là viennent d'être téléchargés */
+    listed = true;
+    const rest = queue.filter(u => !PAGES.includes(u) && !texts.includes(u));
+    let i = 0;
+    const worker = async () => { while(i < rest.length){ const u = rest[i++]; await get(u, "blob"); count(); } };
+    await Promise.all(Array.from({length:6}, worker));
+    fin();
+  };
+
+  /* la boutique SumUp (autre site) : seulement préparée, pour qu'elle s'ouvre vite */
+  const sumup = () => {
+    const l = (href, rel, as) => { const e = document.createElement("link"); e.rel = rel; e.href = href; if(as) e.as = as; document.head.appendChild(e); };
+    l(SUMUP, "preconnect");
+    [SUMUP + "/", SUMUP + "/product/pull", SUMUP + "/product/t-shirt", SUMUP + "/product/pack-t-shirt-pull-1"].forEach(h => l(h, "prefetch", "document"));
+  };
+  list().catch(() => fin()); sumup();
+  return {
+    progress: () => listed ? (total ? Math.min(1, done / total) : 1) : 0,   /* 0 tant que la liste n'est pas faite */
+    finished,
+    counts: () => ({done, total})
+  };
+})() : null;
 
 /* ---------- Sans GSAP ou mouvement réduit : on s'arrête là ---------- */
 const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -100,11 +145,21 @@ if(loading){
   /* le compteur se place juste au-dessus du médaillon */
   const placeCount = () => { const r = logo.getBoundingClientRect(); count.style.top = Math.max(16, r.top - 28) + "px"; };
   placeCount(); addEventListener("resize", placeCount);
-  const counting = gsap.to(st, {p:1, duration:3.8, ease:"power1.inOut", onUpdate:() => {
+  /* le compteur affiche le vrai pourcentage de fichiers du site téléchargés ; le chrome liquide le suit en douceur.
+     Au moins 1,5 s d'animation (si tout est déjà en cache) ; au plus 30 s (connexion très lente : le reste continue
+     de se télécharger derrière). */
+  const t0 = performance.now();
+  const follow = () => {
+    const real = SITE ? SITE.progress() : 1;
+    st.p += (real - st.p) * .12; if(real >= 1 && st.p > .995) st.p = 1;
     if(P) P.fill = st.p;
-    count.textContent = String(Math.round(st.p * 100)).padStart(3, "0");
-  }});
-  Promise.all([Promise.race([pageLoaded, wait(6000)]), counting.then()]).then(() => {
+    count.textContent = String(Math.floor(real * 100)).padStart(3, "0");
+  };
+  gsap.ticker.add(follow);
+  const filled = new Promise(r => { const chk = () => (st.p >= 1 && performance.now() - t0 > 1500) ? r() : requestAnimationFrame(chk); chk(); });
+  const allFiles = SITE ? SITE.finished : Promise.resolve();
+  Promise.race([Promise.all([pageLoaded, allFiles, filled]), wait(30000)]).then(() => {
+    gsap.ticker.remove(follow); st.p = 1; count.textContent = "100";
     try{ sessionStorage.setItem("bde-cesi-lille-loader", "1"); }catch(e){}
     if(P) P.fill = 1;
     gsap.timeline()

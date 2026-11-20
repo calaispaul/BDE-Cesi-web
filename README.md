@@ -188,8 +188,8 @@ On peut aussi modifier un fichier directement sur github.com (icône crayon), pu
 Si un changement n'apparaît pas : recharger la page avec `Ctrl + F5` (le navigateur garde des fichiers en cache).
 
 **Forcer les visiteurs à recharger le CSS et le JavaScript** : dans les pages, les liens vers `site.css` et
-les fichiers `.js` portent un numéro de version (`site.css?v=2026111926`). Après une modification de ces
-fichiers, remplacer ce numéro partout par la date du jour (rechercher/remplacer `?v=2026111926` dans les
+les fichiers `.js` portent un numéro de version (`site.css?v=2026111927`). Après une modification de ces
+fichiers, remplacer ce numéro partout par la date du jour (rechercher/remplacer `?v=2026111927` dans les
 `.html`) : les navigateurs téléchargent alors la nouvelle version au lieu de garder l'ancienne en cache.
 
 > **Page 404** : ses liens commencent par `/` pour fonctionner quelle que soit l'adresse introuvable. Elle
@@ -218,8 +218,12 @@ fichiers, remplacer ce numéro partout par la date du jour (rechercher/remplacer
 
 ## 9. Fonctionnement des animations
 
-- **Écran de chargement** (accueil, une fois par session) : le médaillon se remplit pendant que le compteur
-  monte de 000 à 100.
+- **Écran de chargement** (accueil, une fois par session) : c'est un vrai chargement. `home.js` lit toutes les
+  pages du site, y trouve tous les fichiers utilisés (images, scripts, styles, police, 3D, visuels de la collection
+  du catalogue `products.js`) et les télécharge. Le compteur = pourcentage de fichiers déjà téléchargés ; le site
+  s'ouvre à 100 %, avec tout dans le cache du navigateur. Rien à tenir à jour : une image ajoutée dans une page est
+  trouvée toute seule. Au moins 1,5 s d'animation, au plus 30 s (connexion très lente : la suite continue derrière).
+  La boutique SumUp (autre site) est préparée à part et ne compte pas dans le pourcentage.
 - **Médaillon 3D** (`pendant.js`) : il descend de la hero jusqu'à la section « Notre logo » en tournant.
 - **Défilement aimanté** (ordinateur) : sur l'accueil et la collection, chaque partie fait un écran et la page
   se cale sur la plus proche.
