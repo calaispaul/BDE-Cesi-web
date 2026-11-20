@@ -64,48 +64,54 @@ lever(); addEventListener("resize", lever); addEventListener("orientationchange"
    Les lignes autour des carrés s'illuminent doucement, de proche en proche :
    - ordinateur (souris) : la case sous le curseur s'allume (traîne douce), un clic gauche lance une vague ;
    - téléphone / tablette : des vagues douces qui partent d'un point au hasard et s'éteignent avant de couvrir l'écran.
-   Si l'utilisateur demande moins d'animations, la grille reste immobile. */
+   Si l'utilisateur demande moins d'animations, la grille reste immobile.
+   Optimisé pour les ordinateurs modestes : la grille est dessinée une fois, puis seules les cases qui changent sont
+   redessinées (pas d'effet d'ombre coûteux), 60 images/s au plus, et rien n'est calculé quand rien ne bouge. */
 (() => {
   const bg = $("#wtBg"); if(!bg) return;
-  const g = bg.getContext("2d");
+  const g = bg.getContext("2d", {alpha: false});
   const calme = matchMedia("(prefers-reduced-motion: reduce)").matches;
   const souris = matchMedia("(hover: hover) and (pointer: fine)").matches;
-  const PAS = souris ? 64 : 48, ESP = 2;               /* taille d'une case et épaisseur des lignes (px) */
+  const PAS = souris ? 64 : 48, ESP = 2, DEMI = ESP / 2;   /* taille d'une case et épaisseur des lignes (px) */
   const LIGNE = "#0c0c0e";                              /* couleur des lignes au repos */
-  let W = 0, H = 0, cols = 0, rows = 0, ox = 0, oy = 0, base, lum;
+  let W = 0, H = 0, cols = 0, rows = 0, ox = 0, oy = 0, base, lum, vu;
   const taille = () => {
-    const dpr = Math.min(2, devicePixelRatio || 1); W = innerWidth; H = innerHeight;
-    bg.width = W * dpr; bg.height = H * dpr; g.setTransform(dpr, 0, 0, dpr, 0, 0);
+    const dpr = Math.min(1.5, devicePixelRatio || 1); W = innerWidth; H = innerHeight;   /* 1,5 suffit pour des carrés nets */
+    bg.width = Math.round(W * dpr); bg.height = Math.round(H * dpr); g.setTransform(dpr, 0, 0, dpr, 0, 0);
     cols = Math.ceil(W / PAS) + 1; rows = Math.ceil(H / PAS) + 1;
     ox = (W - cols * PAS) / 2; oy = (H - rows * PAS) / 2;  /* grille centrée */
     const n = cols * rows;
-    base = new Float32Array(n); lum = new Float32Array(n);
+    base = new Float32Array(n); lum = new Float32Array(n); vu = new Float32Array(n);
     for(let i = 0; i < n; i++) base[i] = 22 + Math.random() * 8;   /* presque noir, pas noir, nuances proches */
-    dessine();
-  };
-  function dessine(){
     g.fillStyle = LIGNE; g.fillRect(0, 0, W, H);
-    const t = PAS - ESP;
-    for(let r = 0; r < rows; r++) for(let c = 0; c < cols; c++){
-      const i = r * cols + c, v = Math.round(base[i] + lum[i] * 9);     /* allumé : à peine plus clair */
-      g.fillStyle = `rgb(${v},${v},${v + 2})`;
-      g.fillRect(ox + c * PAS + ESP / 2, oy + r * PAS + ESP / 2, t, t);
+    for(let i = 0; i < n; i++) carre(i);                 /* dessin complet, une seule fois */
+    reveille();
+  };
+  const L = (r, c) => (r < 0 || c < 0 || r >= rows || c >= cols) ? 0 : lum[r * cols + c];
+  /* une ligne (entre deux cases) : fond sombre, puis lueur selon la case la plus allumée des deux */
+  function ligne(x, y, w, h, b){
+    g.fillStyle = LIGNE; g.fillRect(x, y, w, h);
+    if(b > .02){ g.fillStyle = `rgba(225,232,255,${(b * .75).toFixed(2)})`; g.fillRect(x, y, w, h); }
+  }
+  /* redessine une case et les 4 lignes qui l'entourent (rien ne déborde : pas d'accumulation) */
+  function carre(i){
+    const c = i % cols, r = (i / cols) | 0, x = ox + c * PAS, y = oy + r * PAS, t = PAS - ESP, l = lum[i];
+    const v = Math.round(base[i] + l * 9);               /* allumée : à peine plus claire */
+    g.fillStyle = `rgb(${v},${v},${v + 2})`; g.fillRect(x + DEMI, y + DEMI, t, t);
+    if(l > .03){                                          /* halo doux à l'intérieur du bord, sans ombre coûteuse */
+      g.strokeStyle = `rgba(200,212,255,${(l * .22).toFixed(2)})`; g.lineWidth = 3;
+      g.strokeRect(x + DEMI + 1.5, y + DEMI + 1.5, t - 3, t - 3);
     }
-    g.lineWidth = ESP; g.shadowColor = "rgba(190,205,255,.8)";
-    for(let i = 0; i < lum.length; i++){
-      if(lum[i] <= .03) continue;
-      const c = i % cols, r = (i / cols) | 0;
-      g.shadowBlur = 12 * lum[i];
-      g.strokeStyle = `rgba(225,232,255,${(lum[i] * .7).toFixed(3)})`;
-      g.strokeRect(ox + c * PAS, oy + r * PAS, PAS, PAS);
-    }
-    g.shadowBlur = 0;
+    ligne(x - DEMI, y - DEMI, PAS + ESP, ESP, Math.max(l, L(r - 1, c)));          /* haut (avec les coins) */
+    ligne(x - DEMI, y + PAS - DEMI, PAS + ESP, ESP, Math.max(l, L(r + 1, c)));    /* bas */
+    ligne(x - DEMI, y + DEMI, ESP, t, Math.max(l, L(r, c - 1)));                  /* gauche */
+    ligne(x + PAS - DEMI, y + DEMI, ESP, t, Math.max(l, L(r, c + 1)));            /* droite */
+    vu[i] = l;
   }
 
-  /* source de lumière (ordinateur) : suit le curseur en douceur */
-  const cible = {x: 0, y: 0, on: false}, lueur = {x: 0, y: 0, a: 0};
-  /* vagues (téléphone) : anneaux qui s'élargissent depuis un point au hasard, jamais dans une autre vague
-     ni derrière le pull ; elles glissent lentement et rebondissent quand elles se touchent */
+  const cible = {x: 0, y: 0, on: false}, lueur = {a: 0};
+  /* vagues : anneaux qui s'élargissent ; au hasard sur téléphone (jamais dans une autre vague ni derrière le pull),
+     au clic sur ordinateur ; elles glissent lentement et rebondissent quand elles se touchent */
   const vagues = []; let prochaine = 0;
   const pull = document.getElementById("wtPixels");
   function point(){
@@ -119,58 +125,63 @@ lever(); addEventListener("resize", lever); addEventListener("orientationchange"
     }
     return null;                                        /* pas de place libre : on attend la prochaine */
   }
-
   function intensite(x, y){
     let v = 0;
     if(souris && lueur.a > .01 && Math.abs(x - cible.x) < PAS / 2 && Math.abs(y - cible.y) < PAS / 2) v = lueur.a;   /* seulement la case sous le curseur */
     for(const w of vagues){
-      const d = Math.hypot(x - w.x, y - w.y), e = Math.abs(d - w.r), L = PAS * 1.3;
-      if(e < L){ const k = 1 - e / L; v = Math.max(v, k * k * (1 - w.r / w.max)); }
+      const d = Math.hypot(x - w.x, y - w.y), e = Math.abs(d - w.r), Lg = PAS * 1.3;
+      if(e < Lg){ const k = 1 - e / Lg; v = Math.max(v, k * k * (1 - w.r / w.max)); }
     }
     return v;
   }
+
+  let actif = false, avant = 0;
+  function reveille(){ if(!calme && !actif){ actif = true; avant = 0; requestAnimationFrame(pas); } }
   function pas(now){
-    if(souris){
-      lueur.a += ((cible.on ? 1 : 0) - lueur.a) * .05;
-      lueur.x += (cible.x - lueur.x) * .12; lueur.y += (cible.y - lueur.y) * .12;
-    }else if(now > prochaine){                          /* téléphone : nouvelle vague toutes les 2,5 à 4,5 s */
+    if(avant && now - avant < 15){ requestAnimationFrame(pas); return; }   /* 60 images/s au plus (écrans 120-144 Hz) */
+    const f = avant ? Math.min(3, (now - avant) / 16.7) : 1; avant = now;   /* même vitesse quelle que soit la cadence */
+    const lisse = k => 1 - Math.pow(1 - k, f);
+    if(souris) lueur.a += ((cible.on ? 1 : 0) - lueur.a) * lisse(.05);
+    else if(now > prochaine){                           /* téléphone : nouvelle vague toutes les 2,5 à 4,5 s */
       const p = point(); if(p) vagues.push(p);
       prochaine = now + 2500 + Math.random() * 2000;
     }
-    {                                                   /* vagues (téléphone, ou clic sur ordinateur) */
-      const VIT = souris ? 2 : 1;                       /* vagues deux fois plus rapides sur ordinateur */
-      for(const w of vagues){ w.r += 1.2 * VIT; w.x += w.vx * VIT; w.y += w.vy * VIT; }   /* s'élargit et glisse lentement */
-      /* deux vagues qui se touchent rebondissent l'une sur l'autre (comme deux billes) */
-      for(let a = 0; a < vagues.length; a++) for(let b = a + 1; b < vagues.length; b++){
-        const A = vagues[a], B = vagues[b], dx = B.x - A.x, dy = B.y - A.y, d = Math.hypot(dx, dy) || 1;
-        if(d >= A.r + B.r) continue;
-        const nx = dx / d, ny = dy / d, rel = (A.vx - B.vx) * nx + (A.vy - B.vy) * ny;
-        if(rel > 0){ A.vx -= rel * nx; A.vy -= rel * ny; B.vx += rel * nx; B.vy += rel * ny; }
-      }
-      for(let k = vagues.length - 1; k >= 0; k--) if(vagues[k].r >= vagues[k].max) vagues.splice(k, 1);
+    const VIT = (souris ? 2 : 1) * f;                   /* vagues deux fois plus rapides sur ordinateur */
+    for(const w of vagues){ w.r += 1.2 * VIT; w.x += w.vx * VIT; w.y += w.vy * VIT; }
+    for(let a = 0; a < vagues.length; a++) for(let b = a + 1; b < vagues.length; b++){   /* rebond (comme deux billes) */
+      const A = vagues[a], B = vagues[b], dx = B.x - A.x, dy = B.y - A.y, d = Math.hypot(dx, dy) || 1;
+      if(d >= A.r + B.r) continue;
+      const nx = dx / d, ny = dy / d, rel = (A.vx - B.vx) * nx + (A.vy - B.vy) * ny;
+      if(rel > 0){ A.vx -= rel * nx; A.vy -= rel * ny; B.vx += rel * nx; B.vy += rel * ny; }
     }
+    for(let k = vagues.length - 1; k >= 0; k--) if(vagues[k].r >= vagues[k].max) vagues.splice(k, 1);
+
+    const monte = lisse(.08), descend = lisse(.03); let vivant = false;
     for(let r = 0; r < rows; r++) for(let c = 0; c < cols; c++){
       const i = r * cols + c, t = intensite(ox + (c + .5) * PAS, oy + (r + .5) * PAS);
-      lum[i] += (t - lum[i]) * (t > lum[i] ? .08 : .03);   /* s'allume doucement, s'éteint encore plus doucement */
+      let l = lum[i]; if(!t && !l) continue;
+      l += (t - l) * (t > l ? monte : descend); if(l < .004 && !t) l = 0;
+      lum[i] = l; vivant = true;
     }
-    dessine(); requestAnimationFrame(pas);
+    for(let i = 0; i < lum.length; i++)                 /* seules les cases qui ont changé sont redessinées */
+      if(Math.abs(lum[i] - vu[i]) > .004 || (lum[i] === 0 && vu[i] !== 0)) carre(i);
+
+    if(vivant || vagues.length || !souris || cible.on) requestAnimationFrame(pas);
+    else actif = false;                                 /* ordinateur au repos : plus aucun calcul */
   }
   taille(); addEventListener("resize", taille);
   if(calme) return;
   if(souris){
-    addEventListener("pointermove", e => {
-      cible.x = e.clientX; cible.y = e.clientY;
-      if(!cible.on){ cible.on = true; if(lueur.a < .02){ lueur.x = cible.x; lueur.y = cible.y; } }
-    }, {passive: true});
+    addEventListener("pointermove", e => { cible.x = e.clientX; cible.y = e.clientY; cible.on = true; reveille(); }, {passive: true});
     document.documentElement.addEventListener("pointerleave", () => { cible.on = false; });
-    /* clic sur le fond : une vague de taille aléatoire part du point cliqué */
-    addEventListener("click", e => {                    /* clic gauche uniquement (le clic droit ne fait rien) */
+    /* clic gauche sur le fond : une vague de taille aléatoire part du point cliqué */
+    addEventListener("click", e => {
       if(e.button !== 0 || e.target.closest("button, a, input, form, .wt-count")) return;
       const a = Math.random() * 6.283, v = .2 + Math.random() * .3;
       vagues.push({x: e.clientX, y: e.clientY, r: 0, max: 100 + Math.random() * 320, vx: Math.cos(a) * v, vy: Math.sin(a) * v});
+      reveille();
     });
   }
-  requestAnimationFrame(pas);
 })();
 
 /* ---------- Rappel dans l'agenda ---------- */

@@ -844,7 +844,9 @@ form.cf{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 .attente{background:var(--mist);min-height:100svh;
   /* taille du pull : --pull ; --pull-old = l'ancienne taille, qui sert de référence pour que le compteur ne bouge pas */
   --pull-old:min(100vw - 2 * var(--gutter),54svh,760px);--pull:min(108vw,61svh,840px)}
-.wt-bg{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
+.wt-bg{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;will-change:transform}
+/* calques séparés : le fond qui s'anime ne force pas à recalculer le flou et le halo du pull */
+.wt-pull{will-change:transform}
 .attente .wt{position:relative;z-index:1}
 .wt{min-height:100svh;display:flex;flex-direction:column;align-items:center;text-align:center;
   padding:max(clamp(18px,4vh,40px), calc(env(safe-area-inset-top) + 10px)) var(--gutter) max(clamp(16px,3vh,28px), calc(env(safe-area-inset-bottom) + 8px))}
