@@ -47,6 +47,18 @@ function draw(){
 
 tick(); setInterval(tick, 1000);
 
+/* ---------- Téléphone : remonter le compteur d'une case et demie (72 px) sans le couper ----------
+   Sur iPhone, la hauteur visible est plus petite (barres de Safari, encoche) : on remonte seulement de ce qui est libre. */
+const lever = () => {
+  const c = $(".wt-count"), d = document.documentElement; if(!c) return;
+  d.style.setProperty("--lift", "0px");
+  if(!matchMedia("(hover: none), (pointer: coarse)").matches) return;
+  const pad = parseFloat(getComputedStyle($(".wt")).paddingTop) || 16;
+  const libre = c.getBoundingClientRect().top + scrollY - pad;
+  d.style.setProperty("--lift", Math.max(0, Math.min(72, libre)) + "px");
+};
+lever(); addEventListener("resize", lever); addEventListener("orientationchange", lever); addEventListener("load", lever);
+
 /* ---------- Accès équipe ---------- */
 /* ---------- Fond : grille fixe de grands carrés presque noirs ----------
    Les lignes autour des carrés s'illuminent doucement, de proche en proche :
