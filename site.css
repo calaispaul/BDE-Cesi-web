@@ -436,6 +436,8 @@ footer .copy a:hover{text-decoration:underline}
    son paiement refuse de s'afficher à l'intérieur d'un autre site, donc pas de boutique intégrée) ---------- */
 .store{padding:0}
 .store-m{display:block;max-width:1100px;margin:0 auto;padding:clamp(28px,6vw,72px) var(--gutter) clamp(40px,7vw,96px);background:var(--white)}
+.sm-banner{display:block;margin:0 0 clamp(24px,4vw,48px)}
+.sm-banner img{display:block;width:100%;height:auto;aspect-ratio:2/1;border-radius:var(--r-card);background:var(--mist)}
 .sm-kicker{margin:0 0 6px;font-size:15px;font-weight:600;color:var(--blue-fill)}
 .sm-title{margin:0;font-family:var(--display);font-weight:600;font-size:clamp(40px,6vw,72px);line-height:1.05;letter-spacing:-.01em;color:var(--ink)}
 .sm-lead{margin:12px 0 22px;max-width:620px;font-size:clamp(16px,1.5vw,19px);line-height:1.45;color:var(--slate)}
