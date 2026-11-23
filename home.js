@@ -15,7 +15,7 @@ const root = document.documentElement;
    Le pourcentage de l'écran de chargement = fichiers téléchargés / fichiers du site (SITE.progress()).
    La boutique SumUp (autre site) est seulement préparée : elle ne compte pas dans le pourcentage. */
 const SITE = $("#hero") ? (() => {
-  const PAGES = ["index.html", "collection.html", "boutique.html", "contact.html", "infos-legales.html"];
+  const PAGES = ["./", "collection.html", "boutique.html", "contact.html", "infos-legales.html"];
   const SUMUP = "https://bde-cesi-lille.sumupstore.com";
   const seen = new Set(), queue = [];
   let done = 0, total = 0, listed = false, fin;
@@ -23,7 +23,7 @@ const SITE = $("#hero") ? (() => {
   /* adresse d'un fichier du site, ou null (autre site, ancre, data:) */
   const own = (u, from) => { try{ const x = new URL(u, from || location.href);
     if(x.origin !== location.origin || !/^https?:$/.test(x.protocol)) return null;
-    return (x.pathname.replace(/^\//, "") || "index.html") + x.search; }catch(e){ return null; } };
+    return (x.pathname.replace(/^\//, "") || "./") + x.search; }catch(e){ return null; } };
   const add = u => { if(u && !seen.has(u)){ seen.add(u); queue.push(u); } };
   const count = () => { done++; if(listed && done >= total) fin(); };
   /* un fichier qui échoue (réseau coupé, serveur occupé) est redemandé jusqu'à 5 fois ; un fichier absent (404) ne bloque pas */

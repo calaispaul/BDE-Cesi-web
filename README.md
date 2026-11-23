@@ -30,7 +30,7 @@ utilisateur. Il s'héberge tel quel sur **GitHub Pages**, avec un nom de domaine
 |---|---|---|
 | Accueil | `index.html` | Écran de chargement, médaillon 3D du logo, explication du logo et plan de la Citadelle, photo du BDE, les quatre membres de l'exécutif, lien vers la collection |
 | Collection | `collection.html` | Booster à ouvrir, tringle 3D des 8 pièces (fiche produit au clic avec zoom), « Face et dos » (brodé / imprimé), la matière et les chiffres, l'atelier (collaboration CESI Lille × Maison Vitali), lien vers la boutique |
-| Boutique | `boutique.html` | Sur ordinateur : la boutique SumUp intégrée. Sur téléphone : trois cartes (Pull, T-shirt, Pack) qui ouvrent directement la page SumUp de l'article |
+| Boutique | `boutique.html` | Trois cartes (Pull, T-shirt, Pack) qui ouvrent directement la page SumUp de l'article, sur tous les écrans (le paiement SumUp refuse de s'afficher à l'intérieur d'un autre site, donc plus de boutique intégrée) |
 | Contact | `contact.html` | E-mail, adresse, réseaux, formulaire (ouvre la messagerie du visiteur), questions fréquentes |
 | Infos légales | `infos-legales.html` | Mentions légales, conditions de vente, confidentialité |
 | Page introuvable | `404.html` | Affichée automatiquement par GitHub Pages pour toute adresse qui n'existe pas |
@@ -188,8 +188,8 @@ On peut aussi modifier un fichier directement sur github.com (icône crayon), pu
 Si un changement n'apparaît pas : recharger la page avec `Ctrl + F5` (le navigateur garde des fichiers en cache).
 
 **Forcer les visiteurs à recharger le CSS et le JavaScript** : dans les pages, les liens vers `site.css` et
-les fichiers `.js` portent un numéro de version (`site.css?v=2026112304`). Après une modification de ces
-fichiers, remplacer ce numéro partout par la date du jour (rechercher/remplacer `?v=2026112304` dans les
+les fichiers `.js` portent un numéro de version (`site.css?v=2026112305`). Après une modification de ces
+fichiers, remplacer ce numéro partout par la date du jour (rechercher/remplacer `?v=2026112305` dans les
 `.html`) : les navigateurs téléchargent alors la nouvelle version au lieu de garder l'ancienne en cache.
 
 > **Page 404** : ses liens commencent par `/` pour fonctionner quelle que soit l'adresse introuvable. Elle

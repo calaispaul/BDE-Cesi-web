@@ -112,5 +112,29 @@ ScrollTrigger.batch("[data-rise]", {start:"top 90%", once:true,
 gsap.from("#cf > *", {opacity:0, y:24, duration:.9, stagger:.06, ease:"power3.out",
   scrollTrigger:{trigger:"#cf", start:"top 80%", once:true}});
 
+/* Diaporama : une fois le défilement relâché, la page s'aimante sur le début de la partie la plus proche
+   (ou sur sa fin quand elle dépasse l'écran, pour la voir en entier). Au milieu d'une partie plus haute que l'écran,
+   le défilement reste libre. */
+{
+  let pts = [];
+  const compute = () => {
+    const nav = $("#gnav") ? $("#gnav").offsetHeight : 0, vh = innerHeight - nav, list = [0];
+    $$("main > section, #contact").forEach(el => {
+      const top = el.getBoundingClientRect().top + scrollY - nav, h = el.offsetHeight;
+      list.push(top); if(h > vh + 2) list.push(top + h - vh);
+    });
+    list.push(ScrollTrigger.maxScroll(window));
+    pts = [...new Set(list.map(v => Math.round(Math.max(0, v))))].sort((x, y) => x - y);
+  };
+  ScrollTrigger.addEventListener("refresh", compute); compute();
+  ScrollTrigger.create({start:0, end:"max", snap:{
+    snapTo:v => {
+      const max = ScrollTrigger.maxScroll(window) || 1, y = v * max;
+      const p = pts.reduce((b, q) => Math.abs(q - y) < Math.abs(b - y) ? q : b, 0);
+      return Math.abs(p - y) < innerHeight * .45 ? Math.min(1, p / max) : v;
+    },
+    duration:{min:.35, max:.8}, delay:.08, ease:"power2.inOut"}});
+}
+
 window.addEventListener("load", () => ScrollTrigger.refresh());
 })();
