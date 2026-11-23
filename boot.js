@@ -7,10 +7,10 @@
     if(!same){ document.documentElement.style.display = "none";
       try{ window.top.location = window.location.href; }catch(e){} return; }
   }
-  /* Page d'attente : jusqu'à l'ouverture (mardi 24 novembre 2026, 8 h 30, heure de Paris), le site renvoie vers
+  /* Page d'attente : jusqu'à l'ouverture (jeudi 26 novembre 2026, 18 h, heure de Paris), le site renvoie vers
      attente.html, sauf pour ceux qui ont saisi le code d'accès (jeton gardé dans ce navigateur, voir attente.js).
      Les infos légales restent accessibles. Après l'heure d'ouverture, plus rien n'est bloqué. */
-  var OUVERTURE = 1795505400000, JETON = "0596365f95335e86bf7c7678507404a6215dee8b839923a146de952866565c68";
+  var OUVERTURE = 1795712400000, JETON = "0596365f95335e86bf7c7678507404a6215dee8b839923a146de952866565c68";
   var page = location.pathname.split("/").pop() || "index.html";
   if(Date.now() < OUVERTURE && page !== "attente.html" && page !== "infos-legales.html"){
     /* accès gardé seulement pour la visite en cours (même onglet) : un rafraîchissement, un nouvel onglet ou

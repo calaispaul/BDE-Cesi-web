@@ -4,7 +4,7 @@
    Limite : sur un site statique, ceci cache le site au public mais ne remplace pas une vraie authentification. */
 (function(){
 "use strict";
-const OUVERTURE = 1795505400000;                       /* mardi 24 novembre 2026, 8 h 30 (Paris) */
+const OUVERTURE = 1795712400000;                       /* jeudi 26 novembre 2026, 18 h (Paris) */
 const DEBUT = 1795100000000;                           /* mise en ligne de la page d'attente : pixels les plus gros */
 const EMPREINTE = "0596365f95335e86bf7c7678507404a6215dee8b839923a146de952866565c68";
 const SEL = "bde-cesi-lille|acces|2026", TOURS = 300000;
