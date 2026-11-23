@@ -188,8 +188,8 @@ On peut aussi modifier un fichier directement sur github.com (icône crayon), pu
 Si un changement n'apparaît pas : recharger la page avec `Ctrl + F5` (le navigateur garde des fichiers en cache).
 
 **Forcer les visiteurs à recharger le CSS et le JavaScript** : dans les pages, les liens vers `site.css` et
-les fichiers `.js` portent un numéro de version (`site.css?v=2026112314`). Après une modification de ces
-fichiers, remplacer ce numéro partout par la date du jour (rechercher/remplacer `?v=2026112314` dans les
+les fichiers `.js` portent un numéro de version (`site.css?v=2026112315`). Après une modification de ces
+fichiers, remplacer ce numéro partout par la date du jour (rechercher/remplacer `?v=2026112315` dans les
 `.html`) : les navigateurs téléchargent alors la nouvelle version au lieu de garder l'ancienne en cache.
 
 > **Page 404** : ses liens commencent par `/` pour fonctionner quelle que soit l'adresse introuvable. Elle

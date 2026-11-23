@@ -57,6 +57,18 @@
 /* pendant le chargement, la page est noire autour du médaillon (qui reste à sa place) */
 .ld-on body,.ld-on .hero{background:#000}
 .ld-count{position:absolute;left:50%;top:38vh;transform:translateX(-50%);margin:0;font:600 12px/1 var(--text);letter-spacing:.12em;font-variant-numeric:tabular-nums}
+/* Autres pages (chargement.js) : écran noir plein, le médaillon au centre se remplit de chrome, compteur au-dessus ;
+   à la fin le compteur s'efface, un reflet balaie le chrome, puis tout l'écran se fond pour laisser la page */
+.loader.ld-solid{background:#000;transition:opacity .9s ease}
+.ld-medal{--size:min(62vw,46svh,440px);--fill:0;position:absolute;left:50%;top:50%;width:var(--size);aspect-ratio:1;transform:translate(-50%,-50%)}
+.ld-medal img{position:absolute;inset:0;width:100%;height:100%;filter:invert(1)}
+.ld-medal img:first-child{opacity:.16}
+.ld-medal .ld-fill{clip-path:inset(calc((1 - var(--fill)) * 100%) 0 0 0)}      /* sans 3D : le logo blanc monte de bas en haut */
+.ld-medal.is-3d img{display:none}
+.ld-medal canvas{position:absolute;inset:0;width:100%;height:100%}
+.ld-solid .ld-count{top:calc(50% - min(62vw,46svh,440px) / 2 - 28px);transition:opacity .35s}
+.ld-done .ld-count{opacity:0}
+.loader.ld-out{opacity:0}
 
 *,*::before,*::after{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%;text-size-adjust:100%;scrollbar-width:none}

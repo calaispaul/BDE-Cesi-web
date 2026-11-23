@@ -1,8 +1,8 @@
 /* BDE CESI Lille — page Boutique (ordinateur) : la roue des articles, qui tourne comme une horloge.
    Grand cadran dont le centre est au milieu du bord droit de l'écran : seule sa moitié gauche est visible.
    Les articles sont posés sur le cadran (9 emplacements tous les 40°, la liste est triplée) ; celui à 9 h est l'article
-   choisi. Un cran de défilement (molette, pavé tactile) ou une flèche du clavier = un article. Arrivé au dernier
-   article (ou revenu au premier), le défilement reprend la page : on n'est jamais bloqué sur la roue.
+   choisi. La roue tourne à l'infini dans les deux sens : un cran de défilement (molette, pavé tactile) ou une flèche
+   du clavier = un article, comme si on la tournait à la main. Souris hors de la roue : la page défile normalement.
    Un clic sur un article voisin l'amène à 9 h ; un clic sur l'article choisi ouvre sa page SumUp (nouvel onglet).
    Téléphone et tablette en hauteur : pas de roue, la simple liste d'articles. */
 (function(){
@@ -15,8 +15,6 @@ const desk = matchMedia("(min-width: 835px)");
 
 let slots = [], M = 0, STEP = 0, cur = 0, ring = null, last = new Map(), on = false;
 
-/* rang de l'article choisi dans la liste (0 = premier, N - 1 = dernier) */
-const index = () => ((cur % N) + N) % N;
 /* position d'un emplacement par rapport à 9 h : 0 = choisi, 1 = juste en dessous, -1 = juste au-dessus */
 const offset = i => { let d = ((i - cur) % M + M) % M; if(d >= M / 2) d -= M; return d; };
 
@@ -46,22 +44,22 @@ const move = k => {
   if(hadFocus){ const a = ul.querySelector("li.on a"); if(a) a.focus({preventScroll:true}); }
 };
 
-/* ---------- Défilement : un cran = un article ; aux deux bouts, la page défile normalement ----------
-   Molette (gros crans) : chaque cran fait passer un article. Pavé tactile (petits mouvements continus) : ils
-   s'additionnent, un article tous les 150 px et au plus un toutes les 300 ms, pour qu'un geste ne fasse passer
-   qu'un article. Rien ne reste bloqué : chaque cran compte, et dès qu'on est au bout, la page reprend. */
+/* ---------- Défilement sur la roue : un cran = un article, à l'infini, dans les deux sens ----------
+   Molette (gros crans) : chaque cran fait passer un article, aussi vite qu'on tourne (rien n'est jamais ignoré,
+   sauf un doublon envoyé par certaines souris pour le même cran, à moins de 40 ms). Pavé tactile (petits mouvements
+   continus) : ils s'additionnent, un article tous les 150 px et au plus un toutes les 300 ms, pour qu'un geste ne
+   fasse passer qu'un article. La page ne défile pas tant que la souris est sur la roue. */
 let acc = 0, lastMove = 0, lastDir = 0;
 const onWheel = e => {
   if(!on) return;
   const dy = e.deltaMode === 1 ? e.deltaY * 33 : e.deltaMode === 2 ? e.deltaY * 400 : e.deltaY;
   if(!dy) return;
-  const dir = Math.sign(dy), i = index();
-  if((dir > 0 && i === N - 1) || (dir < 0 && i === 0)){ acc = 0; return; }   /* au bout : la page défile */
   e.preventDefault();
+  const dir = Math.sign(dy);
   if(dir !== lastDir){ acc = 0; lastDir = dir; }
   const now = performance.now();
   if(Math.abs(dy) >= 50){                                 /* un cran de molette */
-    if(now - lastMove >= 120){ move(dir); acc = 0; lastMove = now; }
+    if(now - lastMove >= 40){ move(dir); acc = 0; lastMove = now; }
     return;
   }
   acc += dy;                                              /* pavé tactile */

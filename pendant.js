@@ -14,6 +14,60 @@ function supportsWebGL(){
 if(window.LOGO_SHAPES && supportsWebGL()){
   if(host) init();                                                    /* accueil : hero + trajet jusqu'au socle */
   document.querySelectorAll("[data-medal]").forEach(el => initSimple(el, el.dataset.medal));   /* autres pages */
+  const ldm = document.getElementById("ldMedal");                     /* écran de chargement des autres pages (chargement.js) */
+  if(ldm && !host && document.documentElement.classList.contains("ld-on")) initLoader(ldm);
+}
+
+/* ---------- Écran de chargement des pages autres que l'accueil ----------
+   Le même médaillon que sur l'accueil, au centre de l'écran noir : il se remplit de chrome liquide de bas en haut
+   (state.fill de 0 à 1, piloté par chargement.js), puis un reflet le balaie (state.sweep de -1 à 1). */
+function initLoader(el){
+  const {renderer, canvas, camera, pivot, piece, sweep, box, centerY, silver, geo, scene} = buildMedal();
+  renderer.localClippingEnabled = true;
+  const cutLiquid = new THREE.Plane(new THREE.Vector3(0, -1, 0), 0), cutMold = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
+  const mold = new THREE.Mesh(geo, new THREE.MeshPhysicalMaterial({color:0x262a31, metalness:1, roughness:.38, envMapIntensity:.35, clippingPlanes:[cutMold]}));
+  piece.add(mold);
+  silver.clippingPlanes = [cutLiquid]; silver.side = THREE.DoubleSide;
+  canvas.className = "medal-canvas";
+  el.append(canvas); el.classList.add("is-3d");
+  const D = THREE.MathUtils.degToRad, lowY = box[1] - .04, highY = box[3] + .04, nrm = new THREE.Vector3();
+  const state = {fill:0, sweep:-1};
+  const fit = () => {
+    const w = Math.max(1, el.clientWidth), h = Math.max(1, el.clientHeight);
+    renderer.setSize(w, h, false);
+    camera.aspect = w / h;
+    const halfH = (box[3] - box[1]) / 2 + .08, halfW = (box[2] - box[0]) / 2 + .08;
+    const t = Math.tan(D(camera.fov / 2));
+    camera.position.set(0, centerY, Math.max(halfH / t, halfW / (t * camera.aspect)) + .12);
+    camera.lookAt(0, centerY, 0);
+    camera.updateProjectionMatrix();
+  };
+  const t0 = performance.now();
+  let running = true;
+  const frame = now => {
+    if(!running) return;
+    const t = (now - t0) / 1000, swing = reduce ? 0 : 1;
+    pivot.rotation.set(Math.sin(t * .7) * .03 * swing, Math.sin(t * .5) * .12 * swing, Math.sin(t * .9) * .02 * swing);
+    sweep.position.x = state.sweep * 3;
+    sweep.intensity = state.sweep > -1 && state.sweep < 1 ? 40 * (1 - Math.abs(state.sweep)) : 0;
+    const f = Math.min(1, Math.max(0, state.fill));
+    mold.visible = f < 1;
+    if(f >= 1){ cutLiquid.constant = 1e3; }
+    else{
+      const wob = (1 - f) * .07;
+      nrm.set(Math.sin(t * 2.3) * wob, -1, Math.sin(t * 1.7 + 1) * wob * .6).normalize();
+      const level = lowY + (highY - lowY) * f;
+      cutLiquid.normal.copy(nrm); cutLiquid.constant = level * -nrm.y;
+      cutMold.normal.copy(nrm).negate(); cutMold.constant = -cutLiquid.constant;
+    }
+    renderer.render(scene, camera);
+    requestAnimationFrame(frame);
+  };
+  fit();
+  new ResizeObserver(fit).observe(el);
+  requestAnimationFrame(frame);
+  /* une fois l'écran retiré, on libère la carte graphique */
+  window.LoaderMedal = {state, stop: () => { running = false; renderer.dispose(); }};
 }
 
 function init(){

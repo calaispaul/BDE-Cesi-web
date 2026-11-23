@@ -18,7 +18,7 @@
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://bde-cesi-lille.fr/images/partage.jpg">
 <link rel="icon" type="image/png" href="favicon.png">
-<link rel="stylesheet" href="site.css?v=2026112314">
+<link rel="stylesheet" href="site.css?v=2026112315">
 <!-- SumUp met ~3 s à répondre : on s'y connecte tout de suite et on télécharge en avance les pages des articles,
      pour qu'un toucher sur une carte (téléphone) ouvre une page déjà prête -->
 <link rel="preconnect" href="https://bde-cesi-lille.sumupstore.com">
@@ -26,10 +26,19 @@
 <link rel="prefetch" as="document" href="https://bde-cesi-lille.sumupstore.com/product/pull">
 <link rel="prefetch" as="document" href="https://bde-cesi-lille.sumupstore.com/product/t-shirt">
 <link rel="prefetch" as="document" href="https://bde-cesi-lille.sumupstore.com/product/pack-t-shirt-pull-1">
-<script src="boot.js?v=2026112314"></script>
-<script src="nav.js?v=2026112314" defer></script>
-<script src="boutique.js?v=2026112314" defer></script>
+<script src="boot.js?v=2026112315"></script>
+<script src="nav.js?v=2026112315" defer></script>
+<script src="products.js?v=2026112315" defer></script>
+<script src="chargement.js?v=2026112315" defer></script>
+<script src="logo-shape.js?v=2026112315" defer></script>
+<script type="module" src="pendant.js?v=2026112315"></script>
+<script src="boutique.js?v=2026112315" defer></script>
 </head><body>
+<!-- Écran de chargement (une fois par visite, sur la première page ouverte) : le médaillon se remplit de chrome liquide -->
+<div class="loader ld-solid" id="loader" aria-hidden="true">
+  <div class="ld-medal" id="ldMedal"><img src="images/logo-noir-grand.png" alt="" width="1000" height="1000"><img class="ld-fill" src="images/logo-noir-grand.png" alt="" width="1000" height="1000"></div>
+  <p class="ld-count" id="ldCount">000</p>
+</div>
 <a class="skip" href="#contenu">Aller au contenu</a>
 
 <header class="gnav" id="gnav">
