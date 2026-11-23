@@ -45,13 +45,16 @@ sur ordinateur, le logo ramène à l'accueil et le menu est affiché dans la bar
 
 ```
 .
-├── index.html, collection.html, boutique.html, contact.html, infos-legales.html, 404.html
+├── index.html, collection.html, boutique.html, contact.html, infos-legales.html, 404.html, attente.html
 ├── site.css            feuille de style unique (couleurs, mise en page, animations CSS)
 ├── products.js         catalogue : produits, prix, coloris, tailles, e-mail de contact  ← à modifier
-├── boot.js             chargé en premier : protection anti-intégration, états de départ des animations
+├── boot.js             chargé en premier : anti-intégration, page d'attente (heure du serveur), états de départ (compacté)
+├── chargement.js       écran de chargement de la première page de la visite + téléchargement de tout le site
+├── attente.js          page d'attente : compte à rebours, pull en pixels, accès équipe (compacté)
+├── boutique.js         roue des articles de la boutique (ordinateur) et liens vers SumUp
 ├── nav.js              barre du haut et menu (logo qui ouvre le menu sur téléphone)
 ├── home.js             animations de l'accueil et de la collection (GSAP + ScrollTrigger)
-├── pendant.js          médaillon 3D du logo sur l'accueil (Three.js)
+├── pendant.js          médaillon 3D du logo : accueil, écran de chargement, autres pages (Three.js)
 ├── logo-shape.js       contours vectoriels du logo (relief 3D du médaillon et du booster)
 ├── collection3d.js     booster, tringle 3D, fiche produit et zoom (Three.js)
 ├── contact.js          formulaire et bouton « Copier l'adresse » de la page Contact
@@ -67,7 +70,8 @@ sur ordinateur, le logo ramène à l'accueil et le menu est affiché dans la bar
     ├── pieces/                              visuels de la tringle : <pull|tee>-<coloris>-<face|dos|side>.png
     ├── equipe/                              photos du BDE et des membres
     ├── collab/                              logos CESI Lille et Maison Vitali (partie « L'atelier »)
-    └── design/tshirt-design.png             fichier source du design du T-shirt (devant et dos)
+    ├── banniere-boutique.webp               bannière de la page Boutique
+    └── attente-pull.png                     pull déjà pixellisé (80 × 80) de la page d'attente
 ```
 
 Il n'y a **aucune étape de compilation** : ce qui est dans le dépôt est exactement ce qui est publié.
@@ -188,8 +192,8 @@ On peut aussi modifier un fichier directement sur github.com (icône crayon), pu
 Si un changement n'apparaît pas : recharger la page avec `Ctrl + F5` (le navigateur garde des fichiers en cache).
 
 **Forcer les visiteurs à recharger le CSS et le JavaScript** : dans les pages, les liens vers `site.css` et
-les fichiers `.js` portent un numéro de version (`site.css?v=2026112317`). Après une modification de ces
-fichiers, remplacer ce numéro partout par la date du jour (rechercher/remplacer `?v=2026112317` dans les
+les fichiers `.js` portent un numéro de version (`site.css?v=2026112319`). Après une modification de ces
+fichiers, remplacer ce numéro partout par la date du jour (rechercher/remplacer `?v=2026112319` dans les
 `.html`) : les navigateurs téléchargent alors la nouvelle version au lieu de garder l'ancienne en cache.
 
 > **Page 404** : ses liens commencent par `/` pour fonctionner quelle que soit l'adresse introuvable. Elle
