@@ -512,6 +512,7 @@ footer .copy a:hover{text-decoration:underline}
   .sm-card > img,.sm-duo{width:72px;height:72px;border-radius:14px}
   .sm-txt b,.sm-price{font-size:17px}
   .sm-txt{font-size:14px}
+  .sm-list > li.is-cible .sm-card{box-shadow:0 0 0 2px var(--blue-fill)}   /* arrivée depuis la collection */
 }
 /* ---------- Fin de page : vers la page suivante (Accueil → Design → Boutique) ---------- */
 .next-step{padding:var(--section) 0;text-align:center;background:var(--white)}

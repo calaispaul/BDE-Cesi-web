@@ -623,6 +623,8 @@ function buildSheet(){
       <div class="sg-t"><table><thead><tr><th scope="col"><span class="sr">Mesure</span></th>${sz.map(s => `<th scope="col">${esc(s)}</th>`).join("")}</tr></thead>
       <tbody><tr><th scope="row">A</th>${sz.map(s => `<td>${n(p.guideTable[s][0])}</td>`).join("")}</tr><tr><th scope="row">B</th>${sz.map(s => `<td>${n(p.guideTable[s][1])}</td>`).join("")}</tr></tbody></table></div></details>`;
   };
+  /* « Commander » mène à la boutique, roue déjà tournée sur la famille de l'article (boutique.js lit l'ancre) */
+  const FAMILLE = {hoodie:"pull", tshirt:"t-shirt"};
   const paint = () => {
     const pc = pieces[idx], p = pc.p, c = pc.c, m = /^(.*?)\s*\((.*)\)$/.exec(c.sumup || c.name);
     zoom(false);
@@ -638,7 +640,7 @@ function buildSheet(){
       ${p.material ? `<p class="ps-mat">${esc(p.material)}</p>` : ""}
       ${guide(p)}
       <p class="ps-sizes">Tailles ${esc(p.sizes[0])} à ${esc(p.sizes[p.sizes.length - 1])}</p>
-      <a class="pill blue lg ps-buy" href="boutique.html">Commander</a>`;
+      <a class="pill blue lg ps-buy" href="boutique.html${FAMILLE[p.id] ? "#" + FAMILLE[p.id] : ""}">Commander</a>`;
   };
   const api = {
     open(i){

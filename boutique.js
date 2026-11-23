@@ -94,7 +94,23 @@ const setup = () => {
   box.classList.add("is-dial");
   on = true;
   render();
+  versCible();
 };
+
+/* Arrivée depuis la collection (« Commander » sur un T-shirt → boutique.html#t-shirt) : la roue tourne jusqu'à cette
+   famille d'articles ; sur téléphone, sa carte de la liste est entourée de bleu. */
+const cible = () => {
+  let f = ""; try{ f = decodeURIComponent(location.hash.slice(1)); }catch(e){}
+  return base.findIndex(li => li.dataset.famille === f);
+};
+const versCible = () => {
+  const i = cible();
+  base.forEach((li, k) => li.classList.toggle("is-cible", k === i));
+  if(!on || i < 0) return;
+  let d = ((i - cur) % N + N) % N; if(d > N / 2) d -= N;       /* par le chemin le plus court */
+  if(d) setTimeout(() => move(d), 350);                       /* on voit la roue tourner jusqu'à l'article */
+};
+addEventListener("hashchange", versCible);
 
 const teardown = () => {
   if(!on) return;
@@ -115,4 +131,5 @@ ul.addEventListener("click", onClick);
 const apply = () => desk.matches ? setup() : teardown();
 if(desk.addEventListener) desk.addEventListener("change", apply); else desk.addListener(apply);
 apply();
+if(!on) versCible();                                          /* téléphone : la carte de la famille demandée en bleu */
 })();
