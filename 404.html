@@ -6,53 +6,73 @@
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self' https://formspree.io; base-uri 'self'; form-action 'self' https://formspree.io; object-src 'none'">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#ffffff">
-<title>Page introuvable – CESI Lille</title>
+<title>Page introuvable – BDE CESI Lille</title>
 <meta name="description" content="Cette page n'existe pas.">
-<meta property="og:title" content="Page introuvable – CESI Lille">
+<meta property="og:title" content="Page introuvable – BDE CESI Lille">
 <meta property="og:description" content="Cette page n'existe pas.">
 <meta property="og:image" content="/images/og.jpg">
 <meta name="robots" content="noindex">
 <link rel="icon" type="image/png" href="/favicon.png">
-<link rel="stylesheet" href="/style.css">
-</head>
-<body>
+<link rel="stylesheet" href="/site.css">
+<script src="/boot.js"></script>
+<script src="/nav.js" defer></script>
+</head><body>
 <a class="skip" href="#contenu">Aller au contenu</a>
-<div class="bg-logo" data-medal="scroll" aria-hidden="true"></div>
-<div class="bg-glass" aria-hidden="true"></div>
-<header>
-  <div class="nav">
-    <button class="burger" type="button" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="menu"><span></span><span></span><span></span></button>
-    <a class="brand" href="/index.html" aria-label="CESI Lille – accueil"><img src="/images/logo-noir.png" alt="CESI Lille" width="176" height="176"></a>
-    <a class="cart" href="/boutique.html" data-cart aria-label="Panier : voir la boutique"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8h12l-1 12H7L6 8z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg></a>
-  </div>
-</header>
-<div class="scrim" hidden></div>
-<nav class="drawer" id="menu" aria-label="Menu" aria-hidden="true">
-  <a href="/index.html">Accueil</a>
-  <div class="dgroup">
-    <button type="button" class="dtoggle" aria-expanded="false" aria-controls="sub-boutique">Boutique<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
-    <div class="dsub" id="sub-boutique" hidden>
-      <a href="/boutique.html">Tout voir</a>
-      <a href="/hoodie.html">Pull</a>
-      <a href="/tshirt.html">T-shirt</a>
+
+<header class="gnav" id="gnav">
+  <div class="wrap">
+    <a class="brand" href="/index.html" aria-label="BDE CESI Lille – accueil"><img src="/images/logo-noir.png" alt="" width="192" height="192"></a>
+    <nav aria-label="Navigation principale">
+      <ul>
+        <li><a href="/index.html">Accueil</a></li>
+        <li><a href="/collection.html">Collection</a></li>
+        <li><a href="/boutique.html">Boutique</a></li>
+        <li><a href="/contact.html">Contact</a></li>
+      </ul>
+    </nav>
+    <div class="tools">
+      <a class="icon" href="/boutique.html" aria-label="Boutique"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8h12l-1 12H7L6 8z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg></a>
+      <button class="icon burger" type="button" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="sheet"><span></span><span></span></button>
     </div>
   </div>
-  <a href="/index.html#apropos">La marque</a>
-  <a href="/infos-legales.html">Infos légales</a>
-  <a href="mailto:bde-lille@viacesi.fr" data-mail>Contact</a>
+</header>
+<nav class="sheet" id="sheet" aria-label="Menu">
+  <a href="/index.html">Accueil</a>
+  <a href="/collection.html">Collection</a>
+  <a href="/boutique.html">Boutique</a>
+  <a href="/contact.html">Contact</a>
 </nav>
-<main class="pdp" id="contenu"><div class="sec-head"><h1 class="h">Page introuvable</h1></div><p class="sub">Cette page n'existe pas ou a été déplacée.</p><a class="btn inl" href="/index.html">Retour à l'accueil</a></main>
-<footer>
-  <div class="wrap fcols">
-    <div><h4>Marque</h4><a href="/index.html#apropos">La marque</a><a href="/boutique.html">Boutique</a><a href="/hoodie.html">Hoodie</a><a href="/tshirt.html">T-shirt</a></div>
-    <div><h4>Légal</h4><a href="/infos-legales.html#mentions">Mentions légales</a><a href="/infos-legales.html#cgv">Conditions de vente</a><a href="/infos-legales.html#confidentialite">Confidentialité</a></div>
-    <div><h4>Aide</h4><a href="mailto:bde-lille@viacesi.fr" data-mail>Contact</a><a href="/boutique.html#infos">Comment précommander</a></div>
-    <div><h4>Suivre</h4><a class="ig" href="https://www.instagram.com/bde.cesi.lille/" target="_blank" rel="noopener noreferrer" aria-label="Instagram du BDE CESI Lille, @bde.cesi.lille (nouvel onglet)"><span class="ig-ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".9" fill="currentColor" stroke="none"/></svg></span><span class="ig-txt"><b>@bde.cesi.lille</b><small>Annonces et coulisses</small></span></a></div>
+<main id="contenu" class="doc doc-404">
+<p class="kicker">Erreur 404</p>
+<h1 class="display">Page introuvable.</h1>
+<p class="lead">Cette page n'existe pas ou a été déplacée.</p>
+<p class="acts"><a class="pill blue lg" href="/index.html">Retour à l'accueil</a> <a class="pill outline lg" href="/boutique.html">Voir la boutique</a></p>
+</main>
+<!-- Pied de page unique : contact + liens -->
+<footer id="contact" aria-labelledby="contact-title">
+  <div class="wrap">
+    <div class="fhead">
+      <div class="fh-txt">
+        <img class="mark" src="/images/logo-noir.png" alt="" width="192" height="192">
+        <div>
+          <h2 id="contact-title">Une question ?</h2>
+          <p class="lead">Une idée, un partenariat ou un événement : le BDE te répond.</p>
+        </div>
+      </div>
+      <div class="ctas">
+        <a class="pill blue lg" href="mailto:bde-cesi-lille@viacesi.fr" data-mail>Écrire au BDE</a>
+        <a class="link" href="/contact.html">Page contact</a>
+      </div>
+    </div>
+    <div class="fcols">
+      <div><h4>Contact</h4><a href="mailto:bde-cesi-lille@viacesi.fr" data-mail data-mail-text>bde-cesi-lille@viacesi.fr</a><span>1 Rue Héloïse, Lille</span></div>
+      <div><h4>Collection</h4><a href="/collection.html">La collection</a><a href="/boutique.html">Boutique</a></div>
+      <div><h4>BDE</h4><a href="/index.html#design">Le logo</a><a href="/index.html#nous">Nous</a><a href="/contact.html">Contact</a></div>
+      <div><h4>Légal</h4><a href="/infos-legales.html#mentions">Mentions légales</a><a href="/infos-legales.html#cgv">Conditions de vente</a><a href="/infos-legales.html#confidentialite">Confidentialité</a></div>
+      <div><h4>Suivre</h4><a class="ig" href="https://www.instagram.com/bde.cesi.lille/" target="_blank" rel="noopener noreferrer" aria-label="Instagram du BDE CESI Lille, @bde.cesi.lille (nouvel onglet)"><span class="ig-ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".9" fill="currentColor" stroke="none"/></svg></span><span class="ig-txt"><b>@bde.cesi.lille</b><small>Annonces et coulisses</small></span></a></div>
+    </div>
+    <div class="copy"><span>© 2026 BDE CESI Lille. Tous droits réservés.</span><span>Les visuels de dos sont des aperçus du design sur la couleur du vêtement.</span></div>
   </div>
-  <p class="copy">&copy; 2026 CESI Lille — Tous droits réservés</p>
 </footer>
-<script src="/logo-shape.js" defer></script>
-<script type="module" src="/pendant.js"></script>
-<script src="/menu.js" defer></script>
 </body>
 </html>

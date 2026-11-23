@@ -12,11 +12,11 @@ Tout le contenu se règle dans **`products.js`**.
 - **Fichiers d'impression** : `images/logo-dos-blanc.png` (pour les coloris foncés) et `images/logo-dos-noir.png` (pour les clairs), fond transparent. L'impression blanche sur noir/marron et noire sur gris/écru est mon hypothèse : confirmez avec l'imprimeur (technique, dimensions, emplacement).
 - Les images du dos sur le site sont des **aperçus du design** sur la couleur du vêtement, pas des photos du produit fini. Remplacez-les par de vraies photos dès que vous avez un exemplaire.
 
-## Le logo 3D du fond
-Le logo chromé tourne en 3D derrière un verre dépoli très léger sans contour (`logo3d.js`, WebGL, un tour en 30 s ; réglable en haut du fichier, constante `TURN`). Si l'appareil n'a pas WebGL, si l'utilisateur a demandé moins d'animations, ou si l'image ne charge pas, le logo reste fixe en image : rien ne casse. Il est en pause quand l'onglet est caché. La texture du logo est aussi intégrée dans `logo-tex.js` : la 3D fonctionne même en ouvrant `index.html` directement sur votre ordinateur (sans serveur). Il s'attarde de face et de dos et passe vite de profil.js`).
-
-## Menu et en-tête
-L'en-tête affiche un menu burger à gauche, le logo « CESI Lille » (`images/logo-header.png`) exactement au centre, et le panier à droite. Les liens du menu sont dans le bloc `<nav class="drawer">` de chaque page ; le comportement est dans `menu.js`.
+## Les fichiers du site
+- Pages : `index.html` (accueil), `collection.html`, `boutique.html` (boutique SumUp intégrée), `contact.html`, `infos-legales.html`, `404.html`. `hoodie.html`, `tshirt.html` et `design.html` ne font que rediriger (anciennes adresses déjà partagées).
+- Style : `site.css`. Barre de navigation et menu mobile : `nav.js`, qui gère aussi la date limite des précommandes.
+- 3D : `pendant.js` (médaillon), `collection3d.js` (booster et pièces), avec `vendor/three.module.min.js` ; animations : `home.js` avec GSAP (`vendor/`).
+- Fichiers d'impression (non utilisés par le site) : `images/logo-dos-blanc.png`, `images/logo-dos-noir.png`.
 
 ## 1. Ouvrir et vérifier le compte SumUp
 1. Créez un compte SumUp sur sumup.com (application **SumUp Business** ou site). SumUp demande de déclarer votre **statut** (indépendant, association, société…) et impose une **vérification d'identité**, que seul le titulaire peut faire.
@@ -37,7 +37,7 @@ SumUp propose une **boutique en ligne gratuite** (0 €/mois à la création) re
 - **API SumUp (paiement intégré à un site)** : nécessite un petit serveur pour garder la clé secrète. Inutile ici ; à envisager seulement si la boutique SumUp ne suffit pas.
 
 ## 4. Brancher le site
-Dans `products.js` : `shopUrl`, `contactEmail`, et si vous voulez `payLabel` (texte du bouton), `payNote` (mention sous le bouton) et `preorderEnd` (ex. `"2026-12-15"`).
+Dans `products.js` : `shopUrl`, `contactEmail`, et `preorderEnd` : date et heure limites des précommandes, heure de Paris (ex. `"2026-11-26T18:00"`). Elles s'affichent en haut de la page Boutique ; une fois passées, la boutique intégrée est remplacée par « Précommandes terminées ». Fermez aussi la boutique SumUp à la même heure : c'est elle qui accepte les commandes.
 - Tant que `shopUrl` est vide, les boutons affichent « Précommandes bientôt ouvertes » (aucun lien cassé).
 - Seules les adresses `https://` valides sont acceptées. Option : `trustedHosts: ["sumup.com"]` pour n'autoriser que ce domaine (testez d'abord : si le bouton reste grisé, l'adresse de votre boutique est sur un autre domaine).
 - Un produit peut avoir sa propre adresse : `buyUrl: "https://..."`.

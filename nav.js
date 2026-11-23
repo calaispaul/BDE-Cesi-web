@@ -46,3 +46,41 @@
   addEventListener("scroll", req, {passive:true}); addEventListener("resize", req);
   update();
 })();
+
+/* Date limite des précommandes (products.js > SHOP.preorderEnd, heure de Paris).
+   Avant : « Précommandes ouvertes jusqu'au jeudi 26 novembre à 18 h » sur les éléments [data-deadline].
+   Après : classe .preorder-closed sur <html> (la page Boutique remplace alors la boutique intégrée par un message). */
+(function(){
+  "use strict";
+  if(typeof SHOP === "undefined" || !SHOP.preorderEnd) return;
+  var raw = String(SHOP.preorderEnd).trim();
+  var m = /^(\d{4})-(\d{2})-(\d{2})(?:[T ](\d{1,2}):(\d{2}))?$/.exec(raw);
+  if(!m) return;
+  var hasTime = m[4] !== undefined;
+  var y = +m[1], mo = +m[2] - 1, d = +m[3], h = hasTime ? +m[4] : 23, mi = hasTime ? +m[5] : 59;
+  /* heure de Paris -> instant UTC, quel que soit le fuseau du visiteur (gère l'heure d'été) */
+  var guess = Date.UTC(y, mo, d, h, mi);
+  var offset = function(t){
+    try{
+      var p = {}; new Intl.DateTimeFormat("en-GB", {timeZone:"Europe/Paris", hourCycle:"h23", year:"numeric", month:"2-digit", day:"2-digit", hour:"2-digit", minute:"2-digit"})
+        .formatToParts(new Date(t)).forEach(function(x){ p[x.type] = x.value; });
+      return Date.UTC(+p.year, +p.month - 1, +p.day, +p.hour, +p.minute) - t;
+    }catch(e){ return 3600000; }
+  };
+  var end = guess - offset(guess - offset(guess));
+  var closed = Date.now() >= end;
+  var label;
+  try{ label = new Date(end).toLocaleDateString("fr-FR", {weekday:"long", day:"numeric", month:"long", timeZone:"Europe/Paris"}); }
+  catch(e){ label = d + "/" + (mo + 1); }
+  if(hasTime) label += " à " + h + " h" + (mi ? " " + (mi < 10 ? "0" : "") + mi : "");
+  document.querySelectorAll("[data-deadline]").forEach(function(el){
+    el.textContent = closed ? "Les précommandes sont terminées." : "Précommandes ouvertes jusqu'au " + label + ".";
+    el.hidden = false;
+  });
+  if(closed) document.documentElement.classList.add("preorder-closed");
+  /* page restée ouverte : on bascule à l'heure dite */
+  else if(end - Date.now() < 2147483647) setTimeout(function(){
+    document.documentElement.classList.add("preorder-closed");
+    document.querySelectorAll("[data-deadline]").forEach(function(el){ el.textContent = "Les précommandes sont terminées."; });
+  }, end - Date.now());
+})();

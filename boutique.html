@@ -14,6 +14,7 @@
 <link rel="icon" type="image/png" href="favicon.png">
 <link rel="stylesheet" href="site.css">
 <script src="boot.js"></script>
+<script src="products.js" defer></script>
 <script src="nav.js" defer></script>
 </head><body>
 <a class="skip" href="#contenu">Aller au contenu</a>
@@ -44,6 +45,12 @@
 <main id="contenu" class="store">
   <h1 class="sr">Boutique du BDE CESI Lille</h1>
   <!-- La boutique SumUp du BDE, intégrée telle quelle : articles, panier et paiement -->
+  <p class="store-deadline" data-deadline hidden></p>
+  <div class="store-closed" hidden>
+    <h2 class="h2">Précommandes terminées.</h2>
+    <p class="lead">Merci à toutes et à tous ! La date de retrait sur le campus est envoyée par e-mail.</p>
+    <a class="pill blue lg" href="contact.html">Une question ? Contacte le BDE</a>
+  </div>
   <div class="store-frame">
     <iframe src="https://bde-cesi-lille.sumupstore.com/" title="Boutique du BDE CESI Lille (SumUp) : articles, panier et paiement" allow="payment"></iframe>
   </div>

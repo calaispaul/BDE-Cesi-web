@@ -926,3 +926,21 @@ form.cf{display:grid;grid-template-columns:1fr 1fr;gap:16px}
    on garde la main sur les liens et boutons pour savoir ce qui se clique */
 .has-cursor #hero,.has-cursor #hero *,.has-cursor #inkZone,.has-cursor #inkZone *{cursor:none}
 .has-cursor #hero a,.has-cursor #inkZone a,.has-cursor #hero button,.has-cursor #inkZone button{cursor:pointer}
+/* ---------- Pages simples : infos légales, 404 ---------- */
+.doc{max-width:760px;margin:0 auto;padding:clamp(48px,8vw,96px) var(--gutter) var(--section)}
+.doc section{margin-top:48px;scroll-margin-top:calc(var(--nav) + 16px)}
+.doc section h2{font-family:var(--display);font-weight:600;font-size:clamp(24px,2.6vw,32px);line-height:1.15;margin:0 0 16px}
+.doc section p{margin:0 0 12px;font-size:17px;line-height:1.55;color:var(--ink)}
+.doc .todo-note{margin:20px 0 0;padding:12px 16px;border-radius:14px;background:#fff6d1;font-size:14px;line-height:1.45}
+.doc mark.todo{background:#fff1a6;padding:0 3px;border-radius:3px}
+.doc-404{text-align:center;min-height:calc(70svh - var(--nav));display:flex;flex-direction:column;justify-content:center}
+.doc-404 .kicker{margin-bottom:14px;color:var(--slate)}
+.doc-404 .lead{margin:18px 0 0;color:var(--slate)}
+.doc-404 .acts{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin:32px 0 0}
+
+/* ---------- Boutique : date limite des précommandes (products.js > preorderEnd, géré par nav.js) ---------- */
+.store-deadline{margin:0;padding:14px var(--gutter);font-size:15px;font-weight:600;text-align:center;color:var(--ink);background:var(--mist)}
+.store-closed{max-width:640px;margin:0 auto;padding:clamp(64px,10vw,120px) var(--gutter);text-align:center}
+.store-closed .lead{margin:16px 0 28px;color:var(--slate)}
+.preorder-closed .store-frame,.preorder-closed .store-foot,.preorder-closed .store-deadline{display:none}
+.preorder-closed .store-closed[hidden]{display:block}

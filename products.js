@@ -14,8 +14,10 @@ const SHOP = {
   // Facultatif : adresse Formspree (https://formspree.io/f/...) pour recevoir le formulaire de la page Contact
   // sans passer par la messagerie du visiteur. Vide = le formulaire ouvre la messagerie avec le message pré-rempli.
   contactEndpoint: "",
-  // Date limite des précommandes, au format "2026-12-15" ("" = pas de date). Après cette date, les boutons se désactivent.
-  preorderEnd: ""
+  // Date et heure limites des précommandes, heure de Paris : "2026-11-26T18:00" ("" = pas de date ; "2026-12-15" seul = jusqu'à 23 h 59).
+  // Affichée en haut de la page Boutique ; une fois passée, la boutique intégrée est remplacée par « Précommandes terminées ».
+  // Pensez aussi à fermer la boutique SumUp à la même heure : c'est elle qui accepte les commandes.
+  preorderEnd: "2026-11-26T18:00"
 };
 
 /* Un produit = des couleurs, chacune avec ses images.
