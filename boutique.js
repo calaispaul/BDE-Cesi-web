@@ -40,9 +40,9 @@ const render = () => {
     li.style.zIndex = String(10 - a);
     li.style.pointerEvents = a > 1 ? "none" : "";
     li.classList.toggle("on", d === 0);
-    const real = i < N;
-    li.querySelectorAll("a").forEach(el => { el.tabIndex = d === 0 && real ? 0 : -1; });
-    if(real) li.toggleAttribute("aria-hidden", false);
+    /* seul l'article du centre est lu et atteignable au clavier ; les flèches font tourner la roue */
+    li.querySelectorAll("a").forEach(el => { el.tabIndex = d === 0 ? 0 : -1; });
+    if(d === 0) li.removeAttribute("aria-hidden"); else li.setAttribute("aria-hidden", "true");
   });
   requestAnimationFrame(() => slots.forEach(li => li.classList.remove("no-anim")));
 };
