@@ -18,7 +18,7 @@
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://bde-cesi-lille.fr/images/partage.jpg">
 <link rel="icon" type="image/png" href="favicon.png">
-<link rel="stylesheet" href="site.css?v=2026112311">
+<link rel="stylesheet" href="site.css?v=2026112312">
 <!-- SumUp met ~3 s à répondre : on s'y connecte tout de suite et on télécharge en avance les pages des articles,
      pour qu'un toucher sur une carte (téléphone) ouvre une page déjà prête -->
 <link rel="preconnect" href="https://bde-cesi-lille.sumupstore.com">
@@ -26,9 +26,9 @@
 <link rel="prefetch" as="document" href="https://bde-cesi-lille.sumupstore.com/product/pull">
 <link rel="prefetch" as="document" href="https://bde-cesi-lille.sumupstore.com/product/t-shirt">
 <link rel="prefetch" as="document" href="https://bde-cesi-lille.sumupstore.com/product/pack-t-shirt-pull-1">
-<script src="boot.js?v=2026112311"></script>
-<script src="nav.js?v=2026112311" defer></script>
-<script src="boutique.js?v=2026112311" defer></script>
+<script src="boot.js?v=2026112312"></script>
+<script src="nav.js?v=2026112312" defer></script>
+<script src="boutique.js?v=2026112312" defer></script>
 </head><body>
 <a class="skip" href="#contenu">Aller au contenu</a>
 
@@ -57,7 +57,8 @@
 </nav>
 <main id="contenu" class="store">
   <h1 class="sr">Boutique du BDE CESI Lille</h1>
-  <!-- tout est posé sur la bannière : logo de la bannière au centre ; à droite, le titre en haut et la roue des articles -->
+  <!-- tout est posé sur la bannière : le titre à gauche, le logo de la bannière au centre, et à droite une grande roue d'articles
+       dont le centre est sur le bord de l'écran (seule sa moitié gauche est visible) -->
   <section class="store-hero" aria-labelledby="sm-title">
     <img class="sh-bg" src="images/banniere-boutique.webp" alt="" width="2000" height="1000" fetchpriority="high" decoding="async">
     <div class="sh-side">
@@ -66,6 +67,7 @@
       <h2 class="sm-title" id="sm-title">Commander.</h2>
       <p class="sm-lead">Choisis ton article : la commande et le paiement se font sur la boutique SumUp du BDE. Retrait sur le campus.</p>
       <a class="pill blue lg" href="https://bde-cesi-lille.sumupstore.com/">Ouvrir la boutique</a>
+    </div>
     </div>
     <div class="sm-wheel-box">
     <ul class="sm-list" id="smWheel" aria-label="Articles">
@@ -80,7 +82,6 @@
         <span class="sm-txt"><b>Pack T-shirt + Pull</b><span>Un pull et un T-shirt</span></span><span class="sm-price">65 €</span></a></li>
     </ul>
     <p class="sm-hint" hidden>Fais défiler sur les articles pour les faire tourner</p>
-    </div>
     </div>
   </section>
 </main>

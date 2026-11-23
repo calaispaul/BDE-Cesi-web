@@ -1,80 +1,81 @@
-/* BDE CESI Lille — page Boutique : la roue des articles.
-   Les articles sont posés sur un cylindre ; faire défiler dessus (molette, pavé tactile, glisser du doigt, flèches du
-   clavier) le fait tourner d'un article. Un clic sur un article du dessus ou du dessous l'amène au centre ; un clic sur
-   celui du centre ouvre sa page SumUp. Sans JavaScript, les articles restent une simple liste. */
+/* BDE CESI Lille — page Boutique : la roue des articles, qui tourne comme une horloge.
+   Grand cadran dont le centre est au milieu du bord droit de l'écran : seule sa moitié gauche est visible.
+   Les articles sont posés sur le cadran (9 emplacements tous les 40°, la liste est triplée) ; celui à 9 h est l'article
+   choisi. Faire défiler dessus (molette, pavé tactile, glisser du doigt, flèches du clavier) fait tourner le cadran d'un
+   cran. Un clic sur un article voisin l'amène à 9 h ; un clic sur l'article choisi ouvre sa page SumUp.
+   Sans JavaScript, les articles restent une simple liste. */
 (function(){
 "use strict";
 const ul = document.getElementById("smWheel");
 if(!ul) return;
-const base = [...ul.children], N = base.length;
+const box = ul.parentElement, base = [...ul.children], N = base.length;
 if(N < 2) return;
 
-/* la roue est doublée (2 × 3 emplacements) : l'article qui passe de haut en bas le fait à l'arrière, invisible */
-base.forEach(li => {
+for(let r = 0; r < 2; r++) base.forEach(li => {      /* la liste triplée fait le tour complet du cadran */
   const c = li.cloneNode(true);
-  c.setAttribute("aria-hidden", "true");
   c.querySelectorAll("a").forEach(a => { a.tabIndex = -1; });
   ul.appendChild(c);
 });
-const slots = [...ul.children], M = slots.length;
-const STEP = 30, R = 200;                 /* écart entre deux articles (degrés) et rayon du cylindre (px) */
-let cur = 0;
+const slots = [...ul.children], M = slots.length, STEP = 360 / M;
+let cur = 0;                                            /* nombre de crans tournés (sans limite : le cadran tourne toujours dans le bon sens) */
 const last = new Map();
 
-ul.classList.add("is-wheel");
-ul.tabIndex = -1;
-const hint = document.querySelector(".sm-hint");
+const ring = document.createElement("div");
+ring.className = "sm-ring"; ring.setAttribute("aria-hidden", "true");
+box.insertBefore(ring, ul);
+box.classList.add("is-dial");
+const hint = box.querySelector(".sm-hint");
 if(hint){ const t = hint.textContent; hint.textContent = ""; const sp = document.createElement("span"); sp.textContent = t; hint.appendChild(sp); hint.hidden = false; }
 
-/* position d'un emplacement par rapport au centre : 0 au centre, négatif au-dessus, positif en dessous */
+/* position d'un emplacement par rapport à 9 h : 0 = choisi, 1 = juste en dessous, -1 = juste au-dessus */
 const offset = i => { let d = ((i - cur) % M + M) % M; if(d >= M / 2) d -= M; return d; };
 
 const render = () => {
+  ring.style.setProperty("--rot", (cur * STEP) + "deg");
   slots.forEach((li, i) => {
-    const d = offset(i), prev = last.get(li);
-    if(prev !== undefined && Math.abs(d - prev) > 1.5){ li.classList.add("no-anim"); void li.offsetWidth; }   /* passage par l'arrière */
+    const d = offset(i), prev = last.get(li), a = Math.abs(d);
+    if(prev !== undefined && Math.abs(d - prev) > 2.5){ li.classList.add("no-anim"); void li.offsetWidth; }   /* passage par l'arrière, hors écran */
     last.set(li, d);
-    const a = Math.abs(d);
-    li.style.transform = `translateZ(${-R}px) rotateX(${-d * STEP}deg) translateZ(${R}px)`;
-    li.style.opacity = a === 0 ? 1 : a === 1 ? .6 : 0;
+    li.style.setProperty("--a", (-d * STEP) + "deg");
+    li.style.opacity = a <= 1 ? "1" : "0";
+    li.style.visibility = a <= 1 ? "" : "hidden";
     li.style.zIndex = String(10 - a);
-    li.style.pointerEvents = a > 1 ? "none" : "";
     li.classList.toggle("on", d === 0);
-    /* seul l'article du centre est lu et atteignable au clavier ; les flèches font tourner la roue */
+    /* seul l'article choisi est lu et atteignable au clavier ; les flèches font tourner le cadran */
     li.querySelectorAll("a").forEach(el => { el.tabIndex = d === 0 ? 0 : -1; });
     if(d === 0) li.removeAttribute("aria-hidden"); else li.setAttribute("aria-hidden", "true");
   });
-  requestAnimationFrame(() => slots.forEach(li => li.classList.remove("no-anim")));
+  requestAnimationFrame(() => requestAnimationFrame(() => slots.forEach(li => li.classList.remove("no-anim"))));
 };
 
 const move = k => {
   if(!k) return;
   const hadFocus = ul.contains(document.activeElement);
-  cur = ((cur + k) % M + M) % M;
+  cur += k;
   render();
-  if(hadFocus){ const on = slots[cur % N]; const a = on && on.querySelector("a"); if(a) a.focus({preventScroll:true}); }
+  if(hadFocus){ const on = ul.querySelector("li.on a"); if(on) on.focus({preventScroll:true}); }
 };
 
 /* molette et pavé tactile : un cran (ou un geste) = un article ; la page ne défile pas pendant ce temps */
 let acc = 0, lockUntil = 0;
-ul.addEventListener("wheel", e => {
+box.addEventListener("wheel", e => {
   e.preventDefault();
   const now = performance.now(), dy = e.deltaMode === 1 ? e.deltaY * 33 : e.deltaY;
   if(now < lockUntil){ acc = 0; return; }
   acc += dy;
-  if(Math.abs(acc) >= 40){ move(Math.sign(acc)); acc = 0; lockUntil = now + 320; }
+  if(Math.abs(acc) >= 40){ move(Math.sign(acc)); acc = 0; lockUntil = now + 380; }
 }, {passive:false});
 
-/* doigt : glisser vers le haut ou le bas fait tourner (un article tous les 44 px) */
+/* doigt : glisser vers le haut ou le bas fait tourner (un cran tous les 50 px) */
 let ty = null;
-ul.addEventListener("touchstart", e => { ty = e.touches[0].clientY; }, {passive:true});
-ul.addEventListener("touchmove", e => {
+box.addEventListener("touchstart", e => { ty = e.touches[0].clientY; }, {passive:true});
+box.addEventListener("touchmove", e => {
   if(ty === null) return;
   e.preventDefault();
   const y = e.touches[0].clientY;
-  if(Math.abs(y - ty) >= 44){ move(y < ty ? 1 : -1); ty = y; }
+  if(Math.abs(y - ty) >= 50){ move(y < ty ? 1 : -1); ty = y; }
 }, {passive:false});
-ul.addEventListener("touchend", () => { ty = null; });
+box.addEventListener("touchend", () => { ty = null; });
 
 /* clavier */
 ul.addEventListener("keydown", e => {
@@ -82,7 +83,7 @@ ul.addEventListener("keydown", e => {
   else if(e.key === "ArrowUp"){ e.preventDefault(); move(-1); }
 });
 
-/* clic sur un article du dessus ou du dessous : il vient au centre (sans ouvrir la page) */
+/* clic sur un article voisin : il vient à 9 h (sans ouvrir la page) */
 ul.addEventListener("click", e => {
   const li = e.target.closest("li"); if(!li) return;
   const d = offset(slots.indexOf(li));

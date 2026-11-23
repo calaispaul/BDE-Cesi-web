@@ -433,20 +433,22 @@ footer .copy a:hover{text-decoration:underline}
 .sizes button[aria-checked="true"]{box-shadow:inset 0 0 0 2px var(--blue-fill);background:#f0f6fd}
 
 /* ---------- Page Boutique : tout tient sur la bannière plein écran (sous la barre du haut).
-   Ordinateur : logo de la bannière au centre ; à droite, le titre en haut et la roue des articles en dessous
-   (boutique.js : la roue tourne quand on fait défiler dessus). Téléphone : logo en haut, puis titre et roue.
-   Chaque carte ouvre la page SumUp de l'article (le paiement SumUp refuse de s'afficher dans un autre site). ---------- */
+   Le titre à gauche, le logo de la bannière au centre, et à droite une grande roue d'articles (boutique.js) qui tourne
+   comme une horloge quand on fait défiler dessus ; son centre est sur le bord droit de l'écran, seule la moitié
+   gauche est visible. L'article à 9 h est l'article choisi. Chaque carte ouvre la page SumUp de l'article
+   (le paiement SumUp refuse de s'afficher dans un autre site). Sans JavaScript : simple liste. ---------- */
 .store{padding:0}
-.store-hero{position:relative;display:flex;justify-content:flex-end;min-height:calc(100svh - var(--nav));
-  padding:clamp(20px,4vh,44px) var(--gutter);overflow:hidden;background:#000}
-.sh-bg{position:absolute;inset:0;width:100%;height:100%;max-width:none;object-fit:cover;object-position:50% 50%}
-.sh-side{position:relative;z-index:1;display:flex;flex-direction:column;gap:clamp(16px,3vh,28px);width:min(100%,400px)}
+.store-hero{--R:min(44svh,30vw,440px);--card:320px;
+  position:relative;display:flex;align-items:flex-start;gap:24px;min-height:calc(100svh - var(--nav));
+  padding:clamp(20px,4vh,44px) var(--gutter);overflow:hidden;overflow:clip;background:#000}
+.sh-bg{position:absolute;inset:0;width:100%;height:100%;max-width:none;object-fit:cover;object-position:100% 50%}
+.sh-side{position:relative;z-index:2;width:min(100%,380px)}
 .sh-txt,.sm-card{background:rgba(255,255,255,.82);-webkit-backdrop-filter:saturate(180%) blur(18px);backdrop-filter:saturate(180%) blur(18px);box-shadow:0 18px 44px rgba(0,0,0,.14)}
 .sh-txt{padding:clamp(20px,2.2vw,28px);border-radius:var(--r-card)}
 .sm-kicker{margin:0 0 6px;font-size:15px;font-weight:600;color:var(--blue-fill)}
 .sm-title{margin:0;font-family:var(--display);font-weight:600;font-size:clamp(34px,3.4vw,52px);line-height:1.05;letter-spacing:-.01em;color:var(--ink)}
 .sm-lead{margin:10px 0 18px;font-size:clamp(15px,1.1vw,16px);line-height:1.45;color:var(--slate)}
-.sm-wheel-box{flex:1;display:flex;flex-direction:column;justify-content:center;min-height:0}
+.sm-wheel-box{position:relative;z-index:1;flex:1;align-self:center;max-width:var(--card)}
 .sm-list{list-style:none;margin:0;padding:0;display:grid;gap:12px}
 .sm-card{display:flex;align-items:center;gap:14px;padding:10px 16px 10px 10px;border-radius:20px;color:var(--ink);min-height:88px}
 .sm-card:active{transform:scale(.99)}
@@ -457,24 +459,45 @@ footer .copy a:hover{text-decoration:underline}
 .sm-txt{flex:1;display:flex;flex-direction:column;gap:2px;font-size:14px;color:var(--slate)}
 .sm-txt b{font-size:17px;font-weight:600;color:var(--ink)}
 .sm-price{flex:none;font-weight:600;font-size:17px}
-/* la roue : les articles sont posés sur un cylindre vu de face ; celui du milieu est net, les autres s'éloignent */
-.sm-list.is-wheel{display:block;position:relative;height:300px;perspective:900px;touch-action:none;overscroll-behavior:contain;cursor:ns-resize}
-.is-wheel > li{position:absolute;left:0;right:0;top:50%;margin-top:-44px;transform-style:preserve-3d;backface-visibility:hidden;
-  transition:transform .55s cubic-bezier(.2,.8,.2,1),opacity .55s,filter .55s}
-.is-wheel > li.no-anim{transition:none}
-.is-wheel > li:not(.on) .sm-card{cursor:pointer}
-.is-wheel > li.on .sm-card{box-shadow:0 22px 50px rgba(0,0,0,.2),0 0 0 2px var(--blue-fill)}
-.sm-hint{margin:10px 0 0;text-align:center;font-size:13px;font-weight:500;color:var(--ink)}
-.sm-hint span{display:inline-block;padding:6px 12px;border-radius:var(--r-pill);background:rgba(255,255,255,.82);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px)}
-@media (prefers-reduced-motion:reduce){ .is-wheel > li{transition:none} }
-/* téléphone et tablette en hauteur : une colonne ; la bannière, moins zoomée, est calée en haut pour montrer le logo,
-   les flammes noires du bas se prolongent dans le fond noir sous le contenu */
+.sm-hint{margin:10px 0 0;font-size:13px;font-weight:500;color:var(--ink)}
+.sm-hint span{display:inline-block;padding:6px 12px;border-radius:var(--r-pill);background:rgba(255,255,255,.88);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px)}
+
+/* la roue (classe ajoutée par boutique.js) : elle couvre toute la bannière, son centre est au milieu du bord droit */
+.sm-wheel-box.is-dial{position:absolute;inset:0;align-self:auto;max-width:none;pointer-events:none}
+.is-dial .sm-ring{position:absolute;left:100%;top:50%;width:calc(2 * var(--R) + 80px);aspect-ratio:1;border-radius:50%;
+  transform:translate(-50%,-50%) rotate(var(--rot,0deg));transition:transform .7s cubic-bezier(.2,.8,.2,1);
+  background:rgba(255,255,255,.28);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);
+  box-shadow:inset 0 0 0 1px rgba(0,0,0,.12),0 0 0 1px rgba(255,255,255,.6);pointer-events:auto;touch-action:none;overscroll-behavior:contain}
+/* graduations de cadran sur le bord, et le cercle sur lequel roulent les articles */
+.is-dial .sm-ring::before{content:"";position:absolute;inset:0;border-radius:50%;
+  background:repeating-conic-gradient(rgba(0,0,0,.55) 0 .5deg,transparent .5deg 10deg);
+  -webkit-mask:radial-gradient(closest-side,transparent calc(100% - 18px),#000 calc(100% - 18px) calc(100% - 4px),transparent calc(100% - 4px));
+          mask:radial-gradient(closest-side,transparent calc(100% - 18px),#000 calc(100% - 18px) calc(100% - 4px),transparent calc(100% - 4px))}
+.is-dial .sm-ring::after{content:"";position:absolute;left:50%;top:50%;width:calc(2 * var(--R));aspect-ratio:1;border-radius:50%;
+  transform:translate(-50%,-50%);box-shadow:inset 0 0 0 1.5px rgba(0,113,227,.45)}
+.is-dial .sm-list{display:block;position:absolute;inset:0;pointer-events:none}
+.is-dial .sm-list > li{position:absolute;left:100%;top:50%;width:var(--card);pointer-events:auto;touch-action:none;
+  transform:rotate(var(--a)) translateX(calc(-1 * var(--R))) rotate(calc(-1 * var(--a))) translate(-50%,-50%);
+  transition:transform .7s cubic-bezier(.2,.8,.2,1),opacity .5s}
+.is-dial .sm-list > li.no-anim{transition:none}
+.is-dial .sm-list > li:not(.on) .sm-card{cursor:pointer}
+.is-dial .sm-list > li.on .sm-card{box-shadow:0 22px 50px rgba(0,0,0,.22),0 0 0 2px var(--blue-fill);background:rgba(255,255,255,.94)}
+.is-dial .sm-hint{position:absolute;left:var(--gutter);bottom:clamp(14px,3vh,28px);margin:0;pointer-events:none}
+@media (prefers-reduced-motion:reduce){ .is-dial .sm-ring,.is-dial .sm-list > li{transition:none} }
+
+/* téléphone et tablette en hauteur : logo en haut, puis le titre, puis la roue sous le titre (toujours à moitié hors de l'écran) */
 @media (max-width:834px){
-  .store-hero{justify-content:stretch;align-items:flex-end;padding-top:98vw;padding-bottom:24px}
+  .store-hero{--R:58vw;--card:min(250px,66vw);flex-direction:column;align-items:stretch;padding-top:98vw;padding-bottom:24px}
   .sh-bg{inset:0 auto auto 50%;width:max(100%,250vw);height:auto;transform:translateX(-50%)}
   .sh-side{width:100%}
   .sh-txt{padding:20px}
-  .sm-hint span{background:rgba(255,255,255,.9)}
+  .sm-wheel-box{align-self:stretch;max-width:none}
+  .sm-wheel-box.is-dial{position:relative;inset:auto;flex:none;height:calc(1.3 * var(--R) + 150px);margin-right:calc(-1 * var(--gutter))}
+  .sm-card{min-height:72px;padding:8px 12px 8px 8px;gap:10px}
+  .sm-card > img,.sm-duo{width:56px;height:56px;border-radius:12px}
+  .sm-txt b,.sm-price{font-size:15px}
+  .sm-txt{font-size:12px}
+  .is-dial .sm-hint{left:0;bottom:0}
 }
 /* ---------- Fin de page : vers la page suivante (Accueil → Design → Boutique) ---------- */
 .next-step{padding:var(--section) 0;text-align:center;background:var(--white)}
