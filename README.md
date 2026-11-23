@@ -188,8 +188,8 @@ On peut aussi modifier un fichier directement sur github.com (icône crayon), pu
 Si un changement n'apparaît pas : recharger la page avec `Ctrl + F5` (le navigateur garde des fichiers en cache).
 
 **Forcer les visiteurs à recharger le CSS et le JavaScript** : dans les pages, les liens vers `site.css` et
-les fichiers `.js` portent un numéro de version (`site.css?v=2026112301`). Après une modification de ces
-fichiers, remplacer ce numéro partout par la date du jour (rechercher/remplacer `?v=2026112301` dans les
+les fichiers `.js` portent un numéro de version (`site.css?v=2026112302`). Après une modification de ces
+fichiers, remplacer ce numéro partout par la date du jour (rechercher/remplacer `?v=2026112302` dans les
 `.html`) : les navigateurs téléchargent alors la nouvelle version au lieu de garder l'ancienne en cache.
 
 > **Page 404** : ses liens commencent par `/` pour fonctionner quelle que soit l'adresse introuvable. Elle
@@ -263,10 +263,11 @@ pull noir en pixels floutés, fond sombre en grille de grands carrés presque no
   Le code n'est écrit nulle part dans le site : seule son empreinte (PBKDF2-SHA256, 300 000 tours) est enregistrée.
 - **Limite** : le site est statique et le dépôt public, donc ce verrou cache le site au public mais n'est pas
   une vraie protection (quelqu'un de technique peut lire les fichiers du dépôt). Ne rien mettre de secret derrière.
-- **Changer l'heure d'ouverture** : modifier `OUVERTURE` (millisecondes depuis 1970, en UTC) dans `boot.js` **et** `attente.js`, ainsi que les dates de `rappel.ics` et du lien Google Agenda dans `attente.html`.
-- **Ouvrir le site plus tôt** : mettre `OUVERTURE = 0` dans `boot.js`.
+- **Fichiers compactés** : `attente.html`, `attente.js` et `boot.js` sont publiés sans commentaires et compactés (noms de variables raccourcis). Pour les modifier, rechercher les valeurs ci-dessous telles quelles. Les versions commentées restent dans l'historique Git (commit précédant « Compacte la page d'attente »).
+- **Changer l'heure d'ouverture** : l'heure est écrite `17957124e5` (= 1795712400000, millisecondes depuis 1970, UTC : jeudi 26 novembre 2026, 18 h à Paris) dans `boot.js` **et** `attente.js` ; la remplacer dans les deux, ainsi que les dates de `rappel.ics` et du lien Google Agenda dans `attente.html`.
+- **Ouvrir le site plus tôt** : remplacer `17957124e5` par `0` dans `boot.js` et `attente.js`.
 - **Changer le code** : calculer la nouvelle empreinte (console du navigateur sur la page d'attente) puis remplacer
-  `EMPREINTE` dans `attente.js` et `JETON` dans `boot.js` :
+  l'ancienne empreinte (`0596365f…`) dans `attente.js` et `boot.js` :
   ```js
   (async c=>{const e=new TextEncoder(),k=await crypto.subtle.importKey("raw",e.encode(c),"PBKDF2",false,["deriveBits"]);
   return [...new Uint8Array(await crypto.subtle.deriveBits({name:"PBKDF2",hash:"SHA-256",salt:e.encode("bde-cesi-lille|acces|2026"),iterations:300000},k,256))].map(b=>b.toString(16).padStart(2,"0")).join("")})("NOUVEAUCODE")
