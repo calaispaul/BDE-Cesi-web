@@ -433,22 +433,22 @@ footer .copy a:hover{text-decoration:underline}
 .sizes button[aria-checked="true"]{box-shadow:inset 0 0 0 2px var(--blue-fill);background:#f0f6fd}
 
 /* ---------- Page Boutique : tout tient sur la bannière plein écran (sous la barre du haut).
-   Ordinateur : titre à gauche, logo de la bannière au centre, articles à droite.
-   Téléphone : logo en haut, puis titre et articles. Chaque carte ouvre la page SumUp de l'article (le paiement
-   SumUp refuse de s'afficher à l'intérieur d'un autre site, donc pas de boutique intégrée). ---------- */
+   Ordinateur : logo de la bannière au centre ; à droite, le titre en haut et la roue des articles en dessous
+   (boutique.js : la roue tourne quand on fait défiler dessus). Téléphone : logo en haut, puis titre et roue.
+   Chaque carte ouvre la page SumUp de l'article (le paiement SumUp refuse de s'afficher dans un autre site). ---------- */
 .store{padding:0}
-.store-hero{position:relative;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:center;gap:clamp(16px,3vw,40px);
-  min-height:calc(100svh - var(--nav));padding:clamp(20px,4vh,48px) var(--gutter);overflow:hidden;background:#000}
+.store-hero{position:relative;display:flex;justify-content:flex-end;min-height:calc(100svh - var(--nav));
+  padding:clamp(20px,4vh,44px) var(--gutter);overflow:hidden;background:#000}
 .sh-bg{position:absolute;inset:0;width:100%;height:100%;max-width:none;object-fit:cover;object-position:50% 50%}
-.sh-txt,.sm-list{position:relative;z-index:1}
-.sh-txt,.sm-card{background:rgba(255,255,255,.8);-webkit-backdrop-filter:saturate(180%) blur(18px);backdrop-filter:saturate(180%) blur(18px);box-shadow:0 18px 44px rgba(0,0,0,.14)}
-.sh-txt{justify-self:start;max-width:420px;padding:clamp(20px,2.4vw,32px);border-radius:var(--r-card)}
+.sh-side{position:relative;z-index:1;display:flex;flex-direction:column;gap:clamp(16px,3vh,28px);width:min(100%,400px)}
+.sh-txt,.sm-card{background:rgba(255,255,255,.82);-webkit-backdrop-filter:saturate(180%) blur(18px);backdrop-filter:saturate(180%) blur(18px);box-shadow:0 18px 44px rgba(0,0,0,.14)}
+.sh-txt{padding:clamp(20px,2.2vw,28px);border-radius:var(--r-card)}
 .sm-kicker{margin:0 0 6px;font-size:15px;font-weight:600;color:var(--blue-fill)}
-.sm-title{margin:0;font-family:var(--display);font-weight:600;font-size:clamp(34px,3.6vw,56px);line-height:1.05;letter-spacing:-.01em;color:var(--ink)}
-.sm-lead{margin:12px 0 20px;font-size:clamp(15px,1.2vw,17px);line-height:1.45;color:var(--slate)}
-.sm-list{justify-self:end;width:min(100%,380px);list-style:none;margin:0;padding:0;display:grid;gap:12px}
-.sm-card{display:flex;align-items:center;gap:14px;padding:10px 16px 10px 10px;border-radius:20px;color:var(--ink);min-height:88px;transition:transform .25s,background .25s}
-.sm-card:hover{transform:translateX(-4px);background:rgba(255,255,255,.92)}
+.sm-title{margin:0;font-family:var(--display);font-weight:600;font-size:clamp(34px,3.4vw,52px);line-height:1.05;letter-spacing:-.01em;color:var(--ink)}
+.sm-lead{margin:10px 0 18px;font-size:clamp(15px,1.1vw,16px);line-height:1.45;color:var(--slate)}
+.sm-wheel-box{flex:1;display:flex;flex-direction:column;justify-content:center;min-height:0}
+.sm-list{list-style:none;margin:0;padding:0;display:grid;gap:12px}
+.sm-card{display:flex;align-items:center;gap:14px;padding:10px 16px 10px 10px;border-radius:20px;color:var(--ink);min-height:88px}
 .sm-card:active{transform:scale(.99)}
 .sm-card > img,.sm-duo{flex:none;width:72px;height:72px;border-radius:14px;background:#fff;object-fit:cover}
 .sm-duo{position:relative;overflow:hidden}
@@ -457,13 +457,24 @@ footer .copy a:hover{text-decoration:underline}
 .sm-txt{flex:1;display:flex;flex-direction:column;gap:2px;font-size:14px;color:var(--slate)}
 .sm-txt b{font-size:17px;font-weight:600;color:var(--ink)}
 .sm-price{flex:none;font-weight:600;font-size:17px}
+/* la roue : les articles sont posés sur un cylindre vu de face ; celui du milieu est net, les autres s'éloignent */
+.sm-list.is-wheel{display:block;position:relative;height:300px;perspective:900px;touch-action:none;overscroll-behavior:contain;cursor:ns-resize}
+.is-wheel > li{position:absolute;left:0;right:0;top:50%;margin-top:-44px;transform-style:preserve-3d;backface-visibility:hidden;
+  transition:transform .55s cubic-bezier(.2,.8,.2,1),opacity .55s,filter .55s}
+.is-wheel > li.no-anim{transition:none}
+.is-wheel > li:not(.on) .sm-card{cursor:pointer}
+.is-wheel > li.on .sm-card{box-shadow:0 22px 50px rgba(0,0,0,.2),0 0 0 2px var(--blue-fill)}
+.sm-hint{margin:10px 0 0;text-align:center;font-size:13px;font-weight:500;color:var(--ink)}
+.sm-hint span{display:inline-block;padding:6px 12px;border-radius:var(--r-pill);background:rgba(255,255,255,.82);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px)}
+@media (prefers-reduced-motion:reduce){ .is-wheel > li{transition:none} }
 /* téléphone et tablette en hauteur : une colonne ; la bannière, moins zoomée, est calée en haut pour montrer le logo,
    les flammes noires du bas se prolongent dans le fond noir sous le contenu */
 @media (max-width:834px){
-  .store-hero{grid-template-columns:1fr;align-content:end;gap:12px;padding-top:98vw;padding-bottom:24px}
+  .store-hero{justify-content:stretch;align-items:flex-end;padding-top:98vw;padding-bottom:24px}
   .sh-bg{inset:0 auto auto 50%;width:max(100%,250vw);height:auto;transform:translateX(-50%)}
-  .sh-txt,.sm-list{justify-self:stretch;max-width:none;width:auto}
+  .sh-side{width:100%}
   .sh-txt{padding:20px}
+  .sm-hint span{background:rgba(255,255,255,.9)}
 }
 /* ---------- Fin de page : vers la page suivante (Accueil → Design → Boutique) ---------- */
 .next-step{padding:var(--section) 0;text-align:center;background:var(--white)}
