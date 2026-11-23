@@ -52,7 +52,7 @@
 
 /* Écran de chargement (accueil) : fond noir, blason qui se remplit de chrome, compteur 100 → 000 */
 .loader{display:none}
-.ld-on .loader{display:block;position:fixed;inset:0;z-index:9999;pointer-events:none;color:#fff}
+.ld-on .loader{display:block;position:fixed;inset:0;z-index:9999;pointer-events:auto;cursor:progress;color:#fff}
 .ld-on body{overflow:hidden}
 /* pendant le chargement, la page est noire autour du médaillon (qui reste à sa place) */
 .ld-on body,.ld-on .hero{background:#000}

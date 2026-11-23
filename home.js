@@ -26,8 +26,10 @@ const SITE = $("#hero") ? (() => {
     return (x.pathname.replace(/^\//, "") || "index.html") + x.search; }catch(e){ return null; } };
   const add = u => { if(u && !seen.has(u)){ seen.add(u); queue.push(u); } };
   const count = () => { done++; if(listed && done >= total) fin(); };
-  const get = (u, kind) => fetch(u, {credentials:"same-origin"})
-    .then(r => r.ok ? (kind === "text" ? r.text() : r.blob()) : null).catch(() => null);
+  /* un fichier qui échoue (réseau coupé, serveur occupé) est redemandé jusqu'à 5 fois ; un fichier absent (404) ne bloque pas */
+  const get = (u, kind, n = 0) => fetch(u, {credentials:"same-origin"})
+    .then(r => r.ok ? (kind === "text" ? r.text() : r.blob()) : (r.status >= 500 && n < 5 ? Promise.reject() : null))
+    .catch(() => n < 5 ? new Promise(res => setTimeout(res, 800 * (n + 1))).then(() => get(u, kind, n + 1)) : null);
 
   /* fichiers cités dans une page HTML */
   const fromPage = (html, base) => {
@@ -135,19 +137,22 @@ intro
 
 /* Écran de chargement : la page est noire et le médaillon 3D lui-même (à sa place exacte dans la hero) se remplit
    de chrome liquide de bas en haut, pendant que le compteur monte de 000 à 100. Il attend la fin du chargement
-   (6 s au plus), puis un reflet balaie le chrome et le noir se fond en blanc autour de lui : aucun déplacement. */
+   (sans limite de temps), puis un reflet balaie le chrome et le noir se fond en blanc autour de lui : aucun déplacement. */
 if(loading){
+  window.__ldCtl = true;                                        /* boot.js : l'écran de chargement est pris en main ici */
   const L = $("#loader"), count = $("#ldCount"), hero = $("#hero"), st = {p:0};
   gsap.set(logo, {opacity:1});
   if(P){ P.spinIn = 0; P.fill = 0; }
-  const wait = ms => new Promise(r => setTimeout(r, ms));
+  /* pendant le chargement, rien ne se clique ni ne se parcourt au clavier : on ne part pas sur une autre page à moitié prête */
+  const locked = $$("body > *:not(#loader)").filter(e => !e.inert);
+  locked.forEach(e => { e.inert = true; });
   const pageLoaded = new Promise(r => document.readyState === "complete" ? r() : addEventListener("load", r, {once:true}));
   /* le compteur se place juste au-dessus du médaillon */
   const placeCount = () => { const r = logo.getBoundingClientRect(); count.style.top = Math.max(16, r.top - 28) + "px"; };
   placeCount(); addEventListener("resize", placeCount);
   /* le compteur affiche le vrai pourcentage de fichiers du site téléchargés ; le chrome liquide le suit en douceur.
-     Au moins 1,5 s d'animation (si tout est déjà en cache) ; au plus 30 s (connexion très lente : le reste continue
-     de se télécharger derrière). */
+     Au moins 1,5 s d'animation (si tout est déjà en cache) et aucune limite de temps : le site ne s'ouvre qu'une fois
+     tous ses fichiers téléchargés, pour que chaque page s'affiche ensuite complète. */
   const t0 = performance.now();
   const follow = () => {
     const real = SITE ? SITE.progress() : 1;
@@ -158,8 +163,9 @@ if(loading){
   gsap.ticker.add(follow);
   const filled = new Promise(r => { const chk = () => (st.p >= 1 && performance.now() - t0 > 1500) ? r() : requestAnimationFrame(chk); chk(); });
   const allFiles = SITE ? SITE.finished : Promise.resolve();
-  Promise.race([Promise.all([pageLoaded, allFiles, filled]), wait(30000)]).then(() => {
+  Promise.all([pageLoaded, allFiles, filled]).then(() => {
     gsap.ticker.remove(follow); st.p = 1; count.textContent = "100";
+    locked.forEach(e => { e.inert = false; });
     try{ sessionStorage.setItem("bde-cesi-lille-loader", "1"); }catch(e){}
     if(P) P.fill = 1;
     gsap.timeline()
