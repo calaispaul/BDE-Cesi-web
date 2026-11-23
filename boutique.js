@@ -24,8 +24,6 @@ const ring = document.createElement("div");
 ring.className = "sm-ring"; ring.setAttribute("aria-hidden", "true");
 box.insertBefore(ring, ul);
 box.classList.add("is-dial");
-const hint = box.querySelector(".sm-hint");
-if(hint){ const t = hint.textContent; hint.textContent = ""; const sp = document.createElement("span"); sp.textContent = t; hint.appendChild(sp); hint.hidden = false; }
 
 /* position d'un emplacement par rapport à 9 h : 0 = choisi, 1 = juste en dessous, -1 = juste au-dessus */
 const offset = i => { let d = ((i - cur) % M + M) % M; if(d >= M / 2) d -= M; return d; };
@@ -56,14 +54,16 @@ const move = k => {
   if(hadFocus){ const on = ul.querySelector("li.on a"); if(on) on.focus({preventScroll:true}); }
 };
 
-/* molette et pavé tactile : un cran (ou un geste) = un article ; la page ne défile pas pendant ce temps */
-let acc = 0, lockUntil = 0;
+/* molette et pavé tactile : un geste = un article, jamais plus ; la page ne défile pas pendant ce temps.
+   Après un cran, la roue reste bloquée tant que le geste continue (élan du pavé tactile, molette qui tourne encore) :
+   il faut une pause d'au moins 250 ms sans défilement, et au moins 500 ms en tout, avant le cran suivant. */
+let acc = 0, lockUntil = 0, quietUntil = 0;
 box.addEventListener("wheel", e => {
   e.preventDefault();
   const now = performance.now(), dy = e.deltaMode === 1 ? e.deltaY * 33 : e.deltaY;
-  if(now < lockUntil){ acc = 0; return; }
+  if(now < lockUntil || now < quietUntil){ quietUntil = now + 250; acc = 0; return; }
   acc += dy;
-  if(Math.abs(acc) >= 40){ move(Math.sign(acc)); acc = 0; lockUntil = now + 380; }
+  if(Math.abs(acc) >= 30){ move(Math.sign(acc)); acc = 0; lockUntil = now + 500; quietUntil = now + 250; }
 }, {passive:false});
 
 /* doigt : glisser vers le haut ou le bas fait tourner (un cran tous les 50 px) */
