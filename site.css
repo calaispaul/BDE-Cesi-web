@@ -436,8 +436,23 @@ footer .copy a:hover{text-decoration:underline}
    son paiement refuse de s'afficher à l'intérieur d'un autre site, donc pas de boutique intégrée) ---------- */
 .store{padding:0}
 .store-m{display:block;max-width:1100px;margin:0 auto;padding:clamp(28px,6vw,72px) var(--gutter) clamp(40px,7vw,96px);background:var(--white)}
-.sm-banner{display:block;margin:0 0 clamp(24px,4vw,48px)}
-.sm-banner img{display:block;width:100%;height:auto;aspect-ratio:2/1;border-radius:var(--r-card);background:var(--mist)}
+/* bannière plein écran (sous la barre du haut) ; les textes sont posés dessus, en bas à gauche, dans une carte
+   en verre dépoli qui laisse le logo CESI Lille au centre visible */
+.store-hero{position:relative;display:flex;align-items:flex-end;height:calc(100svh - var(--nav));min-height:480px;overflow:hidden;background:#fff}
+.store-hero > img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 50%}
+.sh-txt{position:relative;z-index:1;max-width:min(560px,calc(100% - 2 * var(--gutter)));margin:0 0 clamp(20px,6vh,64px) var(--gutter);
+  padding:clamp(20px,3vw,32px);border-radius:var(--r-card);background:rgba(255,255,255,.78);
+  -webkit-backdrop-filter:saturate(180%) blur(18px);backdrop-filter:saturate(180%) blur(18px);box-shadow:0 20px 50px rgba(0,0,0,.12)}
+.store-hero .sm-lead{margin:12px 0 20px}
+/* ordinateur : la bannière glisse un peu vers la droite pour que le logo ne passe pas sous la carte */
+@media (min-width:835px){ .store-hero > img{object-position:15% 50%} }
+/* téléphone (écran en hauteur) : bannière moins zoomée, calée en haut, pour voir le logo en entier au-dessus de la carte */
+@media (max-width:640px){
+  .store-hero > img{inset:0 auto auto 50%;width:330%;max-width:none;height:auto;transform:translateX(-50%)}
+  .sh-txt{margin-bottom:16px;padding:20px}
+  .store-hero .sm-title{font-size:36px}
+}
+.store-m{scroll-margin-top:var(--nav)}
 .sm-kicker{margin:0 0 6px;font-size:15px;font-weight:600;color:var(--blue-fill)}
 .sm-title{margin:0;font-family:var(--display);font-weight:600;font-size:clamp(40px,6vw,72px);line-height:1.05;letter-spacing:-.01em;color:var(--ink)}
 .sm-lead{margin:12px 0 22px;max-width:620px;font-size:clamp(16px,1.5vw,19px);line-height:1.45;color:var(--slate)}
