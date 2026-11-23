@@ -128,7 +128,15 @@ const teardown = () => {
 box.addEventListener("wheel", onWheel, {passive:false});
 ul.addEventListener("keydown", onKey);
 ul.addEventListener("click", onClick);
-const apply = () => desk.matches ? setup() : teardown();
+/* Liens vers SumUp : sur ordinateur, dans un nouvel onglet (le site reste ouvert à côté) ; sur téléphone, dans
+   la même page (plus simple au doigt, on revient avec le bouton retour) */
+const onglets = () => {
+  document.querySelectorAll('.store-hero a[href^="https://bde-cesi-lille.sumupstore.com"]').forEach(a => {
+    if(desk.matches){ a.target = "_blank"; a.rel = "noopener noreferrer"; }
+    else { a.removeAttribute("target"); a.removeAttribute("rel"); }
+  });
+};
+const apply = () => { desk.matches ? setup() : teardown(); onglets(); };
 if(desk.addEventListener) desk.addEventListener("change", apply); else desk.addListener(apply);
 apply();
 if(!on) versCible();                                          /* téléphone : la carte de la famille demandée en bleu */
