@@ -67,7 +67,8 @@ sur ordinateur, le logo ramène à l'accueil et le menu est affiché dans la bar
     ├── logo-noir.png, logo-noir-grand.png   logo noir (barre du haut, pied de page, plan)
     ├── partage.jpg                          image affichée quand on partage le lien (logo noir sur fond blanc, 1200 × 630)
     ├── sweat-*.jpg, tshirt-black-*.jpg      photos face / dos de « Face et dos »
-    ├── pieces/                              visuels de la tringle : <pull|tee>-<coloris>-<face|dos|side>.png
+    ├── pieces/                              visuels de la tringle : <pull|tee>-<version>-<face|dos|side>.webp
+    ├── pack.jpg                             pull + T-shirt de la carte « Pack » (boutique)
     ├── equipe/                              photos du BDE et des membres
     ├── collab/                              logos CESI Lille et Maison Vitali (partie « L'atelier »)
     ├── banniere-boutique.webp               bannière de la page Boutique
@@ -84,12 +85,12 @@ Il n'y a **aucune étape de compilation** : ce qui est dans le dépôt est exact
 Tout est dans **`products.js`** :
 - `price` : prix affiché dans la fiche produit ;
 - `desc`, `material`, `guideTable` (guide des tailles en cm) ;
-- `colors` : un coloris = `id` (sert à trouver les visuels `images/pieces/…`), `name`, `sumup` (libellé exact sur SumUp), `hex`.
+- `colors` : un coloris = `id` (sert à trouver les visuels `images/pieces/…`), `name`, `sumup` (libellé sur SumUp), `print` et `printLabel` (couleur de l'impression).
 
 Les prix et coloris doivent rester **identiques à la boutique SumUp**, c'est elle qui fait foi pour la commande.
 
 **Ajouter un coloris** : ajouter une ligne dans `colors` et déposer les trois visuels
-`images/pieces/<pull|tee>-<id>-face.png`, `-dos.png` et `-side.png` (640 × 640 px, fond transparent).
+`images/pieces/<pull|tee>-<id>-face.webp`, `-dos.webp` et `-side.webp` (640 × 640 px, fond transparent).
 
 ### Boutique sur téléphone
 Les trois cartes (Pull, T-shirt, Pack) et leurs liens SumUp sont écrits directement dans `boutique.html`

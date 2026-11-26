@@ -4,7 +4,7 @@
      (ou avec le bouton « Ouvrir »). Éclat d'étoiles, puis les pièces s'envolent sur la tringle.
    - Une seule tringle chromée droite qui traverse la page : on attrape et on fait glisser les vêtements,
      qui se balancent. Survol : les voisines s'écartent. Clic : fiche produit en surimpression.
-   - Une pièce = un coloris (products.js). Visuels : images/pieces/<pull|tee>-<coloris>-<face|dos>.png */
+   - Une pièce = un coloris (products.js). Visuels : images/pieces/<pull|tee>-<coloris>-<face|dos|side>.webp */
 import * as THREE from "./vendor/three.module.min.js";
 
 const stage = document.getElementById("rackStage");
@@ -24,9 +24,9 @@ const KIND = {hoodie:"pull", tshirt:"tee"};
 const pieces = [];
 PRODUCTS.forEach(p => { const k = KIND[p.id]; if(!k) return;
   p.colors.forEach(c => { const img = c.id;
-    pieces.push({p, c, kind:k, face:`images/pieces/${k}-${img}-face.png`, dos:`images/pieces/${k}-${img}-dos.png`, side:`images/pieces/${k}-${img}-side.png`}); }); });
+    pieces.push({p, c, kind:k, face:`images/pieces/${k}-${img}-face.webp`, dos:`images/pieces/${k}-${img}-dos.webp`, side:`images/pieces/${k}-${img}-side.webp`}); }); });
 /* le T-shirt noir ferme la tringle */
-{ const i = pieces.findIndex(x => x.kind === "tee" && x.c.id === "noir"); if(i >= 0) pieces.push(pieces.splice(i, 1)[0]); }
+{ const i = pieces.findIndex(x => x.kind === "tee" && x.c.id === "noir-blanc"); if(i >= 0) pieces.push(pieces.splice(i, 1)[0]); }
 
 const sheet = buildSheet();
 buildList();

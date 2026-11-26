@@ -456,17 +456,15 @@ footer .copy a:hover{text-decoration:underline}
 .sm-list{list-style:none;margin:0;padding:0;display:grid;gap:12px}
 .sm-card{position:relative;isolation:isolate;overflow:hidden;display:flex;align-items:center;gap:20px;padding:14px 24px 14px 14px;border-radius:28px;color:var(--ink);min-height:var(--ch,184px);transition:box-shadow .25s,background .25s}
 .sm-card:active{transform:scale(.99)}
-.sm-card > img,.sm-duo{flex:none;width:calc(var(--ch,184px) - 28px);height:calc(var(--ch,184px) - 28px);border-radius:18px;background:#fff;object-fit:cover}
-.sm-duo{position:relative;overflow:hidden}
-.sm-duo img{position:absolute;top:0;width:60%;height:100%;object-fit:cover}
-.sm-duo img:first-child{left:0}.sm-duo img:last-child{right:0}
+.sm-card > img{flex:none;width:calc(var(--ch,184px) - 28px);height:calc(var(--ch,184px) - 28px);border-radius:18px;background:#fff;object-fit:cover}
 .sm-txt{flex:1;display:flex;flex-direction:column;gap:4px;font-size:16px;color:var(--slate)}
 .sm-txt b{font-size:23px;font-weight:600;color:var(--ink)}
 .sm-price{flex:none;font-weight:600;font-size:23px}
 /* article choisi : une vague bleue traverse la carte de droite à gauche, derrière l'image et le texte, puis repasse
    toutes les quelques secondes (front ondulé, traîne qui s'efface) */
 .sm-card::before{content:"";position:absolute;top:0;bottom:0;left:0;width:70%;z-index:-1;pointer-events:none;opacity:0;transform:translateX(145%);
-  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 100' preserveAspectRatio='none'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' x2='1'%3E%3Cstop offset='0' stop-color='rgb(0,113,227)' stop-opacity='.34'/%3E%3Cstop offset='.35' stop-color='rgb(0,113,227)' stop-opacity='.16'/%3E%3Cstop offset='1' stop-color='rgb(0,113,227)' stop-opacity='0'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath d='M22 0C2 17 42 33 22 50S2 83 22 100H120V0Z' fill='url(%23g)'/%3E%3C/svg%3E") 0 0/100% 100% no-repeat}
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 100' preserveAspectRatio='none'%3E%3Cpath d='M22 0C2 17 42 33 22 50S2 83 22 100H120V0Z' fill='rgb(0,113,227)' fill-opacity='.34'/%3E%3C/svg%3E") 0 0/100% 100% no-repeat;
+  -webkit-mask-image:linear-gradient(90deg,#000 15%,rgba(0,0,0,.45) 40%,transparent);mask-image:linear-gradient(90deg,#000 15%,rgba(0,0,0,.45) 40%,transparent)}
 .is-dial .sm-list > li.on .sm-card::before,.sm-list > li.is-cible .sm-card::before{opacity:1;animation:sm-vague 3s cubic-bezier(.45,0,.25,1) .3s infinite}
 @keyframes sm-vague{0%{transform:translateX(145%)}90%,100%{transform:translateX(-100%)}}
 @media (prefers-reduced-motion:reduce){ .sm-card::before{display:none} }
@@ -508,7 +506,7 @@ footer .copy a:hover{text-decoration:underline}
   .sh-txt .pill{order:2;width:100%}
   .sm-wheel-box{order:1;flex:none;align-self:stretch;max-width:none;margin:0 0 22px}
   .sm-card{background:var(--mist);-webkit-backdrop-filter:none;backdrop-filter:none;box-shadow:none;min-height:116px;padding:10px 16px 10px 10px;gap:16px;border-radius:22px}
-  .sm-card > img,.sm-duo{width:96px;height:96px;border-radius:16px}
+  .sm-card > img{width:96px;height:96px;border-radius:16px}
   .sm-txt b,.sm-price{font-size:19px}
   .sm-txt{font-size:14px}
   .sm-list > li.is-cible .sm-card{box-shadow:0 0 0 2px var(--blue-fill)}   /* arrivée depuis la collection */
