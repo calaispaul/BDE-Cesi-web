@@ -460,6 +460,10 @@ footer .copy a:hover{text-decoration:underline}
 .sm-txt{flex:1;display:flex;flex-direction:column;gap:4px;font-size:16px;color:var(--slate)}
 .sm-txt b{font-size:23px;font-weight:600;color:var(--ink)}
 .sm-price{flex:none;font-weight:600;font-size:23px}
+/* Pack : étiquette « −10 % » rouge, en biais sur le coin de la photo */
+.sm-tag{position:absolute;z-index:2;left:6px;top:6px;padding:5px 11px 5px 9px;border-radius:6px 999px 999px 6px;background:#e3171e;color:#fff;
+  font-size:15px;font-weight:700;letter-spacing:.01em;line-height:1.1;transform:rotate(-8deg);box-shadow:0 6px 14px rgba(227,23,30,.35)}
+.sm-tag::before{content:"";display:inline-block;width:6px;height:6px;border-radius:50%;background:#fff;margin:0 6px 1px 0;vertical-align:middle}
 /* article choisi : une vague bleue traverse la carte de droite à gauche, derrière l'image et le texte, puis repasse
    toutes les quelques secondes (front ondulé, traîne qui s'efface) */
 .sm-card::before{content:"";position:absolute;top:0;bottom:0;left:0;width:70%;z-index:-1;pointer-events:none;opacity:0;transform:translateX(145%);
@@ -792,14 +796,6 @@ form.cf{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 .specs .head .kicker{font-size:17px;color:var(--steel);margin:0 0 12px}
 .specs .head p:not(.kicker){max-width:56ch;margin:18px auto 0;font-size:17px;line-height:1.47;color:var(--slate)}
 .specs .head p b{color:var(--ink);font-weight:600}
-/* La matière : le pull et le T-shirt côte à côte, au même format */
-.mat-duo{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--gap);max-width:1000px;margin:0 auto clamp(40px,5vw,64px)}
-.mat{padding:clamp(22px,2.4vw,32px);border-radius:var(--r-card);background:var(--mist)}
-.mat-k{margin:0;font-size:15px;font-weight:600;color:var(--steel)}
-.mat-n{margin:6px 0 0;font-family:var(--display);font-weight:600;font-size:clamp(36px,4vw,56px);line-height:1.05;letter-spacing:-.02em;color:var(--ink)}
-.mat p:last-child{margin:14px 0 0;font-size:16px;line-height:1.47;color:var(--slate)}
-.mat p b{color:var(--ink);font-weight:600}
-@media (max-width:834px){ .mat-duo{grid-template-columns:1fr} }
 /* photo bonus agrandie */
 .zoom-box{position:fixed;inset:0;z-index:8500;display:grid;place-items:center;padding:clamp(16px,5vw,64px);background:rgba(29,29,31,.26);
   -webkit-backdrop-filter:blur(14px) brightness(.8);backdrop-filter:blur(14px) brightness(.8);cursor:zoom-out}   /* même flou grisâtre que le colis fermé */
