@@ -27,8 +27,8 @@ const PRODUCTS = [
     sumupName: "Pull",
     price: 45,
     // {print} est remplacé par la couleur d'impression de la version (colors[].print)
-    desc: "Sweat à capuche Native Spirit en molleton French Terry, coupe standard à épaules légèrement tombantes, capuche doublée avec cordon plat en coton bio, poche kangourou, sans étiquette qui gratte. Logo étoile brodé sur la poitrine, blason CESI Lille 2026-2027 au dos, en {print}.",
-    material: "100 % coton biologique peigné, 400 g/m². Intérieur French Terry, lavé aux enzymes. Bords-côtes 2 × 1 aux poignets et en bas, doubles surpiqûres. Certifié GOTS et OEKO-TEX® Standard 100 (Native Spirit NS431).",
+    desc: "Sweat à capuche en molleton French Terry, coupe standard à épaules légèrement tombantes, capuche doublée avec cordon plat en coton bio, poche kangourou, sans étiquette qui gratte. Logo étoile brodé sur la poitrine, blason CESI Lille 2026-2027 au dos, en {print}.",
+    material: "100 % coton biologique peigné, 400 g/m². Intérieur French Terry, lavé aux enzymes. Bords-côtes 2 × 1 aux poignets et en bas, doubles surpiqûres. Certifié GOTS et OEKO-TEX® Standard 100.",
     sizes: SIZES_PULL,
     // Guide des tailles (facultatif) en cm, vêtement posé à plat. A = largeur de poitrine, B = longueur totale :
     // guideTable: { S: [A, B], M: [A, B], ... }, guideNote: "…". Sans guideTable, la fiche n'affiche pas de guide.
@@ -47,8 +47,8 @@ const PRODUCTS = [
     name: "T-shirt CESI Lille",
     sumupName: "T-shirt",
     price: 25,
-    desc: "T-shirt iDeal190 en jersey de coton, coupe droite, col rond en bord-côte. Devant, le logo étoile CESI sur le cœur ; au dos, « CESI Lille » en grandes lettres autour du blason, avec 2026-2027, en {print}.",
-    material: "100 % coton, 185 g/m² (gris cendré : 99 % coton et 1 % viscose ; gris chiné : 90 % coton et 10 % viscose). Maille jersey tubulaire, col bord-côte 1 × 1, ourlets double aiguille. Certifié OEKO-TEX® Standard 100 (iDeal IB320).",
+    desc: "T-shirt en jersey de coton, coupe droite, col rond en bord-côte. Devant, le logo étoile CESI sur le cœur ; au dos, « CESI Lille » en grandes lettres autour du blason, avec 2026-2027, en {print}.",
+    material: "100 % coton, 185 g/m² (gris cendré : 99 % coton et 1 % viscose ; gris chiné : 90 % coton et 10 % viscose). Maille jersey tubulaire, col bord-côte 1 × 1, ourlets double aiguille. Certifié OEKO-TEX® Standard 100.",
     sizes: SIZES_TEE,
     // coloris accrochés sur la tringle ; les autres se choisissent dans la fiche (partie « Personnalisation »)
     rack: ["Blanc", "Rouge", "Orange", "Jaune", "Vert clair", "Bleu roi", "Noir"],
