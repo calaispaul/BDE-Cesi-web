@@ -194,6 +194,8 @@ Si un changement n'apparaît pas : recharger la page avec `Ctrl + F5` (le naviga
 les fichiers `.js` portent un numéro de version (`site.css?v=2026112319`). Après une modification de ces
 fichiers, remplacer ce numéro partout par la date du jour (rechercher/remplacer `?v=2026112319` dans les
 `.html`) : les navigateurs téléchargent alors la nouvelle version au lieu de garder l'ancienne en cache.
+Écrire aussi ce même numéro dans `version.txt` : les pages déjà ouvertes chez les visiteurs le lisent toutes les
+minutes (`nav.js`) et se rechargent d'elles-mêmes quand il change.
 
 > **Page 404** : ses liens commencent par `/` pour fonctionner quelle que soit l'adresse introuvable. Elle
 > s'affiche donc correctement à la racine d'un domaine (après le branchement du domaine IONOS), mais sans

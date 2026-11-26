@@ -1,3 +1,31 @@
+/* Mise à jour du site : chaque page connaît sa version (le « ?v= » de ce script). Toutes les minutes, et quand on revient
+   sur l'onglet, elle lit version.txt ; si le site a été republié avec une autre version, la page se recharge d'elle-même
+   (tout de suite si l'onglet est caché ou dès qu'on y revient ; pas pendant qu'on écrit dans un champ). */
+(function(){
+  "use strict";
+  var me = document.currentScript && /[?&]v=(\d+)/.exec(document.currentScript.src);
+  if(!me || location.protocol === "file:" || !window.fetch) return;
+  var mine = me[1], pending = false;
+  var reload = function(){
+    var el = document.activeElement, typing = el && /^(INPUT|TEXTAREA|SELECT)$/.test(el.tagName);
+    if(document.hidden || !typing) location.reload(); else setTimeout(reload, 5000);
+  };
+  var check = function(){
+    if(pending) return;
+    fetch("/version.txt?t=" + Date.now(), {cache:"no-store", credentials:"same-origin"})
+      .then(function(r){ return r.ok ? r.text() : ""; })
+      .then(function(t){ t = t.trim(); if(!/^\d+$/.test(t) || t === mine) return;
+        /* une seule tentative par nouvelle version : si le navigateur ressert l'ancienne page, on ne boucle pas */
+        var done = ""; try{ done = sessionStorage.getItem("bde-maj") || ""; sessionStorage.setItem("bde-maj", t); }catch(e){ return; }
+        if(done === t) return;
+        pending = true; reload(); })
+      .catch(function(){});
+  };
+  setInterval(check, 60000);
+  document.addEventListener("visibilitychange", function(){ if(!document.hidden) check(); });
+  setTimeout(check, 4000);
+})();
+
 /* Navigation globale : menu mobile (partagé par toutes les pages) */
 (function(){
   "use strict";
