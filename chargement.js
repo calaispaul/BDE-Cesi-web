@@ -57,7 +57,10 @@ const SITE = ($("#hero") || root.classList.contains("ld-on")) ? (() => {
     PAGES.forEach(add);
     /* visuels de la collection (tringle 3D, fiches) : chaque coloris a une vue de côté, de face et de dos */
     if(typeof PRODUCTS !== "undefined") PRODUCTS.forEach(p => { const k = {hoodie:"pull", tshirt:"tee"}[p.id]; if(!k) return;
-      p.colors.forEach(c => ["side", "face", "dos"].forEach(v => add(`images/pieces/${k}-${c.id}-${v}.webp${typeof IMG_V !== "undefined" ? "?v=" + IMG_V : ""}`))); });
+      const iv = typeof IMG_V !== "undefined" ? "?v=" + IMG_V : "";
+      p.colors.forEach(c => { ["side", "face", "dos"].forEach(v => add(`images/pieces/${k}-${c.id}-${v}.webp${iv}`));
+        if(c.nu) ["face", "dos"].forEach(v => add(`images/pieces/tee-${c.nu}-${v}-nu.webp${iv}`)); });   /* T-shirts sans impression */
+      if(p.prints) ["face", "dos"].forEach(v => add(`images/pieces/tee-impression-${v}.png${iv}`)); });   /* calques de l'impression */
     /* lecture des pages (elles comptent déjà comme fichiers téléchargés) */
     const pages = await Promise.all(PAGES.map(u => get(u, "text")));
     pages.forEach((h, i) => { if(h) fromPage(h, new URL(PAGES[i], location.href).href).forEach(add); });

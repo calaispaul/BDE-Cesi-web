@@ -17,7 +17,7 @@ const SHOP = {
    - colors[].teinte : couleur du vêtement (pastille du choix de coloris) ; rack (facultatif) : coloris sur la tringle
    - colors[].id : sert aussi à trouver les visuels de la tringle, images/pieces/<pull|tee>-<id>-<face|dos|side>.webp */
 // version des visuels (images/pieces) : à changer quand on remplace une image, pour que les navigateurs la rechargent
-const IMG_V = "2026112632";
+const IMG_V = "2026112636";
 // tailles proposées sur SumUp
 const SIZES_PULL = ["S", "M", "L", "XL", "XXL"];
 const SIZES_TEE = ["XS", "S", "M", "L", "XL", "XXL"];
@@ -76,31 +76,33 @@ const PRODUCTS = [
       { name: "bordeaux", sumup: "bordeau", teinte: "#6b1f2e" },
       { name: "fuchsia (violet)", sumup: "fushia(violet)", teinte: "#c2187a" }
     ],
-    // les visuels : un par coloris (avec l'impression de la photo), deux pour le blanc et le noir
+    // les visuels : un par coloris (avec l'impression de la photo), deux pour le blanc et le noir ; nu : le même T-shirt
+    // sans impression (images/pieces/tee-<nu>-<face|dos>-nu.webp), sur lequel la fiche pose l'impression choisie
+    // (calques images/pieces/tee-impression-<face|dos>.png, colorés à la volée)
     // (libellés exacts de SumUp, « Couleurs T-Shirt »)
     colors: [
-      { id: "blanc-noir",      name: "Blanc",           sumup: "Blanc",           print: "noir",           teinte: "#f4f5f8" },
-      { id: "blanc-rose",      name: "Blanc",           sumup: "Blanc",           print: "rose",           teinte: "#f4f5f8" },
-      { id: "noir-blanc",      name: "Noir",            sumup: "Noir",            print: "blanc",          teinte: "#28282a" },
-      { id: "noir-rouge",      name: "Noir",            sumup: "Noir",            print: "rouge",          teinte: "#28282a" },
-      { id: "gris-chine",      name: "Gris cendré",     sumup: "Gris cendré",     print: "noir",           teinte: "#dedfe3" },
-      { id: "bleu-atoll",      name: "Bleu atoll",      sumup: "Bleu atoll",      print: "blanc",          teinte: "#1989ad" },
-      { id: "bordeaux",        name: "Bordeaux",        sumup: "Bordeaux",        print: "blanc",          teinte: "#532d38" },
-      { id: "gris-fonce",      name: "Gris foncé",      sumup: "Gris foncé",      print: "blanc",          teinte: "#46484d" },
-      { id: "vert-foret",      name: "Vert forêt",      sumup: "Vert forêt",      print: "beige (crème)",  teinte: "#2f4234" },
-      { id: "fuchsia",         name: "Fuchsia",         sumup: "Fuchsia",         print: "blanc",          teinte: "#d24b73" },
-      { id: "or",              name: "Jaune",           sumup: "Jaune",           print: "noir",           teinte: "#fab119" },
-      { id: "vert-prairie",    name: "Vert clair",      sumup: "Vert clair",      print: "blanc",          teinte: "#198653" },
-      { id: "marine",          name: "Bleu marine",     sumup: "Bleu marine",     print: "blanc",          teinte: "#252c33" },
-      { id: "orange",          name: "Orange",          sumup: "Orange",          print: "noir",           teinte: "#ee5a1e" },
-      { id: "gris-oxford",     name: "Gris chiné",      sumup: "Gris chiné",      print: "noir",           teinte: "#a7a8ae" },
-      { id: "gris-pacifique",  name: "Gris pacifique",  sumup: "Gris pacifique",  print: "blanc",          teinte: "#acb1b2" },
-      { id: "naturel",         name: "Naturel",         sumup: "Naturel",         print: "marron",         teinte: "#efe5d4" },
-      { id: "rouge",           name: "Rouge",           sumup: "Rouge",           print: "blanc",          teinte: "#b32231" },
-      { id: "bleu-roi",        name: "Bleu roi",        sumup: "Bleu roi",        print: "blanc",          teinte: "#19548f" },
-      { id: "sable",           name: "Sable",           sumup: "Sable",           print: "marron",         teinte: "#baa58d" },
-      { id: "bleu-ciel",       name: "Bleu ciel",       sumup: "Bleu ciel",       print: "bleu foncé",     teinte: "#7cadd3" },
-      { id: "kaki",            name: "Kaki",            sumup: "Kaki",            print: "beige (crème)",  teinte: "#48473c" }
+      { id: "blanc-noir",      name: "Blanc",           sumup: "Blanc",           print: "noir",           nu: "blanc",           teinte: "#f4f5f8" },
+      { id: "blanc-rose",      name: "Blanc",           sumup: "Blanc",           print: "rose",           nu: "blanc",           teinte: "#f4f5f8" },
+      { id: "noir-blanc",      name: "Noir",            sumup: "Noir",            print: "blanc",          nu: "noir",            teinte: "#28282a" },
+      { id: "noir-rouge",      name: "Noir",            sumup: "Noir",            print: "rouge",          nu: "noir",            teinte: "#28282a" },
+      { id: "gris-chine",      name: "Gris cendré",     sumup: "Gris cendré",     print: "noir",           nu: "gris-chine",      teinte: "#dedfe3" },
+      { id: "bleu-atoll",      name: "Bleu atoll",      sumup: "Bleu atoll",      print: "blanc",          nu: "bleu-atoll",      teinte: "#1989ad" },
+      { id: "bordeaux",        name: "Bordeaux",        sumup: "Bordeaux",        print: "blanc",          nu: "bordeaux",        teinte: "#532d38" },
+      { id: "gris-fonce",      name: "Gris foncé",      sumup: "Gris foncé",      print: "blanc",          nu: "gris-fonce",      teinte: "#46484d" },
+      { id: "vert-foret",      name: "Vert forêt",      sumup: "Vert forêt",      print: "beige (crème)",  nu: "vert-foret",      teinte: "#2f4234" },
+      { id: "fuchsia",         name: "Fuchsia",         sumup: "Fuchsia",         print: "blanc",          nu: "fuchsia",         teinte: "#d24b73" },
+      { id: "or",              name: "Jaune",           sumup: "Jaune",           print: "noir",           nu: "or",              teinte: "#fab119" },
+      { id: "vert-prairie",    name: "Vert clair",      sumup: "Vert clair",      print: "blanc",          nu: "vert-prairie",    teinte: "#198653" },
+      { id: "marine",          name: "Bleu marine",     sumup: "Bleu marine",     print: "blanc",          nu: "marine",          teinte: "#252c33" },
+      { id: "orange",          name: "Orange",          sumup: "Orange",          print: "noir",           nu: "orange",          teinte: "#ee5a1e" },
+      { id: "gris-oxford",     name: "Gris chiné",      sumup: "Gris chiné",      print: "noir",           nu: "gris-oxford",     teinte: "#a7a8ae" },
+      { id: "gris-pacifique",  name: "Gris pacifique",  sumup: "Gris pacifique",  print: "blanc",          nu: "gris-pacifique",  teinte: "#acb1b2" },
+      { id: "naturel",         name: "Naturel",         sumup: "Naturel",         print: "marron",         nu: "naturel",         teinte: "#efe5d4" },
+      { id: "rouge",           name: "Rouge",           sumup: "Rouge",           print: "blanc",          nu: "rouge",           teinte: "#b32231" },
+      { id: "bleu-roi",        name: "Bleu roi",        sumup: "Bleu roi",        print: "blanc",          nu: "bleu-roi",        teinte: "#19548f" },
+      { id: "sable",           name: "Sable",           sumup: "Sable",           print: "marron",         nu: "sable",           teinte: "#baa58d" },
+      { id: "bleu-ciel",       name: "Bleu ciel",       sumup: "Bleu ciel",       print: "bleu foncé",     nu: "bleu-ciel",       teinte: "#7cadd3" },
+      { id: "kaki",            name: "Kaki",            sumup: "Kaki",            print: "beige (crème)",  nu: "kaki",            teinte: "#48473c" }
     ]
   }
   // Pack T-shirt + Pull (62,99 € sur SumUp, soit 10 % de moins que les deux achetés séparément) :

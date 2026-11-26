@@ -636,6 +636,18 @@ function buildSheet(){
   };
   /* « Commander » mène à la boutique, roue déjà tournée sur la famille de l'article (boutique.js lit l'ancre) */
   const FAMILLE = {hoodie:"pull", tshirt:"t-shirt"};
+  /* T-shirt : n'importe quelle impression sur n'importe quel coloris. Quand il n'y a pas de photo de la combinaison,
+     on la compose : T-shirt sans impression + calque du dessin (devant ou dos) teinté à la couleur de l'encre. */
+  const imgCache = {}, composed = {};
+  const loadImg = src => imgCache[src] || (imgCache[src] = new Promise((ok, ko) => { const i = new Image(); i.onload = () => ok(i); i.onerror = ko; i.src = src; }));
+  const compose = (nu, view, hex) => { const key = nu + "|" + view + "|" + hex;
+    return composed[key] || (composed[key] = Promise.all([loadImg(`images/pieces/tee-${nu}-${view}-nu.webp${iv}`), loadImg(`images/pieces/tee-impression-${view}.png${iv}`)]).then(([b, m]) => {
+      const c = document.createElement("canvas"); c.width = b.naturalWidth; c.height = b.naturalHeight;
+      const ink = document.createElement("canvas"); ink.width = c.width; ink.height = c.height;
+      const k = ink.getContext("2d"); k.drawImage(m, 0, 0, c.width, c.height); k.globalCompositeOperation = "source-in"; k.fillStyle = hex; k.fillRect(0, 0, c.width, c.height);
+      const x = c.getContext("2d"); x.drawImage(b, 0, 0); x.drawImage(ink, 0, 0);
+      return c.toDataURL("image/webp", .9); })); };
+  let shown = 0;   /* jeton : seule la dernière demande d'image s'affiche */
   const cap = t => t.charAt(0).toUpperCase() + t.slice(1);
   const label = c => (c.printLabel || "").replace(/^(Impression|Écriture) (.)/, (_, w, l) => l.toUpperCase());
   const radios = (items, cur, key, sw, txt) => items.map((x, j) => `<button type="button" role="radio" data-${key}="${j}" title="${esc(txt(x))}" aria-checked="${j === cur}"${j === cur ? "" : ' tabindex="-1"'}>
@@ -650,7 +662,7 @@ function buildSheet(){
       ink = p.prints[vi]; v = g.vars.find(x => x.c.print === ink.name) || g.vars[0]; c = v.c;
       inkHTML = `<p class="ps-perso-l" id="psImp">Impression<span>${esc(cap(ink.name))} · ${p.prints.length} au choix</span></p>
         <div class="ps-perso-o sw" role="radiogroup" aria-labelledby="psImp">${radios(p.prints, vi, "vi", x => x.teinte, x => cap(x.name))}</div>
-        ${c.print === ink.name ? "" : `<p class="ps-perso-n">Sur la photo : impression ${esc(c.print)}. Sur ton T-shirt : ${esc(ink.name)}.</p>`}`;
+`;
     } else {
       if(vi < 0) vi = 0;
       v = g.vars[vi] || g.vars[0]; c = v.c; ink = {name:c.print};
@@ -658,8 +670,11 @@ function buildSheet(){
         <div class="ps-perso-o" role="radiogroup" aria-labelledby="psImp">${radios(g.vars, g.vars.indexOf(v), "vi", x => INK[x.c.print] || "#fff", x => label(x.c))}</div>`;
     }
     zoom(false);
-    img.src = v[view];
-    img.alt = `${p.sumupName || p.name} ${c.name}, impression ${c.print}, ${({face:"de face", dos:"de dos", side:"de côté"})[view]}`;
+    const tok = ++shown;
+    if(p.prints && c.print !== ink.name && view !== "side" && c.nu){
+      compose(c.nu, view, ink.teinte).then(u => { if(tok === shown) img.src = u; }, () => { if(tok === shown) img.src = v[view]; });
+    } else img.src = v[view];
+    img.alt = `${p.sumupName || p.name} ${c.name}, impression ${ink.name || c.print}, ${({face:"de face", dos:"de dos", side:"de côté"})[view]}`;
     el.querySelectorAll(".ps-views button").forEach(b => b.setAttribute("aria-pressed", b.dataset.v === view));
     const choixColoris = p.rack && all.length > 1 ? `<p class="ps-perso-l" id="psCol">Coloris<span>${esc(c.name)} · ${all.length} au choix</span></p>
         <div class="ps-perso-o sw" role="radiogroup" aria-labelledby="psCol">${radios(all, all.indexOf(g), "gi", x => x.teinte || "#fff", x => x.name)}</div>` : "";
