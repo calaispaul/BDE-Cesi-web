@@ -1,0 +1,40 @@
+# Retire la page d'attente du site à l'ouverture (jeudi 26 novembre 2026, 18 h à Paris = 17 h UTC).
+# Le site s'ouvre déjà de lui-même à 18 h pile pour les visiteurs ; cette action fait ensuite le ménage
+# (GitHub peut lancer une action programmée avec quelques minutes de retard, d'où plusieurs essais).
+# On peut aussi la lancer à la main : onglet Actions → « Ouverture du site » → Run workflow.
+name: Ouverture du site
+
+on:
+  schedule:
+    - cron: "2 17 26 11 *"
+    - cron: "20 17 26 11 *"
+    - cron: "45 17 26 11 *"
+    - cron: "30 18 26 11 *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+
+concurrency: ouverture
+
+jobs:
+  ouvrir:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - name: Retirer la page d'attente
+        run: node .github/ouverture/ouvrir.mjs
+      - name: Publier
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if [ -z "$(git status --porcelain)" ]; then echo "Rien à publier."; exit 0; fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Ouverture : retrait automatique de la page d'attente"
+          git push origin HEAD:main
+          gh api -X POST "repos/${{ github.repository }}/pages/builds" || true

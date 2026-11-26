@@ -276,4 +276,5 @@ pull noir en pixels floutés, fond sombre en grille de grands carrés presque no
   (async c=>{const e=new TextEncoder(),k=await crypto.subtle.importKey("raw",e.encode(c),"PBKDF2",false,["deriveBits"]);
   return [...new Uint8Array(await crypto.subtle.deriveBits({name:"PBKDF2",hash:"SHA-256",salt:e.encode("bde-cesi-lille|acces|2026"),iterations:300000},k,256))].map(b=>b.toString(16).padStart(2,"0")).join("")})("NOUVEAUCODE")
   ```
-- Après l'ouverture, on peut supprimer `attente.html`, `attente.js` et le bloc « Page d'attente » de `boot.js`.
+- **Après l'ouverture**, la page d'attente est retirée automatiquement par l'action GitHub `.github/workflows/ouverture.yml`
+  (fichiers `attente.*`, `rappel.ics`, image, styles, blocage dans `boot.js`), quelques minutes après 18 h.
