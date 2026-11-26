@@ -48,7 +48,7 @@ const PRODUCTS = [
     material: "100 % coton, 185 g/m² (gris chiné : 99 % coton et 1 % viscose ; gris oxford : 90 % coton et 10 % viscose). Maille jersey tubulaire, col bord-côte 1 × 1, ourlets double aiguille. Certifié OEKO-TEX® Standard 100 (iDeal IB320).",
     sizes: SIZES,
     // coloris accrochés sur la tringle ; les autres se choisissent dans la fiche (partie « Personnalisation »)
-    rack: ["Noir", "Blanc", "Gris chiné", "Bordeaux", "Vert forêt"],
+    rack: ["Blanc", "Rouge", "Orange", "Jaune or", "Vert prairie", "Bleu roi", "Noir"],
     colors: [
       { id: "blanc-noir", name: "Blanc", sumup: "Blanc (impression noire)", print: "noir", printLabel: "Impression noire", teinte: "#f4f5f8" },
       { id: "blanc-rose", name: "Blanc", sumup: "Blanc (impression rose)", print: "rose", printLabel: "Impression rose", teinte: "#f4f5f8" },

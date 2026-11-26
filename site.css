@@ -319,7 +319,7 @@ html{-webkit-tap-highlight-color:transparent}
 .specs .head{text-align:center;max-width:720px;margin:0 auto clamp(40px,5vw,72px)}
 .specs .head p{margin-top:16px}
 .spec-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:var(--gap)}
-.spec{padding:28px 0 0;border-top:1px solid var(--hairline)}
+.spec{padding:28px 0 0;border-top:1px solid var(--hairline);text-align:center}
 .spec .num{font-family:var(--display);font-weight:600;font-size:clamp(40px,5vw,64px);line-height:1;letter-spacing:-.02em;display:block}
 .spec .num small{font-size:.42em;letter-spacing:0;margin-left:4px}
 .spec h3{font-size:17px;font-weight:600;margin-top:16px}
