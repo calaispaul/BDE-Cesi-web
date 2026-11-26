@@ -539,6 +539,7 @@ footer .copy a:hover{text-decoration:underline}
 .rack-stage.locked::after{opacity:1}
 #rendu{transition:background-color .9s var(--ease)}
 .pack-closed #rendu{background:#c4c4c5}
+.pack-closed .racks{background:#c4c4c5}   /* sous la tringle (texte « Personnalisable ») : même gris que le reste */
 /* tant que le booster n'est pas ouvert, la suite de la collection est là mais floutée et inactive */
 #portants ~ *{transition:filter .9s var(--ease),opacity .9s var(--ease)}
 .pack-closed #portants ~ *{filter:blur(16px) brightness(.77);opacity:1;pointer-events:none;user-select:none}
@@ -651,8 +652,14 @@ footer .copy a:hover{text-decoration:underline}
 .ps-nav{position:absolute;top:50%;width:40px;height:40px;border-radius:50%;border:0;background:var(--white);box-shadow:0 0 0 1px var(--control);display:grid;place-items:center;cursor:pointer;color:var(--ink);transform:translateY(-50%)}
 .ps-nav.prev{left:8px}.ps-nav.next{right:8px}
 @media (max-width:834px){
-  .ps-card{grid-template-columns:1fr;max-height:calc(100svh - 24px)}
-  .ps-info{padding-right:0}
+  /* téléphone : la photo reste en place en haut de la fiche, seul le texte défile (on voit toujours le design
+     quand on change de coloris ou d'impression) */
+  .ps-card{grid-template-columns:1fr;grid-template-rows:auto minmax(0,1fr);height:calc(100svh - 24px);max-height:none;overflow:hidden}
+  .ps-info{padding-right:0;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;min-height:0;padding-bottom:6px;margin:0 -4px;padding-left:4px;padding-right:4px}
+  .ps-buys{flex-wrap:nowrap;gap:10px}
+  .ps-buys .ps-buy{flex:none}
+  .ps-buys .ps-pack .pp-l{display:none}
+  .ps-buys .ps-pack .pp-s{display:inline}
   .ps-media img{max-height:38svh}
   .ps-nav{top:28%}
 }
@@ -820,6 +827,7 @@ form.cf{display:grid;grid-template-columns:1fr 1fr;gap:16px}
   font-size:14px;text-decoration:none;transform:rotate(-3deg);box-shadow:0 6px 14px rgba(227,23,30,.3);transition:transform .2s,box-shadow .2s}
 .ps-pack::before{content:"";width:6px;height:6px;border-radius:50%;background:#fff;flex:none}
 .ps-pack b{font-weight:700}
+.ps-pack .pp-s{display:none}
 .ps-pack:hover{transform:rotate(-3deg) scale(1.04);box-shadow:0 8px 18px rgba(227,23,30,.4)}
 /* photo bonus agrandie */
 .zoom-box{position:fixed;inset:0;z-index:8500;display:grid;place-items:center;padding:clamp(16px,5vw,64px);background:rgba(29,29,31,.26);
