@@ -816,9 +816,11 @@ form.cf{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 /* fiche : rappel du pack à côté de « Commander » */
 .ps-buys{display:flex;flex-wrap:wrap;align-items:center;gap:10px 16px;margin-top:18px}
 .ps-buys .ps-buy{margin-top:0}
-.ps-pack{display:inline-flex;align-items:center;gap:8px;font-size:14px;color:var(--ink);text-decoration:none}
-.ps-pack b{padding:4px 10px 4px 8px;border-radius:5px 999px 999px 5px;background:#e3171e;color:#fff;font-size:13px;font-weight:700;transform:rotate(-6deg);box-shadow:0 4px 10px rgba(227,23,30,.3)}
-.ps-pack:hover span{text-decoration:underline}
+.ps-pack{display:inline-flex;align-items:center;gap:6px;padding:7px 14px 7px 10px;border-radius:6px 999px 999px 6px;background:#e3171e;color:#fff;
+  font-size:14px;text-decoration:none;transform:rotate(-3deg);box-shadow:0 6px 14px rgba(227,23,30,.3);transition:transform .2s,box-shadow .2s}
+.ps-pack::before{content:"";width:6px;height:6px;border-radius:50%;background:#fff;flex:none}
+.ps-pack b{font-weight:700}
+.ps-pack:hover{transform:rotate(-3deg) scale(1.04);box-shadow:0 8px 18px rgba(227,23,30,.4)}
 /* photo bonus agrandie */
 .zoom-box{position:fixed;inset:0;z-index:8500;display:grid;place-items:center;padding:clamp(16px,5vw,64px);background:rgba(29,29,31,.26);
   -webkit-backdrop-filter:blur(14px) brightness(.8);backdrop-filter:blur(14px) brightness(.8);cursor:zoom-out}   /* même flou grisâtre que le colis fermé */
