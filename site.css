@@ -620,8 +620,17 @@ footer .copy a:hover{text-decoration:underline}
 .ps-info{display:flex;flex-direction:column;align-items:flex-start;padding-right:30px}
 .ps-kicker{font-size:13px;color:var(--steel);margin:0 0 6px}
 .ps-info h2{font-family:var(--display);font-weight:600;font-size:clamp(30px,3.4vw,44px);line-height:1.05;margin:0}
-.ps-sub{margin:4px 0 0;font-size:17px;color:var(--slate)}
 .ps-price{margin:12px 0 0;font-size:21px;font-weight:600}
+/* Personnalisation : couleur de l'impression du coloris choisi */
+.ps-perso{margin:16px 0 0}
+.ps-perso-t{margin:0;font-size:14px;font-weight:600;color:var(--ink)}
+.ps-perso-t span{font-weight:400;color:var(--slate);margin-left:8px}
+.ps-perso-o{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.ps-perso-o button{display:inline-flex;align-items:center;gap:8px;border:0;border-radius:999px;padding:7px 14px 7px 8px;font:inherit;font-size:14px;cursor:pointer;
+  background:var(--white);color:var(--ink);box-shadow:inset 0 0 0 1px var(--hairline);transition:box-shadow .2s,background .2s}
+.ps-perso-o button i{width:20px;height:20px;border-radius:50%;box-shadow:inset 0 0 0 1px rgba(0,0,0,.18)}
+.ps-perso-o button:hover{box-shadow:inset 0 0 0 1px var(--steel)}
+.ps-perso-o button[aria-checked="true"]{box-shadow:inset 0 0 0 2px var(--blue-fill);font-weight:600}
 .ps-desc,.ps-mat{margin:14px 0 0;font-size:15px;line-height:1.45;color:var(--slate)}
 .ps-mat{font-size:13px}
 .ps-guide{margin-top:14px;width:100%;font-size:13px}
@@ -780,6 +789,14 @@ form.cf{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 .specs .head .kicker{font-size:17px;color:var(--steel);margin:0 0 12px}
 .specs .head p:not(.kicker){max-width:56ch;margin:18px auto 0;font-size:17px;line-height:1.47;color:var(--slate)}
 .specs .head p b{color:var(--ink);font-weight:600}
+/* La matière : le pull et le T-shirt côte à côte, au même format */
+.mat-duo{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--gap);max-width:1000px;margin:0 auto clamp(40px,5vw,64px)}
+.mat{padding:clamp(22px,2.4vw,32px);border-radius:var(--r-card);background:var(--mist)}
+.mat-k{margin:0;font-size:15px;font-weight:600;color:var(--steel)}
+.mat-n{margin:6px 0 0;font-family:var(--display);font-weight:600;font-size:clamp(36px,4vw,56px);line-height:1.05;letter-spacing:-.02em;color:var(--ink)}
+.mat p:last-child{margin:14px 0 0;font-size:16px;line-height:1.47;color:var(--slate)}
+.mat p b{color:var(--ink);font-weight:600}
+@media (max-width:834px){ .mat-duo{grid-template-columns:1fr} }
 /* photo bonus agrandie */
 .zoom-box{position:fixed;inset:0;z-index:8500;display:grid;place-items:center;padding:clamp(16px,5vw,64px);background:rgba(29,29,31,.26);
   -webkit-backdrop-filter:blur(14px) brightness(.8);backdrop-filter:blur(14px) brightness(.8);cursor:zoom-out}   /* même flou grisâtre que le colis fermé */
