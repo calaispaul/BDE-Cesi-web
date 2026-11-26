@@ -30,7 +30,7 @@
     addEventListener("load", function(){ if(!window.__ldCtl) d.classList.remove("ld-on"); }); } }catch(e){}
   /* Collection : tant que le booster n'est pas ouvert (une fois par session), la suite de la page reste cachée.
      Filet de sécurité : si la scène 3D ne démarre pas, on réaffiche tout. */
-  try{ if(page === "collection.html" && sessionStorage.getItem("bde-cesi-lille-booster") !== "1"){ d.classList.add("pack-closed");
+  try{ if(page === "collection.html" && location.hash !== "#voir" && sessionStorage.getItem("bde-cesi-lille-booster") !== "1"){ d.classList.add("pack-closed");
     setTimeout(function(){ var s = document.getElementById("rackStage"); if(!s || !s.classList.contains("is-3d")) d.classList.remove("pack-closed"); }, 6000); } }catch(e){}
   /* Filet de sécurité : si GSAP ne se charge pas, on affiche tout */
   setTimeout(function(){ if(!window.gsap) d.classList.remove("js-anim"); }, 2500);

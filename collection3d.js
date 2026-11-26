@@ -42,6 +42,10 @@ const INK = {"blanc":"#ffffff", "rouge":"#c8102e", "marron":"#4e3328", "bleu él
 const sheet = buildSheet();
 buildList();
 
+/* collection.html#voir (astuce de la boutique) : paquet déjà ouvert, et la fiche du premier pull s'ouvre */
+const voir = location.hash === "#voir";
+if(voir){ try{ sessionStorage.setItem(KEY, "1"); }catch(e){} history.replaceState(null, "", location.pathname + location.search);
+  setTimeout(() => sheet.open(Math.max(0, pieces.findIndex(x => x.kind === "pull"))), 0); }
 let opened = false;
 try{ opened = sessionStorage.getItem(KEY) === "1"; }catch(e){}
 if(reduce) opened = true;
