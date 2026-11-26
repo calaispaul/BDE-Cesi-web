@@ -45,12 +45,11 @@ sur ordinateur, le logo ramène à l'accueil et le menu est affiché dans la bar
 
 ```
 .
-├── index.html, collection.html, boutique.html, contact.html, infos-legales.html, 404.html, attente.html
+├── index.html, collection.html, boutique.html, contact.html, infos-legales.html, 404.html
 ├── site.css            feuille de style unique (couleurs, mise en page, animations CSS)
 ├── products.js         catalogue : produits, prix, coloris, tailles, e-mail de contact  ← à modifier
-├── boot.js             chargé en premier : anti-intégration, page d'attente (heure du serveur), états de départ (compacté)
+├── boot.js             chargé en premier : anti-intégration, adresse propre de l'accueil, états de départ des animations
 ├── chargement.js       écran de chargement de la première page de la visite + téléchargement de tout le site
-├── attente.js          page d'attente : compte à rebours, pull en pixels, accès équipe (compacté)
 ├── boutique.js         roue des articles de la boutique (ordinateur) et liens vers SumUp
 ├── nav.js              barre du haut et menu (logo qui ouvre le menu sur téléphone)
 ├── home.js             animations de l'accueil et de la collection (GSAP + ScrollTrigger)
@@ -71,8 +70,7 @@ sur ordinateur, le logo ramène à l'accueil et le menu est affiché dans la bar
     ├── pack.jpg                             pull + T-shirt de la carte « Pack » (boutique)
     ├── equipe/                              photos du BDE et des membres
     ├── collab/                              logos CESI Lille et Maison Vitali (partie « L'atelier »)
-    ├── banniere-boutique.webp               bannière de la page Boutique
-    └── attente-pull.png                     pull déjà pixellisé (80 × 80) de la page d'attente
+    └── banniere-boutique.webp               bannière de la page Boutique
 ```
 
 Il n'y a **aucune étape de compilation** : ce qui est dans le dépôt est exactement ce qui est publié.
@@ -259,23 +257,7 @@ fichiers, remplacer ce numéro partout par la date du jour (rechercher/remplacer
 - **Site** : BDE CESI Lille — responsable de la publication : Paul Calais
 - Bibliothèques : [GSAP](https://gsap.com) et [Three.js](https://threejs.org) (licences dans leurs fichiers `vendor/`)
 
-## Page d'attente (jusqu'au jeudi 26 novembre 2026, 20 h)
+## Page d'attente
 
-Jusqu'à l'heure d'ouverture, toutes les pages (sauf les infos légales) renvoient vers `attente.html` :
-pull noir en pixels floutés, fond sombre en grille de grands carrés presque noirs (les lignes s'illuminent doucement : case sous le curseur qui s'allume et vague de taille aléatoire au clic gauche sur ordinateur, vagues douces au hasard sur téléphone, jamais dans une autre vague ni derrière le pull, qui rebondissent l'une sur l'autre) ; compteur sur fond blanc, compte à rebours et bouton « Ajouter un rappel » (ouvre la création d'événement de Google Agenda, ou Calendrier sur iPhone/Mac via `rappel.ics`). Jeudi 26 novembre à 20 h (heure de Paris), le site s'ouvre tout seul et `attente.html` renvoie vers l'accueil.
-
-- **Accès équipe** : appuyer sur le pull au centre de la page d'attente, puis saisir le code. L'accès ne dure que le temps de la visite : un rafraîchissement, un nouvel onglet ou la fermeture du navigateur ramènent sur la page d'attente (rien n'est gardé en mémoire).
-  Le code n'est écrit nulle part dans le site : seule son empreinte (PBKDF2-SHA256, 300 000 tours) est enregistrée.
-- **Limite** : le site est statique et le dépôt public, donc ce verrou cache le site au public mais n'est pas
-  une vraie protection (quelqu'un de technique peut lire les fichiers du dépôt). Ne rien mettre de secret derrière.
-- **Fichiers compactés** : `attente.html`, `attente.js` et `boot.js` sont publiés sans commentaires et compactés (noms de variables raccourcis). Pour les modifier, rechercher les valeurs ci-dessous telles quelles. Les versions commentées restent dans l'historique Git (commit précédant « Compacte la page d'attente »).
-- **Changer l'heure d'ouverture** : l'heure est écrite `17957196e5` (= 1795719600000, millisecondes depuis 1970, UTC : jeudi 26 novembre 2026, 20 h à Paris) dans `boot.js` **et** `attente.js` ; la remplacer dans les deux, ainsi que les dates de `rappel.ics` et du lien Google Agenda dans `attente.html`.
-- **Ouvrir le site plus tôt** : remplacer `17957196e5` par `0` dans `boot.js` et `attente.js`.
-- **Changer le code** : calculer la nouvelle empreinte (console du navigateur sur la page d'attente) puis remplacer
-  l'ancienne empreinte (`0596365f…`) dans `attente.js` et `boot.js` :
-  ```js
-  (async c=>{const e=new TextEncoder(),k=await crypto.subtle.importKey("raw",e.encode(c),"PBKDF2",false,["deriveBits"]);
-  return [...new Uint8Array(await crypto.subtle.deriveBits({name:"PBKDF2",hash:"SHA-256",salt:e.encode("bde-cesi-lille|acces|2026"),iterations:300000},k,256))].map(b=>b.toString(16).padStart(2,"0")).join("")})("NOUVEAUCODE")
-  ```
-- **Après l'ouverture**, la page d'attente est retirée automatiquement par l'action GitHub `.github/workflows/ouverture.yml`
-  (fichiers `attente.*`, `rappel.ics`, image, styles, blocage dans `boot.js`), quelques minutes après 20 h.
+La page d'attente a servi jusqu'à l'ouverture du jeudi 26 novembre 2026, 20 h ; elle a été retirée automatiquement
+(`.github/workflows/ouverture.yml`). Elle reste dans l'historique Git. Une ancienne adresse `attente.html` renvoie vers l'accueil.
