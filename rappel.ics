@@ -6,8 +6,8 @@ METHOD:PUBLISH
 BEGIN:VEVENT
 UID:ouverture-collection-2026@bde-cesi-lille.fr
 DTSTAMP:20261123T120000Z
-DTSTART:20261126T170000Z
-DTEND:20261126T173000Z
+DTSTART:20261126T190000Z
+DTEND:20261126T193000Z
 SUMMARY:Ouverture de la collection BDE CESI Lille
 DESCRIPTION:La collection 2026-2027 du BDE CESI Lille est en ligne : https://bde-cesi-lille.fr
 URL:https://bde-cesi-lille.fr

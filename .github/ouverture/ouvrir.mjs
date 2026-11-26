@@ -1,9 +1,9 @@
-// Lancé par .github/workflows/ouverture.yml : à l'heure d'ouverture (jeudi 26 novembre 2026, 18 h, Paris),
+// Lancé par .github/workflows/ouverture.yml : à l'heure d'ouverture (jeudi 26 novembre 2026, 20 h, Paris),
 // retire la page d'attente du site. Ne fait rien avant l'heure, ni si c'est déjà fait. S'arrête sur une erreur
 // (rien n'est alors publié) si un fichier a changé et ne correspond plus à ce qui est attendu.
 import fs from "node:fs";
 
-const OUVERTURE = Date.UTC(2026, 10, 26, 17, 0, 0);
+const OUVERTURE = Date.UTC(2026, 10, 26, 19, 0, 0);
 const force = process.argv.includes("--force");
 if (Date.now() < OUVERTURE && !force) { console.log("Pas encore l'heure d'ouverture : rien à faire."); process.exit(0); }
 if (!fs.existsSync("attente.html")) { console.log("La page d'attente est déjà retirée : rien à faire."); process.exit(0); }
@@ -41,7 +41,7 @@ remplacer("README.md", "    ├── banniere-boutique.webp               banni
   const s = lire("README.md"), a = s.indexOf("## Page d'attente (");
   if (a < 0) throw new Error("README.md : partie « Page d'attente » introuvable");
   const b = s.indexOf("\n## ", a + 5);
-  fs.writeFileSync("README.md", s.slice(0, a) + "## Page d'attente\n\nLa page d'attente a servi jusqu'à l'ouverture du jeudi 26 novembre 2026, 18 h ; elle a été retirée automatiquement\n(`.github/workflows/ouverture.yml`). Elle reste dans l'historique Git. Une ancienne adresse `attente.html` renvoie vers l'accueil.\n" + (b < 0 ? "" : s.slice(b)));
+  fs.writeFileSync("README.md", s.slice(0, a) + "## Page d'attente\n\nLa page d'attente a servi jusqu'à l'ouverture du jeudi 26 novembre 2026, 20 h ; elle a été retirée automatiquement\n(`.github/workflows/ouverture.yml`). Elle reste dans l'historique Git. Une ancienne adresse `attente.html` renvoie vers l'accueil.\n" + (b < 0 ? "" : s.slice(b)));
 }
 
 // 5. nouvelle version des fichiers dans toutes les pages (pour que les navigateurs ne gardent pas l'ancien boot.js)
