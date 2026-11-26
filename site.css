@@ -513,7 +513,6 @@ footer .copy a:hover{text-decoration:underline}
   .sm-card > img{width:96px;height:96px;border-radius:16px}
   .sm-txt b,.sm-price{font-size:19px}
   .sm-txt{font-size:14px}
-  .sm-list > li.is-cible .sm-card{box-shadow:0 0 0 2px var(--blue-fill)}   /* arrivée depuis la collection */
 }
 /* ---------- Fin de page : vers la page suivante (Accueil → Design → Boutique) ---------- */
 .next-step{padding:var(--section) 0;text-align:center;background:var(--white)}
@@ -940,3 +939,24 @@ form.cf{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 .c-hero{padding-top:clamp(24px,5vh,72px);padding-bottom:clamp(24px,5vh,64px)}
 .c-hero .mark{width:min(clamp(240px,32vw,420px),38svh);margin-top:clamp(16px,3vh,44px)}
 .channels,.c-form,.c-faq{padding-top:clamp(40px,7vh,96px);padding-bottom:clamp(40px,7vh,96px)}
+
+/* ---------- Pied de page sur téléphone : environ deux fois plus compact ---------- */
+@media (max-width:639px){
+  footer{padding:18px 0 14px;font-size:11px}
+  footer .fhead{padding:4px 0 14px;gap:10px 16px;align-items:center}
+  footer .fh-txt{gap:12px;align-items:center}
+  footer .fh-txt .mark{width:34px;height:34px}
+  footer .fhead h2{font-size:21px}
+  footer .fhead .lead{display:none}
+  footer .fhead .ctas{gap:14px;margin-bottom:0}
+  footer .fhead .ctas .pill.lg{font-size:14px;padding:8px 16px;min-height:0}
+  footer .fhead .ctas .link{font-size:14px}
+  footer .fcols{grid-template-columns:repeat(3,minmax(0,1fr));gap:10px 12px;padding:12px 0}
+  footer .fcols > div:last-child{grid-column:span 2}
+  footer h4{font-size:11px;margin-bottom:4px}
+  footer .fcols a,footer .fcols span{padding:2px 0}
+  footer .fcols a.ig{padding:4px 12px 4px 4px;gap:8px}
+  footer .fcols .ig-ico{width:26px;height:26px}
+  footer .fcols .ig-ico svg{width:14px;height:14px}
+  footer .copy{padding-top:10px;gap:4px;font-size:10px}
+}
