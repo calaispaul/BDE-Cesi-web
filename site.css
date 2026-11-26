@@ -440,7 +440,7 @@ footer .copy a:hover{text-decoration:underline}
    gauche est visible. L'article à 9 h est l'article choisi. Chaque carte ouvre la page SumUp de l'article
    (le paiement SumUp refuse de s'afficher dans un autre site). Sans JavaScript : simple liste. ---------- */
 .store{padding:0}
-.store-hero{--R:min(44svh,30vw,440px);--card:400px;
+.store-hero{--R:min(44svh,30vw,440px);--card:440px;--ch:min(184px,calc(var(--R) * .58));
   position:relative;display:flex;align-items:flex-start;gap:24px;min-height:calc(100svh - var(--nav));
   padding:clamp(20px,4vh,44px) var(--gutter);overflow:hidden;overflow:clip;background:#000}
 .sh-bg{position:absolute;inset:0;width:100%;height:100%;max-width:none;object-fit:cover;object-position:100% 50%}
@@ -454,15 +454,23 @@ footer .copy a:hover{text-decoration:underline}
 .sm-lead{margin:10px 0 18px;font-size:clamp(15px,1.1vw,16px);line-height:1.45;color:var(--slate)}
 .sm-wheel-box{position:relative;z-index:1;flex:1;align-self:center;max-width:var(--card)}
 .sm-list{list-style:none;margin:0;padding:0;display:grid;gap:12px}
-.sm-card{display:flex;align-items:center;gap:18px;padding:12px 22px 12px 12px;border-radius:24px;color:var(--ink);min-height:120px;transition:box-shadow .25s,background .25s}
+.sm-card{position:relative;isolation:isolate;overflow:hidden;display:flex;align-items:center;gap:20px;padding:14px 24px 14px 14px;border-radius:28px;color:var(--ink);min-height:var(--ch,184px);transition:box-shadow .25s,background .25s}
 .sm-card:active{transform:scale(.99)}
-.sm-card > img,.sm-duo{flex:none;width:96px;height:96px;border-radius:16px;background:#fff;object-fit:cover}
+.sm-card > img,.sm-duo{flex:none;width:calc(var(--ch,184px) - 28px);height:calc(var(--ch,184px) - 28px);border-radius:18px;background:#fff;object-fit:cover}
 .sm-duo{position:relative;overflow:hidden}
 .sm-duo img{position:absolute;top:0;width:60%;height:100%;object-fit:cover}
 .sm-duo img:first-child{left:0}.sm-duo img:last-child{right:0}
-.sm-txt{flex:1;display:flex;flex-direction:column;gap:3px;font-size:15px;color:var(--slate)}
-.sm-txt b{font-size:20px;font-weight:600;color:var(--ink)}
-.sm-price{flex:none;font-weight:600;font-size:20px}
+.sm-txt{flex:1;display:flex;flex-direction:column;gap:4px;font-size:16px;color:var(--slate)}
+.sm-txt b{font-size:23px;font-weight:600;color:var(--ink)}
+.sm-price{flex:none;font-weight:600;font-size:23px}
+/* article choisi : vagues bleues qui montent du bas de la carte et ondulent sans fin, derrière l'image et le texte */
+.sm-card::before{content:"";position:absolute;left:0;right:0;bottom:0;height:46%;z-index:-1;pointer-events:none;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 100' preserveAspectRatio='none'%3E%3Cpath d='M0 18C40 0 80 0 120 18S200 36 240 18V100H0Z' fill='rgb(0,113,227)' fill-opacity='.14'/%3E%3C/svg%3E") 0 0/240px 100% repeat-x,
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 100' preserveAspectRatio='none'%3E%3Cpath d='M0 34C30 16 60 16 90 34S150 52 180 34V100H0Z' fill='rgb(0,113,227)' fill-opacity='.2'/%3E%3C/svg%3E") 0 0/180px 100% repeat-x;
+  opacity:0;transform:translateY(100%);transition:transform .8s cubic-bezier(.2,.8,.2,1),opacity .4s}
+.is-dial .sm-list > li.on .sm-card::before,.sm-list > li.is-cible .sm-card::before{opacity:1;transform:none;animation:sm-vague 7s linear infinite}
+@keyframes sm-vague{to{background-position:240px 0,-180px 0}}
+@media (prefers-reduced-motion:reduce){ .sm-card::before{transition:none;animation:none !important} }
 
 /* la roue (classe ajoutée par boutique.js) : elle couvre toute la bannière, son centre est au milieu du bord droit */
 .sm-wheel-box.is-dial{position:absolute;inset:0;align-self:auto;max-width:none;pointer-events:none}
@@ -500,9 +508,9 @@ footer .copy a:hover{text-decoration:underline}
   .sm-lead{margin:12px 0 22px;font-size:16px}
   .sh-txt .pill{order:2;width:100%}
   .sm-wheel-box{order:1;flex:none;align-self:stretch;max-width:none;margin:0 0 22px}
-  .sm-card{background:var(--mist);-webkit-backdrop-filter:none;backdrop-filter:none;box-shadow:none;min-height:88px;padding:10px 16px 10px 10px;gap:14px;border-radius:20px}
-  .sm-card > img,.sm-duo{width:72px;height:72px;border-radius:14px}
-  .sm-txt b,.sm-price{font-size:17px}
+  .sm-card{background:var(--mist);-webkit-backdrop-filter:none;backdrop-filter:none;box-shadow:none;min-height:116px;padding:10px 16px 10px 10px;gap:16px;border-radius:22px}
+  .sm-card > img,.sm-duo{width:96px;height:96px;border-radius:16px}
+  .sm-txt b,.sm-price{font-size:19px}
   .sm-txt{font-size:14px}
   .sm-list > li.is-cible .sm-card{box-shadow:0 0 0 2px var(--blue-fill)}   /* arrivée depuis la collection */
 }
