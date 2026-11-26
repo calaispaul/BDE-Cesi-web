@@ -19,16 +19,20 @@ const G = window.gsap;
 const KEY = "bde-cesi-lille-booster";
 const D = THREE.MathUtils.degToRad;
 
-/* ---------- Données : une pièce par coloris du vêtement (pulls puis T-shirts). Les versions d'un même coloris
-   (même nom, couleur d'impression différente) se choisissent dans la fiche, partie « Personnalisation ». ---------- */
+/* ---------- Données : les coloris de chaque vêtement (pulls puis T-shirts). Un coloris = un nom, avec une ou plusieurs
+   versions (couleur d'impression). Sur la tringle : tous les coloris du pull, et pour le T-shirt ceux de products.js
+   (rack) ; dans la fiche, partie « Personnalisation », on choisit le coloris puis l'impression. ---------- */
 const KIND = {hoodie:"pull", tshirt:"tee"};
 const view3 = (k, c) => ({c, face:`images/pieces/${k}-${c.id}-face.webp`, dos:`images/pieces/${k}-${c.id}-dos.webp`, side:`images/pieces/${k}-${c.id}-side.webp`});
-const pieces = [];
-PRODUCTS.forEach(p => { const k = KIND[p.id]; if(!k) return;
-  p.colors.forEach(c => { const g = pieces.find(x => x.p === p && x.c.name === c.name);
-    if(g) g.vars.push(view3(k, c)); else pieces.push({p, kind:k, ...view3(k, c), vars:[view3(k, c)]}); }); });
+const groups = new Map(), pieces = [];
+PRODUCTS.forEach(p => { const k = KIND[p.id]; if(!k) return; const list = [];
+  p.colors.forEach(c => { const g = list.find(x => x.name === c.name);
+    if(g) g.vars.push(view3(k, c)); else list.push({p, kind:k, name:c.name, teinte:c.teinte, vars:[view3(k, c)]}); });
+  groups.set(p, list);
+  const onRack = p.rack ? p.rack.map(n => list.find(g => g.name === n)).filter(Boolean) : list;
+  onRack.forEach(g => pieces.push({p, kind:k, g, ...g.vars[0], vars:g.vars})); });
 /* le T-shirt noir ferme la tringle */
-{ const i = pieces.findIndex(x => x.kind === "tee" && x.c.name === "Noir"); if(i >= 0) pieces.push(pieces.splice(i, 1)[0]); }
+{ const i = pieces.findIndex(x => x.kind === "tee" && x.g.name === "Noir"); if(i >= 0) pieces.push(pieces.splice(i, 1)[0]); }
 /* pastille de la couleur d'impression */
 const INK = {"blanc":"#ffffff", "noir":"#1d1d1f", "rouge":"#c8102e", "marron":"#4e3328", "bleu":"#1f33c4", "rose":"#f3b5c9", "crème":"#efe5cf", "bleu marine":"#1c2741"};
 
@@ -607,7 +611,7 @@ function buildSheet(){
     </div>
   </div>`);
   const el = $("#pieceSheet"), card = $(".ps-card", el), img = $("#psImg"), info = $("#psInfo");
-  let idx = 0, vi = 0, view = "face", last = null;
+  let idx = 0, grp = null, vi = 0, view = "face", last = null;
   /* Zoom sur la photo : clic (ou Entrée) = ×2,5 à l'endroit visé, l'image suit ensuite le pointeur ; re-clic ou Échap = retour */
   const zb = $("#psZoom", el), zin = $(".ps-zin", el);
   let zoomed = false;
@@ -629,35 +633,42 @@ function buildSheet(){
   };
   /* « Commander » mène à la boutique, roue déjà tournée sur la famille de l'article (boutique.js lit l'ancre) */
   const FAMILLE = {hoodie:"pull", tshirt:"t-shirt"};
+  const label = c => (c.printLabel || "").replace(/^Impression (.)/, (_, l) => l.toUpperCase());
+  const radios = (items, cur, key, sw, txt) => items.map((x, j) => `<button type="button" role="radio" data-${key}="${j}" title="${esc(txt(x))}" aria-checked="${j === cur}"${j === cur ? "" : ' tabindex="-1"'}>
+        <i style="background:${sw(x)}"></i>${esc(txt(x))}</button>`).join("");
   const paint = () => {
-    const pc = pieces[idx], p = pc.p, v = pc.vars[vi] || pc.vars[0], c = v.c;
+    const pc = pieces[idx], p = pc.p, g = grp || pc.g, all = groups.get(p), v = g.vars[vi] || g.vars[0], c = v.c;
     zoom(false);
     img.src = v[view];
-    img.alt = `${p.sumupName || p.name} ${c.name}, ${(c.printLabel || "").toLowerCase()}, ${({face:"de face", dos:"de dos", side:"de côté"})[view]}`;
+    img.alt = `${p.sumupName || p.name} ${c.name}, ${label(c).toLowerCase()}, ${({face:"de face", dos:"de dos", side:"de côté"})[view]}`;
     el.querySelectorAll(".ps-views button").forEach(b => b.setAttribute("aria-pressed", b.dataset.v === view));
-    const perso = pc.vars.map((x, j) => `<button type="button" role="radio" data-vi="${j}" aria-checked="${j === vi}"${j === vi ? "" : ' tabindex="-1"'}>
-        <i style="background:${INK[x.c.print] || "#fff"}"></i>${esc((x.c.printLabel || "").replace(/^Impression (.)/, (_, l) => l.toUpperCase()))}</button>`).join("");
+    const choixColoris = p.rack && all.length > 1 ? `<p class="ps-perso-l" id="psCol">Coloris<span>${esc(c.name)} · ${all.length} au choix</span></p>
+        <div class="ps-perso-o sw" role="radiogroup" aria-labelledby="psCol">${radios(all, all.indexOf(g), "gi", x => x.teinte || "#fff", x => x.name)}</div>` : "";
     info.innerHTML = `
       <p class="ps-kicker">${esc(p.sumupName || p.name)} · ${idx + 1} / ${pieces.length}</p>
       <h2 id="psTitle">${esc(c.name)}</h2>
       <p class="ps-price">${p.price ? eur(p.price) : ""}</p>
-      <div class="ps-perso"><p class="ps-perso-t" id="psPerso">Personnalisation<span>${pc.vars.length > 1 ? "couleur de l'impression" : "impression"}</span></p>
-        <div class="ps-perso-o" role="radiogroup" aria-labelledby="psPerso">${perso}</div></div>
+      <div class="ps-perso"><p class="ps-perso-t">Personnalisation</p>
+        ${choixColoris}
+        <p class="ps-perso-l" id="psImp">Impression<span>${g.vars.length > 1 ? g.vars.length + " au choix" : ""}</span></p>
+        <div class="ps-perso-o" role="radiogroup" aria-labelledby="psImp">${radios(g.vars, g.vars.indexOf(v), "vi", x => INK[x.c.print] || "#fff", x => label(x.c))}</div></div>
       <p class="ps-desc">${esc(p.desc.replace("{print}", c.print || "blanc"))}</p>
       ${p.material ? `<p class="ps-mat">${esc(p.material)}</p>` : ""}
       ${guide(p)}
       <p class="ps-sizes">Tailles ${esc(p.sizes[0])} à ${esc(p.sizes[p.sizes.length - 1])}</p>
       <a class="pill blue lg ps-buy" href="boutique.html${FAMILLE[p.id] ? "#" + FAMILLE[p.id] : ""}">Commander</a>`;
   };
-  /* Personnalisation : choisir la couleur de l'impression (flèches du clavier comme un groupe de boutons radio) */
-  info.addEventListener("click", e => { const b = e.target.closest("[data-vi]"); if(!b) return;
-    vi = +b.dataset.vi; paint(); const n = info.querySelector(`[data-vi="${vi}"]`); if(n) n.focus({preventScroll:true}); });
-  info.addEventListener("keydown", e => { const b = e.target.closest("[data-vi]"); if(!b || !/^Arrow/.test(e.key)) return;
-    e.preventDefault(); e.stopPropagation(); const n = pieces[idx].vars.length; vi = (vi + (/Right|Down/.test(e.key) ? 1 : -1) + n) % n; paint();
-    const x = info.querySelector(`[data-vi="${vi}"]`); if(x) x.focus({preventScroll:true}); });
+  /* Personnalisation : coloris (data-gi) et impression (data-vi), au clic ou aux flèches comme des boutons radio */
+  const pick = (key, j) => { if(key === "gi"){ grp = groups.get(pieces[idx].p)[j]; vi = 0; } else vi = j; paint();
+    const n = info.querySelector(`[data-${key}="${j}"]`); if(n) n.focus({preventScroll:true}); };
+  info.addEventListener("click", e => { const b = e.target.closest("[data-gi],[data-vi]"); if(!b) return;
+    pick("gi" in b.dataset ? "gi" : "vi", +(b.dataset.gi ?? b.dataset.vi)); });
+  info.addEventListener("keydown", e => { const b = e.target.closest("[data-gi],[data-vi]"); if(!b || !/^Arrow/.test(e.key)) return;
+    e.preventDefault(); e.stopPropagation(); const key = "gi" in b.dataset ? "gi" : "vi", n = b.parentNode.children.length;
+    pick(key, (+b.dataset[key] + (/Right|Down/.test(e.key) ? 1 : -1) + n) % n); });
   const api = {
     open(i){
-      idx = Math.max(0, i); vi = 0; view = "face"; paint(); last = document.activeElement; openedAt = performance.now();
+      idx = Math.max(0, i); grp = null; vi = 0; view = "face"; paint(); last = document.activeElement; openedAt = performance.now();
       el.hidden = false; document.documentElement.classList.add("sheet-open");
       if(G && !reduce){ G.fromTo(el, {opacity:0}, {opacity:1, duration:.3}); G.fromTo(card, {y:40, scale:.96, opacity:0}, {y:0, scale:1, opacity:1, duration:.6, ease:"expo.out"}); }
       setTimeout(() => (window.__kbd ? $(".ps-x", el) : card).focus({preventScroll:true}), 30);   /* clavier : sur « fermer » ; doigt : sur la fiche, sans anneau */
@@ -666,7 +677,7 @@ function buildSheet(){
       const done = () => { el.hidden = true; document.documentElement.classList.remove("sheet-open"); if(last && last.focus) last.focus(); };
       if(G && !reduce) G.to(el, {opacity:0, duration:.25, onComplete:done}); else done();
     },
-    step(d){ idx = (idx + d + pieces.length) % pieces.length; vi = 0; view = "face"; paint();
+    step(d){ idx = (idx + d + pieces.length) % pieces.length; grp = null; vi = 0; view = "face"; paint();
       if(G && !reduce) G.fromTo(img, {x:d * 40, opacity:0}, {x:0, opacity:1, duration:.5, ease:"expo.out"}); }
   };
   $(".ps-x", el).addEventListener("click", api.close);
@@ -689,7 +700,7 @@ function buildSheet(){
 /* Liste des pièces : navigation au clavier (masquée visuellement) et secours sans 3D */
 function buildList(){
   const box = $("#rackFallback");
-  box.innerHTML = `<ul>${pieces.map((pc, i) => `<li><button type="button" data-i="${i}"><img src="${esc(pc.face)}" alt="" width="640" height="640" loading="lazy"><span>${esc(pc.p.sumupName || pc.p.name)} · ${esc(pc.c.name)}</span></button></li>`).join("")}</ul>`;
+  box.innerHTML = `<ul>${pieces.map((pc, i) => `<li><button type="button" data-i="${i}"><img src="${esc(pc.face)}" alt="" width="640" height="640" loading="lazy"><span>${esc(pc.p.sumupName || pc.p.name)} · ${esc(pc.g.name)}</span></button></li>`).join("")}</ul>`;
   box.addEventListener("click", e => { const b = e.target.closest("[data-i]"); if(b) sheet.open(+b.dataset.i); });
 }
 }

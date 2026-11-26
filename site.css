@@ -624,8 +624,11 @@ footer .copy a:hover{text-decoration:underline}
 /* Personnalisation : couleur de l'impression du coloris choisi */
 .ps-perso{margin:16px 0 0}
 .ps-perso-t{margin:0;font-size:14px;font-weight:600;color:var(--ink)}
-.ps-perso-t span{font-weight:400;color:var(--slate);margin-left:8px}
-.ps-perso-o{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.ps-perso-l{margin:10px 0 0;font-size:13px;color:var(--steel)}
+.ps-perso-l span{color:var(--slate);margin-left:8px}
+.ps-perso-o.sw button{padding:0;width:32px;height:32px;justify-content:center;font-size:0;gap:0}
+.ps-perso-o.sw button i{width:24px;height:24px}
+.ps-perso-o{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
 .ps-perso-o button{display:inline-flex;align-items:center;gap:8px;border:0;border-radius:999px;padding:7px 14px 7px 8px;font:inherit;font-size:14px;cursor:pointer;
   background:var(--white);color:var(--ink);box-shadow:inset 0 0 0 1px var(--hairline);transition:box-shadow .2s,background .2s}
 .ps-perso-o button i{width:20px;height:20px;border-radius:50%;box-shadow:inset 0 0 0 1px rgba(0,0,0,.18)}
