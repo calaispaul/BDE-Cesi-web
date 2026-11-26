@@ -810,6 +810,8 @@ form.cf{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 .rack-perso{margin:0;padding:6px var(--gutter) 28px;text-align:center;font-size:15px;color:var(--slate)}
 .rp-tag{display:table;margin:0 auto 8px;padding:4px 12px;border-radius:999px;background:var(--blue-fill);color:#fff;font-size:13px;font-weight:600}
 .pack-closed .rack-perso{visibility:hidden}
+.racks .scroll-hint{bottom:28px;z-index:3}
+.pack-closed .racks .scroll-hint{visibility:hidden}
 @media (min-width:640px){ .rack-perso{position:relative;z-index:3;margin-top:calc(-1 * clamp(64px,12svh,130px));pointer-events:none} }
 /* fiche : rappel du pack à côté de « Commander » */
 .ps-buys{display:flex;flex-wrap:wrap;align-items:center;gap:10px 16px;margin-top:18px}
