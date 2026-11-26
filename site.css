@@ -463,14 +463,13 @@ footer .copy a:hover{text-decoration:underline}
 .sm-txt{flex:1;display:flex;flex-direction:column;gap:4px;font-size:16px;color:var(--slate)}
 .sm-txt b{font-size:23px;font-weight:600;color:var(--ink)}
 .sm-price{flex:none;font-weight:600;font-size:23px}
-/* article choisi : vagues bleues qui montent du bas de la carte et ondulent sans fin, derrière l'image et le texte */
-.sm-card::before{content:"";position:absolute;left:0;right:0;bottom:0;height:46%;z-index:-1;pointer-events:none;
-  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 100' preserveAspectRatio='none'%3E%3Cpath d='M0 18C40 0 80 0 120 18S200 36 240 18V100H0Z' fill='rgb(0,113,227)' fill-opacity='.14'/%3E%3C/svg%3E") 0 0/240px 100% repeat-x,
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 100' preserveAspectRatio='none'%3E%3Cpath d='M0 34C30 16 60 16 90 34S150 52 180 34V100H0Z' fill='rgb(0,113,227)' fill-opacity='.2'/%3E%3C/svg%3E") 0 0/180px 100% repeat-x;
-  opacity:0;transform:translateY(100%);transition:transform .8s cubic-bezier(.2,.8,.2,1),opacity .4s}
-.is-dial .sm-list > li.on .sm-card::before,.sm-list > li.is-cible .sm-card::before{opacity:1;transform:none;animation:sm-vague 7s linear infinite}
-@keyframes sm-vague{to{background-position:240px 0,-180px 0}}
-@media (prefers-reduced-motion:reduce){ .sm-card::before{transition:none;animation:none !important} }
+/* article choisi : une vague bleue traverse la carte de droite à gauche, derrière l'image et le texte, puis repasse
+   toutes les quelques secondes (front ondulé, traîne qui s'efface) */
+.sm-card::before{content:"";position:absolute;top:0;bottom:0;left:0;width:70%;z-index:-1;pointer-events:none;opacity:0;transform:translateX(145%);
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 100' preserveAspectRatio='none'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' x2='1'%3E%3Cstop offset='0' stop-color='rgb(0,113,227)' stop-opacity='.34'/%3E%3Cstop offset='.35' stop-color='rgb(0,113,227)' stop-opacity='.16'/%3E%3Cstop offset='1' stop-color='rgb(0,113,227)' stop-opacity='0'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath d='M22 0C2 17 42 33 22 50S2 83 22 100H120V0Z' fill='url(%23g)'/%3E%3C/svg%3E") 0 0/100% 100% no-repeat}
+.is-dial .sm-list > li.on .sm-card::before,.sm-list > li.is-cible .sm-card::before{opacity:1;animation:sm-vague 4.5s cubic-bezier(.45,0,.25,1) .3s infinite}
+@keyframes sm-vague{0%{transform:translateX(145%)}45%,100%{transform:translateX(-100%)}}
+@media (prefers-reduced-motion:reduce){ .sm-card::before{display:none} }
 
 /* la roue (classe ajoutée par boutique.js) : elle couvre toute la bannière, son centre est au milieu du bord droit */
 .sm-wheel-box.is-dial{position:absolute;inset:0;align-self:auto;max-width:none;pointer-events:none}
