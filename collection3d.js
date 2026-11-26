@@ -656,7 +656,8 @@ function buildSheet(){
       ${p.material ? `<p class="ps-mat">${esc(p.material)}</p>` : ""}
       ${guide(p)}
       <p class="ps-sizes">Tailles ${esc(p.sizes[0])} à ${esc(p.sizes[p.sizes.length - 1])}</p>
-      <a class="pill blue lg ps-buy" href="boutique.html${FAMILLE[p.id] ? "#" + FAMILLE[p.id] : ""}">Commander</a>`;
+      <div class="ps-buys"><a class="pill blue lg ps-buy" href="boutique.html${FAMILLE[p.id] ? "#" + FAMILLE[p.id] : ""}">Commander</a>
+        <a class="ps-pack" href="boutique.html#pack"><b>−10 %</b><span>avec le pack pull + T-shirt</span></a></div>`;
   };
   /* Personnalisation : coloris (data-gi) et impression (data-vi), au clic ou aux flèches comme des boutons radio */
   const pick = (key, j) => { if(key === "gi"){ grp = groups.get(pieces[idx].p)[j]; vi = 0; } else vi = j; paint();

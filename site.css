@@ -796,6 +796,26 @@ form.cf{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 .specs .head .kicker{font-size:17px;color:var(--steel);margin:0 0 12px}
 .specs .head p:not(.kicker){max-width:56ch;margin:18px auto 0;font-size:17px;line-height:1.47;color:var(--slate)}
 .specs .head p b{color:var(--ink);font-weight:600}
+/* La matière : pull et T-shirt côte à côte (chaque colonne : titre, texte, puis ses quatre chiffres en 2 × 2) */
+.mat2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(32px,5vw,80px)}
+.specs-duo .head{max-width:none;margin-bottom:clamp(28px,3.5vw,48px)}
+.specs-duo .h2{font-size:clamp(30px,3.2vw,48px)}
+.specs-duo .head p:not(.kicker){font-size:16px}
+.specs-duo .spec-grid{grid-template-columns:repeat(2,minmax(0,1fr));row-gap:clamp(24px,3vh,36px)}
+.specs-duo .spec{padding-top:20px}
+.specs-duo .spec .num{font-size:clamp(34px,3.6vw,52px)}
+@media (max-width:834px){ .mat2{grid-template-columns:1fr;row-gap:72px} }
+/* sous la tringle : la personnalisation */
+.rack-perso{margin:0;padding:6px var(--gutter) 28px;text-align:center;font-size:15px;color:var(--slate)}
+.rp-tag{display:inline-block;margin-right:10px;padding:4px 12px;border-radius:999px;background:var(--blue-fill);color:#fff;font-size:13px;font-weight:600;vertical-align:1px}
+.pack-closed .rack-perso{visibility:hidden}
+@media (min-width:640px){ .rack-perso{position:relative;z-index:3;margin-top:calc(-1 * clamp(64px,12svh,130px));pointer-events:none} }
+/* fiche : rappel du pack à côté de « Commander » */
+.ps-buys{display:flex;flex-wrap:wrap;align-items:center;gap:10px 16px;margin-top:18px}
+.ps-buys .ps-buy{margin-top:0}
+.ps-pack{display:inline-flex;align-items:center;gap:8px;font-size:14px;color:var(--ink);text-decoration:none}
+.ps-pack b{padding:4px 10px 4px 8px;border-radius:5px 999px 999px 5px;background:#e3171e;color:#fff;font-size:13px;font-weight:700;transform:rotate(-6deg);box-shadow:0 4px 10px rgba(227,23,30,.3)}
+.ps-pack:hover span{text-decoration:underline}
 /* photo bonus agrandie */
 .zoom-box{position:fixed;inset:0;z-index:8500;display:grid;place-items:center;padding:clamp(16px,5vw,64px);background:rgba(29,29,31,.26);
   -webkit-backdrop-filter:blur(14px) brightness(.8);backdrop-filter:blur(14px) brightness(.8);cursor:zoom-out}   /* même flou grisâtre que le colis fermé */
