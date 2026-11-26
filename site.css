@@ -646,6 +646,7 @@ footer .copy a:hover{text-decoration:underline}
 .ps-guide table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
 .ps-guide th,.ps-guide td{padding:6px 4px;text-align:center;border-top:1px solid var(--control)}
 .ps-sizes{margin:14px 0 0;font-size:13px;color:var(--slate)}
+.ps-fit{display:inline-block;margin:8px 0 0;padding:6px 12px;border-radius:10px;background:rgba(0,113,227,.08);color:var(--ink);font-size:14px;font-weight:600}
 .ps-buy{margin-top:18px}
 .ps-nav{position:absolute;top:50%;width:40px;height:40px;border-radius:50%;border:0;background:var(--white);box-shadow:0 0 0 1px var(--control);display:grid;place-items:center;cursor:pointer;color:var(--ink);transform:translateY(-50%)}
 .ps-nav.prev{left:8px}.ps-nav.next{right:8px}

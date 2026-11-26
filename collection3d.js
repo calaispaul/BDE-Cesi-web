@@ -689,6 +689,7 @@ function buildSheet(){
       ${p.material ? `<p class="ps-mat">${esc(p.material)}</p>` : ""}
       ${guide(p)}
       <p class="ps-sizes">Tailles ${esc(p.sizes[0])} à ${esc(p.sizes[p.sizes.length - 1])}</p>
+      ${p.sizeNote ? `<p class="ps-fit">${esc(p.sizeNote)}</p>` : ""}
       <div class="ps-buys"><a class="pill blue lg ps-buy" href="boutique.html${FAMILLE[p.id] ? "#" + FAMILLE[p.id] : ""}">Commander</a>
         <a class="ps-pack" href="boutique.html#pack"><b>−10 %</b>avec le pack pull + T-shirt</a></div>`;
   };

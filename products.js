@@ -32,6 +32,7 @@ const PRODUCTS = [
     desc: "Sweat à capuche en molleton French Terry, coupe standard à épaules légèrement tombantes, capuche doublée avec cordon plat en coton bio, poche kangourou, sans étiquette qui gratte. Logo étoile brodé sur la poitrine, blason CESI Lille 2026-2027 au dos, en {print}.",
     material: "100 % coton biologique peigné, 400 g/m². Intérieur French Terry, lavé aux enzymes. Bords-côtes 2 × 1 aux poignets et en bas, doubles surpiqûres. Certifié GOTS et OEKO-TEX® Standard 100.",
     sizes: SIZES_PULL,
+    sizeNote: "Le pull taille grand : prends ta taille habituelle.",   // conseil affiché sous les tailles dans la fiche
     // Guide des tailles (facultatif) en cm, vêtement posé à plat. A = largeur de poitrine, B = longueur totale :
     // guideTable: { S: [A, B], M: [A, B], ... }, guideNote: "…". Sans guideTable, la fiche n'affiche pas de guide.
     // une version = un coloris + une écriture (libellés exacts de SumUp, « Couleur Pull »)
