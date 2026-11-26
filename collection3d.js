@@ -23,7 +23,8 @@ const D = THREE.MathUtils.degToRad;
    versions (couleur d'impression). Sur la tringle : tous les coloris du pull, et pour le T-shirt ceux de products.js
    (rack) ; dans la fiche, partie « Personnalisation », on choisit le coloris puis l'impression. ---------- */
 const KIND = {hoodie:"pull", tshirt:"tee"};
-const view3 = (k, c) => ({c, face:`images/pieces/${k}-${c.id}-face.webp`, dos:`images/pieces/${k}-${c.id}-dos.webp`, side:`images/pieces/${k}-${c.id}-side.webp`});
+const iv = typeof IMG_V !== "undefined" ? "?v=" + IMG_V : "";
+const view3 = (k, c) => ({c, face:`images/pieces/${k}-${c.id}-face.webp${iv}`, dos:`images/pieces/${k}-${c.id}-dos.webp${iv}`, side:`images/pieces/${k}-${c.id}-side.webp${iv}`});
 const groups = new Map(), pieces = [];
 PRODUCTS.forEach(p => { const k = KIND[p.id]; if(!k) return; const list = [];
   p.colors.forEach(c => { const g = list.find(x => x.name === c.name);

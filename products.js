@@ -16,6 +16,8 @@ const SHOP = {
    - colors[].sumup : libellé sur SumUp ; colors[].print / printLabel : couleur de l'écriture ; prints (T-shirt) : impressions au choix
    - colors[].teinte : couleur du vêtement (pastille du choix de coloris) ; rack (facultatif) : coloris sur la tringle
    - colors[].id : sert aussi à trouver les visuels de la tringle, images/pieces/<pull|tee>-<id>-<face|dos|side>.webp */
+// version des visuels (images/pieces) : à changer quand on remplace une image, pour que les navigateurs la rechargent
+const IMG_V = "2026112632";
 // tailles proposées sur SumUp
 const SIZES_PULL = ["S", "M", "L", "XL", "XXL"];
 const SIZES_TEE = ["XS", "S", "M", "L", "XL", "XXL"];
