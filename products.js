@@ -16,7 +16,9 @@ const SHOP = {
    - colors[].sumup : libellé sur SumUp ; colors[].print / printLabel : couleur de l'écriture ; prints (T-shirt) : impressions au choix
    - colors[].teinte : couleur du vêtement (pastille du choix de coloris) ; rack (facultatif) : coloris sur la tringle
    - colors[].id : sert aussi à trouver les visuels de la tringle, images/pieces/<pull|tee>-<id>-<face|dos|side>.webp */
-const SIZES = ["XS", "S", "M", "L", "XL", "XXL", "3XL"];
+// tailles proposées sur SumUp
+const SIZES_PULL = ["S", "M", "L", "XL", "XXL"];
+const SIZES_TEE = ["XS", "S", "M", "L", "XL", "XXL"];
 
 const PRODUCTS = [
   {
@@ -27,7 +29,7 @@ const PRODUCTS = [
     // {print} est remplacé par la couleur d'impression de la version (colors[].print)
     desc: "Sweat à capuche Native Spirit en molleton French Terry, coupe standard à épaules légèrement tombantes, capuche doublée avec cordon plat en coton bio, poche kangourou, sans étiquette qui gratte. Logo étoile brodé sur la poitrine, blason CESI Lille 2026-2027 au dos, en {print}.",
     material: "100 % coton biologique peigné, 400 g/m². Intérieur French Terry, lavé aux enzymes. Bords-côtes 2 × 1 aux poignets et en bas, doubles surpiqûres. Certifié GOTS et OEKO-TEX® Standard 100 (Native Spirit NS431).",
-    sizes: SIZES,
+    sizes: SIZES_PULL,
     // Guide des tailles (facultatif) en cm, vêtement posé à plat. A = largeur de poitrine, B = longueur totale :
     // guideTable: { S: [A, B], M: [A, B], ... }, guideNote: "…". Sans guideTable, la fiche n'affiche pas de guide.
     // une version = un coloris + une écriture (libellés exacts de SumUp, « Couleur Pull »)
@@ -47,7 +49,7 @@ const PRODUCTS = [
     price: 25,
     desc: "T-shirt iDeal190 en jersey de coton, coupe droite, col rond en bord-côte. Devant, le logo étoile CESI sur le cœur ; au dos, « CESI Lille » en grandes lettres autour du blason, avec 2026-2027, en {print}.",
     material: "100 % coton, 185 g/m² (gris cendré : 99 % coton et 1 % viscose ; gris chiné : 90 % coton et 10 % viscose). Maille jersey tubulaire, col bord-côte 1 × 1, ourlets double aiguille. Certifié OEKO-TEX® Standard 100 (iDeal IB320).",
-    sizes: SIZES,
+    sizes: SIZES_TEE,
     // coloris accrochés sur la tringle ; les autres se choisissent dans la fiche (partie « Personnalisation »)
     rack: ["Blanc", "Rouge", "Orange", "Jaune", "Vert clair", "Bleu roi", "Noir"],
     rackTel: ["Blanc", "Rouge", "Vert clair", "Bleu roi", "Noir"],   // sur téléphone (sans le jaune ni l'orange)
