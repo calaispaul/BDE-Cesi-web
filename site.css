@@ -808,7 +808,7 @@ form.cf{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 @media (max-width:834px){ .mat2{grid-template-columns:1fr;row-gap:72px} }
 /* sous la tringle : la personnalisation */
 .rack-perso{margin:0;padding:6px var(--gutter) 28px;text-align:center;font-size:15px;color:var(--slate)}
-.rp-tag{display:inline-block;margin-right:10px;padding:4px 12px;border-radius:999px;background:var(--blue-fill);color:#fff;font-size:13px;font-weight:600;vertical-align:1px}
+.rp-tag{display:table;margin:0 auto 8px;padding:4px 12px;border-radius:999px;background:var(--blue-fill);color:#fff;font-size:13px;font-weight:600}
 .pack-closed .rack-perso{visibility:hidden}
 @media (min-width:640px){ .rack-perso{position:relative;z-index:3;margin-top:calc(-1 * clamp(64px,12svh,130px));pointer-events:none} }
 /* fiche : rappel du pack à côté de « Commander » */

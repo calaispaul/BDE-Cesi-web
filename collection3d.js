@@ -29,7 +29,9 @@ PRODUCTS.forEach(p => { const k = KIND[p.id]; if(!k) return; const list = [];
   p.colors.forEach(c => { const g = list.find(x => x.name === c.name);
     if(g) g.vars.push(view3(k, c)); else list.push({p, kind:k, name:c.name, teinte:c.teinte, vars:[view3(k, c)]}); });
   groups.set(p, list);
-  const onRack = p.rack ? p.rack.map(n => list.find(g => g.name === n)).filter(Boolean) : list;
+  /* téléphone (tringles en deux rangées, voir layout) : liste plus courte si products.js en donne une (rackTel) */
+  const rk = (p.rackTel && (stage.clientWidth || innerWidth) < 640) ? p.rackTel : p.rack;
+  const onRack = rk ? rk.map(n => list.find(g => g.name === n)).filter(Boolean) : list;
   onRack.forEach(g => pieces.push({p, kind:k, g, ...g.vars[0], vars:g.vars})); });
 /* le T-shirt noir ferme la tringle */
 { const i = pieces.findIndex(x => x.kind === "tee" && x.g.name === "Noir"); if(i >= 0) pieces.push(pieces.splice(i, 1)[0]); }

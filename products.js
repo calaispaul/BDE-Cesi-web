@@ -50,6 +50,7 @@ const PRODUCTS = [
     sizes: SIZES,
     // coloris accrochés sur la tringle ; les autres se choisissent dans la fiche (partie « Personnalisation »)
     rack: ["Blanc", "Rouge", "Orange", "Jaune", "Vert clair", "Bleu roi", "Noir"],
+    rackTel: ["Blanc", "Rouge", "Vert clair", "Bleu roi", "Noir"],   // sur téléphone (sans le jaune ni l'orange)
     // T-shirt : coloris et impression se choisissent séparément, toutes les combinaisons sont possibles
     // (libellés de SumUp, « Impression T-Shirt (couleur) » ; name : nom affiché, teinte : pastille)
     prints: [
