@@ -24,12 +24,11 @@ const PRODUCTS = [
     sumupName: "Pull",
     price: 45,
     // {print} est remplacé par la couleur d'impression du coloris (colors[].print)
-    desc: "Sweat à capuche à coupe oversize, épaules tombantes, poche kangourou et intérieur gratté. Logo étoile brodé sur la poitrine, blason CESI Lille 2026-2027 imprimé au dos, en {print}.",
-    material: "70 % coton, 30 % polyester. 330 g/m², intérieur gratté. Poignets et ourlet côtelés.",
+    desc: "Sweat à capuche en molleton French Terry, coupe standard à épaules tombantes, capuche doublée ton sur ton avec cordon plat en coton bio, poche kangourou. Logo étoile brodé sur la poitrine, blason CESI Lille 2026-2027 imprimé au dos, en {print}.",
+    material: "100 % coton biologique peigné, 400 g/m². Molleton French Terry non gratté, lavé aux enzymes. Bords-côtes 2 × 1 aux poignets et en bas. Certifié GOTS et OEKO-TEX® Standard 100 (Native Spirit NS431).",
     sizes: SIZES,
-    // Guide des tailles en cm, vêtement posé à plat. A = largeur de poitrine, B = longueur totale.
-    guideTable: { S: [58, 68], M: [61, 69], L: [64, 71], XL: [67, 73], XXL: [70, 75], "3XL": [74.5, 76] },
-    guideNote: "Tolérance de fabrication : ± 2 cm.",
+    // Guide des tailles (facultatif) en cm, vêtement posé à plat. A = largeur de poitrine, B = longueur totale :
+    // guideTable: { S: [A, B], M: [A, B], ... }, guideNote: "…". Sans guideTable, la fiche n'affiche pas de guide.
     colors: [
       // print / printLabel : couleur réelle de l'impression, d'après les visuels finaux (le libellé SumUp reste inchangé)
       { id: "noir",  name: "Noir",  sumup: "Noir (écriture blanche)",  print: "blanc",  printLabel: "Impression blanche" },
