@@ -632,6 +632,7 @@ footer .copy a:hover{text-decoration:underline}
 .ps-perso-l span{color:var(--slate);margin-left:8px}
 .ps-perso-o.sw button{padding:0;width:32px;height:32px;justify-content:center;font-size:0;gap:0}
 .ps-perso-o.sw button i{width:24px;height:24px}
+.ps-perso-n{margin:8px 0 0;font-size:13px;color:var(--steel)}
 .ps-perso-o{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
 .ps-perso-o button{display:inline-flex;align-items:center;gap:8px;border:0;border-radius:999px;padding:7px 14px 7px 8px;font:inherit;font-size:14px;cursor:pointer;
   background:var(--white);color:var(--ink);box-shadow:inset 0 0 0 1px var(--hairline);transition:box-shadow .2s,background .2s}

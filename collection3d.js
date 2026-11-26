@@ -33,8 +33,8 @@ PRODUCTS.forEach(p => { const k = KIND[p.id]; if(!k) return; const list = [];
   onRack.forEach(g => pieces.push({p, kind:k, g, ...g.vars[0], vars:g.vars})); });
 /* le T-shirt noir ferme la tringle */
 { const i = pieces.findIndex(x => x.kind === "tee" && x.g.name === "Noir"); if(i >= 0) pieces.push(pieces.splice(i, 1)[0]); }
-/* pastille de la couleur d'impression */
-const INK = {"blanc":"#ffffff", "noir":"#1d1d1f", "rouge":"#c8102e", "marron":"#4e3328", "bleu":"#1f33c4", "rose":"#f3b5c9", "crème":"#efe5cf", "bleu marine":"#1c2741"};
+/* pastille de l'écriture des pulls (les T-shirts ont leur liste dans products.js : prints) */
+const INK = {"blanc":"#ffffff", "rouge":"#c8102e", "marron":"#4e3328", "bleu électrique":"#1f33c4", "rose pâle":"#f3c6d3"};
 
 const sheet = buildSheet();
 buildList();
@@ -633,14 +633,30 @@ function buildSheet(){
   };
   /* « Commander » mène à la boutique, roue déjà tournée sur la famille de l'article (boutique.js lit l'ancre) */
   const FAMILLE = {hoodie:"pull", tshirt:"t-shirt"};
-  const label = c => (c.printLabel || "").replace(/^Impression (.)/, (_, l) => l.toUpperCase());
+  const cap = t => t.charAt(0).toUpperCase() + t.slice(1);
+  const label = c => (c.printLabel || "").replace(/^(Impression|Écriture) (.)/, (_, w, l) => l.toUpperCase());
   const radios = (items, cur, key, sw, txt) => items.map((x, j) => `<button type="button" role="radio" data-${key}="${j}" title="${esc(txt(x))}" aria-checked="${j === cur}"${j === cur ? "" : ' tabindex="-1"'}>
         <i style="background:${sw(x)}"></i>${esc(txt(x))}</button>`).join("");
   const paint = () => {
-    const pc = pieces[idx], p = pc.p, g = grp || pc.g, all = groups.get(p), v = g.vars[vi] || g.vars[0], c = v.c;
+    const pc = pieces[idx], p = pc.p, g = grp || pc.g, all = groups.get(p);
+    let v, c, ink, inkHTML;
+    if(p.prints){
+      /* T-shirt : n'importe quelle impression sur n'importe quel coloris. La photo est celle de l'impression choisie
+         quand elle existe, sinon celle du coloris (avec un mot pour le dire) */
+      if(vi < 0) vi = Math.max(0, p.prints.findIndex(x => x.name === g.vars[0].c.print));
+      ink = p.prints[vi]; v = g.vars.find(x => x.c.print === ink.name) || g.vars[0]; c = v.c;
+      inkHTML = `<p class="ps-perso-l" id="psImp">Impression<span>${esc(cap(ink.name))} · ${p.prints.length} au choix</span></p>
+        <div class="ps-perso-o sw" role="radiogroup" aria-labelledby="psImp">${radios(p.prints, vi, "vi", x => x.teinte, x => cap(x.name))}</div>
+        ${c.print === ink.name ? "" : `<p class="ps-perso-n">Sur la photo : impression ${esc(c.print)}. Sur ton T-shirt : ${esc(ink.name)}.</p>`}`;
+    } else {
+      if(vi < 0) vi = 0;
+      v = g.vars[vi] || g.vars[0]; c = v.c; ink = {name:c.print};
+      inkHTML = `<p class="ps-perso-l" id="psImp">Écriture<span>${g.vars.length > 1 ? g.vars.length + " au choix" : ""}</span></p>
+        <div class="ps-perso-o" role="radiogroup" aria-labelledby="psImp">${radios(g.vars, g.vars.indexOf(v), "vi", x => INK[x.c.print] || "#fff", x => label(x.c))}</div>`;
+    }
     zoom(false);
     img.src = v[view];
-    img.alt = `${p.sumupName || p.name} ${c.name}, ${label(c).toLowerCase()}, ${({face:"de face", dos:"de dos", side:"de côté"})[view]}`;
+    img.alt = `${p.sumupName || p.name} ${c.name}, impression ${c.print}, ${({face:"de face", dos:"de dos", side:"de côté"})[view]}`;
     el.querySelectorAll(".ps-views button").forEach(b => b.setAttribute("aria-pressed", b.dataset.v === view));
     const choixColoris = p.rack && all.length > 1 ? `<p class="ps-perso-l" id="psCol">Coloris<span>${esc(c.name)} · ${all.length} au choix</span></p>
         <div class="ps-perso-o sw" role="radiogroup" aria-labelledby="psCol">${radios(all, all.indexOf(g), "gi", x => x.teinte || "#fff", x => x.name)}</div>` : "";
@@ -650,17 +666,17 @@ function buildSheet(){
       <p class="ps-price">${p.price ? eur(p.price) : ""}</p>
       <div class="ps-perso"><p class="ps-perso-t">Personnalisation</p>
         ${choixColoris}
-        <p class="ps-perso-l" id="psImp">Impression<span>${g.vars.length > 1 ? g.vars.length + " au choix" : ""}</span></p>
-        <div class="ps-perso-o" role="radiogroup" aria-labelledby="psImp">${radios(g.vars, g.vars.indexOf(v), "vi", x => INK[x.c.print] || "#fff", x => label(x.c))}</div></div>
-      <p class="ps-desc">${esc(p.desc.replace("{print}", c.print || "blanc"))}</p>
+        ${inkHTML}</div>
+      <p class="ps-desc">${esc(p.desc.replace("{print}", ink.name || "blanc"))}</p>
       ${p.material ? `<p class="ps-mat">${esc(p.material)}</p>` : ""}
       ${guide(p)}
       <p class="ps-sizes">Tailles ${esc(p.sizes[0])} à ${esc(p.sizes[p.sizes.length - 1])}</p>
       <div class="ps-buys"><a class="pill blue lg ps-buy" href="boutique.html${FAMILLE[p.id] ? "#" + FAMILLE[p.id] : ""}">Commander</a>
         <a class="ps-pack" href="boutique.html#pack"><b>−10 %</b><span>avec le pack pull + T-shirt</span></a></div>`;
   };
+
   /* Personnalisation : coloris (data-gi) et impression (data-vi), au clic ou aux flèches comme des boutons radio */
-  const pick = (key, j) => { if(key === "gi"){ grp = groups.get(pieces[idx].p)[j]; vi = 0; } else vi = j; paint();
+  const pick = (key, j) => { if(key === "gi"){ grp = groups.get(pieces[idx].p)[j]; if(!pieces[idx].p.prints) vi = 0; } else vi = j; paint();
     const n = info.querySelector(`[data-${key}="${j}"]`); if(n) n.focus({preventScroll:true}); };
   info.addEventListener("click", e => { const b = e.target.closest("[data-gi],[data-vi]"); if(!b) return;
     pick("gi" in b.dataset ? "gi" : "vi", +(b.dataset.gi ?? b.dataset.vi)); });
@@ -669,7 +685,7 @@ function buildSheet(){
     pick(key, (+b.dataset[key] + (/Right|Down/.test(e.key) ? 1 : -1) + n) % n); });
   const api = {
     open(i){
-      idx = Math.max(0, i); grp = null; vi = 0; view = "face"; paint(); last = document.activeElement; openedAt = performance.now();
+      idx = Math.max(0, i); grp = null; vi = -1; view = "face"; paint(); last = document.activeElement; openedAt = performance.now();
       el.hidden = false; document.documentElement.classList.add("sheet-open");
       if(G && !reduce){ G.fromTo(el, {opacity:0}, {opacity:1, duration:.3}); G.fromTo(card, {y:40, scale:.96, opacity:0}, {y:0, scale:1, opacity:1, duration:.6, ease:"expo.out"}); }
       setTimeout(() => (window.__kbd ? $(".ps-x", el) : card).focus({preventScroll:true}), 30);   /* clavier : sur « fermer » ; doigt : sur la fiche, sans anneau */
@@ -678,7 +694,7 @@ function buildSheet(){
       const done = () => { el.hidden = true; document.documentElement.classList.remove("sheet-open"); if(last && last.focus) last.focus(); };
       if(G && !reduce) G.to(el, {opacity:0, duration:.25, onComplete:done}); else done();
     },
-    step(d){ idx = (idx + d + pieces.length) % pieces.length; grp = null; vi = 0; view = "face"; paint();
+    step(d){ idx = (idx + d + pieces.length) % pieces.length; grp = null; vi = -1; view = "face"; paint();
       if(G && !reduce) G.fromTo(img, {x:d * 40, opacity:0}, {x:0, opacity:1, duration:.5, ease:"expo.out"}); }
   };
   $(".ps-x", el).addEventListener("click", api.close);
