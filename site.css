@@ -234,6 +234,9 @@ html{-webkit-tap-highlight-color:transparent}
 .socle{isolation:isolate;color:#f5f5f7}
 /* fond noir pleine largeur sans dépendre de 100vw (sur certains téléphones, 100vw laissait une bande blanche à gauche) */
 .socle{background:#000;box-shadow:0 0 0 100vmax #000;clip-path:inset(0 -100vmax)}
+/* iPhone : la partie épinglée fait 100svh, mais quand Safari replie sa barre l'écran devient plus haut ; la bande
+   en dessous laissait voir le blanc de la page (coupure). L'emplacement réservé par l'épinglage est donc noir lui aussi. */
+.pin-spacer:has(> #design){background:#000}
 .socle .num{color:#86868b}
 .socle .display,.socle .lead,.socle .keys b{color:#f5f5f7}
 .socle .keys p{color:#a1a1a6}
