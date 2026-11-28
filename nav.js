@@ -89,7 +89,8 @@
     a.addEventListener("pointerenter", on); a.addEventListener("pointerleave", off);
     a.addEventListener("focus", on); a.addEventListener("blur", off);
   });
-  var ticking = false;
+  var ticking = false, touch = matchMedia("(hover: none) and (pointer: coarse)").matches;
+  if(touch){ layer.style.transition = "opacity .2s"; layer.style.opacity = "0"; }
   var update = function(){
     ticking = false;
     var H = gnav.offsetHeight, top = H, bot = 0;
@@ -97,6 +98,11 @@
       var r = el.getBoundingClientRect(), t = Math.max(0, r.top), b = Math.min(H, r.bottom);
       if(b > t){ top = Math.min(top, t); bot = Math.max(bot, b); }
     });
+    if(touch){   /* téléphone : Safari fait défiler la page avant que la découpe suive, ce qui laissait une bande de la
+                    mauvaise couleur à la frontière ; la barre bascule donc en entier, en fondu, quand le noir en couvre la moitié */
+      var on = bot - top > H / 2; layer.style.visibility = "visible"; layer.style.clipPath = "none"; layer.style.opacity = on ? "1" : "0";
+      return;
+    }
     if(bot > top){ layer.style.visibility = "visible"; layer.style.clipPath = "inset(" + top + "px 0 " + (H - bot) + "px 0)"; }
     else layer.style.visibility = "hidden";
   };
